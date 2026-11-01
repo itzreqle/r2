@@ -18,6 +18,11 @@ _SKIP_DIRS = {
     "dist",
     "build",
     ".tox",
+    ".build",  # SwiftPM
+    ".swiftpm",
+    "DerivedData",  # Xcode
+    ".ipynb_checkpoints",
+    ".mypy_cache",
 }
 
 

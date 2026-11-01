@@ -45,6 +45,7 @@ def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
 
     - unknown parameter keys are dropped (tools only ever read declared fields)
     - bare search words become globs: "json" -> "*.json", "config" -> "*config*"
+    - language words win over substring globs: "*swift*" / "swift files" -> "*.swift"
     """
     try:
         intent = IntentName(data.get("intent"))
@@ -57,9 +58,12 @@ def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
     params = {k: v for k, v in params.items() if k in fields}
     if intent == IntentName.SEARCH_FILES and isinstance(params.get("pattern"), str):
         pat = params["pattern"].strip()
-        if pat and not any(c in pat for c in "*?["):
-            word = pat.lower().lstrip(".")
-            pat = f"*.{_EXT_WORDS[word]}" if word in _EXT_WORDS else f"*{pat}*"
+        # "swift", "swift files", "*swift*", ".swift" all mean files of that language.
+        word = re.sub(r"\s+files?$", "", pat.lower().strip("*").lstrip(".")).strip()
+        if word in _EXT_WORDS and (pat.lower().strip("*") == pat.lower() or pat.startswith("*")):
+            pat = f"*.{_EXT_WORDS[word]}"
+        elif pat and not any(c in pat for c in "*?["):
+            pat = f"*{pat}*"
         params["pattern"] = pat
         params.setdefault("workspace", "active")
     data["parameters"] = params

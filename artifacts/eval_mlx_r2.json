@@ -1,12 +1,12 @@
 {
   "accuracy": 0.925,
-  "param_accuracy": 0.9,
+  "param_accuracy": 0.925,
   "n": 40,
   "malformed_rate": 0.0,
   "fallback_rate": 0.0,
-  "latency_ms_mean": 325.05238324956736,
-  "latency_ms_p50": 284.6827290013607,
-  "ttft_ms_mean": 84.515,
+  "latency_ms_mean": 367.2268197491576,
+  "latency_ms_p50": 297.6540000017849,
+  "ttft_ms_mean": 155.8725,
   "per_intent_f1": {
     "clarify_request": 0.0,
     "general_help": 1.0,
@@ -69,18 +69,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 2281.2690409991774,
+      "latency_ms": 3457.916999999725,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 158.1,
-        "total_ms": 336.1,
+        "ttft_ms": 2830.6,
+        "total_ms": 3041.1,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 11,
-        "prompt_tps": 151.6,
-        "generation_tps": 66.3,
-        "peak_memory_gb": 1.249,
-        "cache_source": "built"
+        "prompt_tps": 7.9,
+        "generation_tps": 55.3,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
       }
     },
     {
@@ -92,18 +92,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 178.5925829972257,
+      "latency_ms": 185.74495800567092,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 69.5,
-        "total_ms": 175.8,
+        "ttft_ms": 74.0,
+        "total_ms": 183.2,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 8,
-        "prompt_tps": 304.1,
-        "generation_tps": 82.8,
+        "prompt_tps": 285.4,
+        "generation_tps": 82.2,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -115,18 +115,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 182.1486670014565,
+      "latency_ms": 256.29399999888847,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.6,
-        "total_ms": 180.1,
+        "ttft_ms": 145.7,
+        "total_ms": 252.2,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 8,
-        "prompt_tps": 259.3,
-        "generation_tps": 82.7,
+        "prompt_tps": 130.8,
+        "generation_tps": 82.1,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -138,18 +138,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 181.807499997376,
+      "latency_ms": 188.9707499940414,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.3,
-        "total_ms": 176.6,
+        "ttft_ms": 76.3,
+        "total_ms": 185.4,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 8,
-        "prompt_tps": 298.9,
-        "generation_tps": 86.4,
+        "prompt_tps": 290.5,
+        "generation_tps": 82.2,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -161,18 +161,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 276.0956249985611,
+      "latency_ms": 269.1403330027242,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.7,
-        "total_ms": 270.9,
+        "ttft_ms": 74.2,
+        "total_ms": 266.4,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 9,
-        "prompt_tps": 287.4,
-        "generation_tps": 48.0,
+        "prompt_tps": 285.4,
+        "generation_tps": 49.6,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -184,18 +184,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 279.59433299838565,
+      "latency_ms": 293.294542003423,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 70.7,
-        "total_ms": 276.8,
+        "ttft_ms": 74.2,
+        "total_ms": 291.1,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 16,
-        "prompt_tps": 312.8,
-        "generation_tps": 81.8,
+        "prompt_tps": 297.9,
+        "generation_tps": 77.0,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -207,18 +207,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 205.59350000257837,
+      "latency_ms": 207.61920799850486,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 81.1,
-        "total_ms": 200.4,
+        "ttft_ms": 81.6,
+        "total_ms": 203.5,
         "prompt_tokens": 29,
         "cached_tokens": 1118,
         "generated_tokens": 9,
-        "prompt_tps": 360.9,
-        "generation_tps": 82.2,
+        "prompt_tps": 358.7,
+        "generation_tps": 81.5,
         "peak_memory_gb": 1.355,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -233,18 +233,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 315.39512499875855,
+      "latency_ms": 328.5854999994626,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 124.1,
-        "total_ms": 310.4,
+        "ttft_ms": 121.8,
+        "total_ms": 323.5,
         "prompt_tokens": 20,
         "cached_tokens": 1118,
         "generated_tokens": 12,
-        "prompt_tps": 162.0,
-        "generation_tps": 67.9,
+        "prompt_tps": 165.1,
+        "generation_tps": 62.4,
         "peak_memory_gb": 1.279,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -259,18 +259,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 234.23445799562614,
+      "latency_ms": 241.70366599719273,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.4,
-        "total_ms": 231.4,
+        "ttft_ms": 73.2,
+        "total_ms": 238.6,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 12,
-        "prompt_tps": 260.5,
-        "generation_tps": 82.1,
+        "prompt_tps": 261.2,
+        "generation_tps": 78.1,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -285,18 +285,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 236.9393749977462,
+      "latency_ms": 245.87958399933996,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 79.0,
-        "total_ms": 230.9,
+        "ttft_ms": 76.1,
+        "total_ms": 240.8,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 12,
-        "prompt_tps": 268.2,
-        "generation_tps": 84.1,
+        "prompt_tps": 278.1,
+        "generation_tps": 78.1,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -305,24 +305,24 @@
       "expected": "search_files",
       "predicted": "search_files",
       "parameters": {
-        "pattern": "*swift",
+        "pattern": "*.swift",
         "workspace": "active"
       },
       "intent_ok": true,
-      "params_ok": false,
+      "params_ok": true,
       "source": "model",
-      "latency_ms": 240.52479099918855,
+      "latency_ms": 243.33616600051755,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 78.2,
-        "total_ms": 234.8,
+        "ttft_ms": 78.6,
+        "total_ms": 239.1,
         "prompt_tokens": 20,
         "cached_tokens": 1118,
         "generated_tokens": 12,
-        "prompt_tps": 258.5,
-        "generation_tps": 82.7,
+        "prompt_tps": 256.6,
+        "generation_tps": 79.4,
         "peak_memory_gb": 1.279,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -337,18 +337,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 234.1272499979823,
+      "latency_ms": 244.8643749958137,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.2,
-        "total_ms": 230.1,
+        "ttft_ms": 78.6,
+        "total_ms": 239.8,
         "prompt_tokens": 24,
         "cached_tokens": 1118,
         "generated_tokens": 12,
-        "prompt_tps": 330.7,
-        "generation_tps": 82.7,
+        "prompt_tps": 308.7,
+        "generation_tps": 79.6,
         "peak_memory_gb": 1.312,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -362,18 +362,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 349.94254099729005,
+      "latency_ms": 369.1094589958084,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 116.3,
-        "total_ms": 345.8,
+        "ttft_ms": 126.6,
+        "total_ms": 364.9,
         "prompt_tokens": 26,
         "cached_tokens": 1118,
         "generated_tokens": 15,
-        "prompt_tps": 224.7,
-        "generation_tps": 68.3,
+        "prompt_tps": 206.4,
+        "generation_tps": 65.4,
         "peak_memory_gb": 1.331,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -387,18 +387,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 321.50787499995204,
+      "latency_ms": 325.9171250028885,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.1,
-        "total_ms": 317.4,
+        "ttft_ms": 76.8,
+        "total_ms": 322.0,
         "prompt_tokens": 27,
         "cached_tokens": 1118,
         "generated_tokens": 18,
-        "prompt_tps": 372.1,
-        "generation_tps": 76.9,
+        "prompt_tps": 354.7,
+        "generation_tps": 77.0,
         "peak_memory_gb": 1.339,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -412,18 +412,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 261.1680419940967,
+      "latency_ms": 275.9026249987073,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.3,
-        "total_ms": 256.8,
+        "ttft_ms": 80.5,
+        "total_ms": 270.5,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 14,
-        "prompt_tps": 299.2,
-        "generation_tps": 81.3,
+        "prompt_tps": 276.0,
+        "generation_tps": 77.6,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -437,18 +437,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 274.13408299617004,
+      "latency_ms": 291.69541600276716,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 76.1,
-        "total_ms": 269.1,
+        "ttft_ms": 80.2,
+        "total_ms": 286.4,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 15,
-        "prompt_tps": 279.0,
-        "generation_tps": 81.7,
+        "prompt_tps": 265.1,
+        "generation_tps": 76.9,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -462,18 +462,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 335.8854589969269,
+      "latency_ms": 359.2164580040844,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 120.4,
-        "total_ms": 331.0,
+        "ttft_ms": 120.6,
+        "total_ms": 355.1,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 14,
-        "prompt_tps": 158.8,
-        "generation_tps": 69.5,
+        "prompt_tps": 158.4,
+        "generation_tps": 62.1,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -487,18 +487,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 246.35058399871923,
+      "latency_ms": 258.44299999880604,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.4,
-        "total_ms": 242.9,
+        "ttft_ms": 74.6,
+        "total_ms": 255.1,
         "prompt_tokens": 20,
         "cached_tokens": 1118,
         "generated_tokens": 13,
-        "prompt_tps": 270.5,
-        "generation_tps": 82.7,
+        "prompt_tps": 269.8,
+        "generation_tps": 76.7,
         "peak_memory_gb": 1.279,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -512,18 +512,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 255.73716600047192,
+      "latency_ms": 270.5043339956319,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 71.1,
-        "total_ms": 251.5,
+        "ttft_ms": 74.4,
+        "total_ms": 265.3,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 14,
-        "prompt_tps": 269.7,
-        "generation_tps": 82.0,
+        "prompt_tps": 258.0,
+        "generation_tps": 77.2,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -538,18 +538,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 409.0494160045637,
+      "latency_ms": 419.18533299758565,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 121.7,
-        "total_ms": 404.1,
+        "ttft_ms": 124.7,
+        "total_ms": 414.9,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 19,
-        "prompt_tps": 181.9,
-        "generation_tps": 69.7,
+        "prompt_tps": 177.7,
+        "generation_tps": 67.6,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -564,18 +564,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 331.4127080011531,
+      "latency_ms": 341.9515420027892,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 75.6,
-        "total_ms": 327.1,
+        "ttft_ms": 77.6,
+        "total_ms": 337.7,
         "prompt_tokens": 23,
         "cached_tokens": 1118,
         "generated_tokens": 19,
-        "prompt_tps": 306.6,
-        "generation_tps": 78.7,
+        "prompt_tps": 298.7,
+        "generation_tps": 76.3,
         "peak_memory_gb": 1.304,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -590,18 +590,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 323.2842500001425,
+      "latency_ms": 346.97558299376396,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.9,
-        "total_ms": 318.6,
+        "ttft_ms": 79.2,
+        "total_ms": 341.7,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 19,
-        "prompt_tps": 295.1,
-        "generation_tps": 81.2,
+        "prompt_tps": 280.6,
+        "generation_tps": 75.5,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -615,18 +615,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 318.20662500103936,
+      "latency_ms": 326.32162499794504,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 123.7,
-        "total_ms": 312.6,
+        "ttft_ms": 122.8,
+        "total_ms": 322.2,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 12,
-        "prompt_tps": 179.1,
-        "generation_tps": 66.8,
+        "prompt_tps": 180.2,
+        "generation_tps": 63.1,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -640,18 +640,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 249.9566250044154,
+      "latency_ms": 251.1703749987646,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 75.5,
-        "total_ms": 247.1,
+        "ttft_ms": 74.9,
+        "total_ms": 248.3,
         "prompt_tokens": 24,
         "cached_tokens": 1118,
         "generated_tokens": 13,
-        "prompt_tps": 319.4,
-        "generation_tps": 80.2,
+        "prompt_tps": 322.4,
+        "generation_tps": 79.2,
         "peak_memory_gb": 1.312,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -663,18 +663,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 259.8594579976634,
+      "latency_ms": 275.7253329982632,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 121.1,
-        "total_ms": 255.7,
+        "ttft_ms": 125.1,
+        "total_ms": 270.0,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 8,
-        "prompt_tps": 174.3,
-        "generation_tps": 64.9,
+        "prompt_tps": 168.9,
+        "generation_tps": 59.6,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -686,18 +686,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 172.41637500410434,
+      "latency_ms": 183.67187499825377,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 68.2,
-        "total_ms": 170.0,
+        "ttft_ms": 72.8,
+        "total_ms": 181.2,
         "prompt_tokens": 20,
         "cached_tokens": 1118,
         "generated_tokens": 8,
-        "prompt_tps": 294.7,
-        "generation_tps": 86.4,
+        "prompt_tps": 276.2,
+        "generation_tps": 82.6,
         "peak_memory_gb": 1.279,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -709,18 +709,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 180.32229100208497,
+      "latency_ms": 184.10466599743813,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.6,
-        "total_ms": 176.2,
+        "ttft_ms": 73.3,
+        "total_ms": 181.2,
         "prompt_tokens": 17,
         "cached_tokens": 1118,
         "generated_tokens": 8,
-        "prompt_tps": 232.7,
-        "generation_tps": 85.5,
+        "prompt_tps": 233.1,
+        "generation_tps": 82.7,
         "peak_memory_gb": 1.252,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -734,18 +734,18 @@
       "intent_ok": false,
       "params_ok": false,
       "source": "model",
-      "latency_ms": 347.1467919953284,
+      "latency_ms": 361.0649580004974,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 116.9,
-        "total_ms": 341.3,
+        "ttft_ms": 126.9,
+        "total_ms": 355.4,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 163.4,
-        "generation_tps": 79.3,
+        "prompt_tps": 150.8,
+        "generation_tps": 78.1,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -759,18 +759,18 @@
       "intent_ok": false,
       "params_ok": false,
       "source": "model",
-      "latency_ms": 297.0825000011246,
+      "latency_ms": 314.4962079968536,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.5,
-        "total_ms": 293.9,
+        "ttft_ms": 76.6,
+        "total_ms": 309.8,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 256.5,
-        "generation_tps": 82.0,
+        "prompt_tps": 250.5,
+        "generation_tps": 75.9,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -784,18 +784,18 @@
       "intent_ok": false,
       "params_ok": false,
       "source": "model",
-      "latency_ms": 245.6171669982723,
+      "latency_ms": 258.62683299783384,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 72.9,
-        "total_ms": 240.5,
+        "ttft_ms": 78.3,
+        "total_ms": 255.0,
         "prompt_tokens": 18,
         "cached_tokens": 1118,
         "generated_tokens": 13,
-        "prompt_tps": 249.6,
-        "generation_tps": 82.4,
+        "prompt_tps": 231.5,
+        "generation_tps": 78.9,
         "peak_memory_gb": 1.263,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -809,18 +809,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 285.9797080018325,
+      "latency_ms": 302.4173340018024,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 75.2,
-        "total_ms": 280.9,
+        "ttft_ms": 79.3,
+        "total_ms": 296.8,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 16,
-        "prompt_tps": 295.6,
-        "generation_tps": 81.8,
+        "prompt_tps": 279.9,
+        "generation_tps": 77.3,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -834,18 +834,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 301.9182499992894,
+      "latency_ms": 319.5211249985732,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 75.4,
-        "total_ms": 297.6,
+        "ttft_ms": 79.4,
+        "total_ms": 313.6,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 294.6,
-        "generation_tps": 80.3,
+        "prompt_tps": 279.7,
+        "generation_tps": 75.6,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -859,18 +859,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 288.442249999207,
+      "latency_ms": 299.35104199830675,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 77.4,
-        "total_ms": 283.3,
+        "ttft_ms": 78.9,
+        "total_ms": 294.4,
         "prompt_tokens": 19,
         "cached_tokens": 1118,
         "generated_tokens": 16,
-        "prompt_tps": 248.0,
-        "generation_tps": 82.5,
+        "prompt_tps": 243.2,
+        "generation_tps": 77.6,
         "peak_memory_gb": 1.271,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -884,18 +884,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 297.79687500558794,
+      "latency_ms": 312.7328329937882,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.0,
-        "total_ms": 292.1,
+        "ttft_ms": 77.0,
+        "total_ms": 307.0,
         "prompt_tokens": 20,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 277.6,
-        "generation_tps": 81.9,
+        "prompt_tps": 262.1,
+        "generation_tps": 77.8,
         "peak_memory_gb": 1.279,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -909,18 +909,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 304.3039999975008,
+      "latency_ms": 315.53858400002355,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.5,
-        "total_ms": 299.3,
+        "ttft_ms": 79.7,
+        "total_ms": 309.7,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 298.0,
-        "generation_tps": 78.9,
+        "prompt_tps": 278.4,
+        "generation_tps": 77.6,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -934,18 +934,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 310.3871249986696,
+      "latency_ms": 328.891916993598,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 74.7,
-        "total_ms": 305.1,
+        "ttft_ms": 80.9,
+        "total_ms": 324.0,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 18,
-        "prompt_tps": 283.7,
-        "generation_tps": 82.3,
+        "prompt_tps": 262.1,
+        "generation_tps": 77.7,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -959,18 +959,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 299.48125000373693,
+      "latency_ms": 315.2847919991473,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 73.9,
-        "total_ms": 294.2,
+        "ttft_ms": 79.6,
+        "total_ms": 310.2,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 303.6,
-        "generation_tps": 80.9,
+        "prompt_tps": 279.3,
+        "generation_tps": 77.4,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -984,18 +984,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 301.46687499654945,
+      "latency_ms": 312.0130829993286,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 79.2,
-        "total_ms": 296.3,
+        "ttft_ms": 75.2,
+        "total_ms": 306.1,
         "prompt_tokens": 23,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 293.3,
-        "generation_tps": 82.0,
+        "prompt_tps": 308.5,
+        "generation_tps": 76.7,
         "peak_memory_gb": 1.304,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -1009,18 +1009,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 303.53104200185044,
+      "latency_ms": 309.93229200248607,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 75.4,
-        "total_ms": 299.0,
+        "ttft_ms": 77.2,
+        "total_ms": 305.1,
         "prompt_tokens": 21,
         "cached_tokens": 1118,
         "generated_tokens": 17,
-        "prompt_tps": 281.6,
-        "generation_tps": 79.2,
+        "prompt_tps": 274.2,
+        "generation_tps": 78.6,
         "peak_memory_gb": 1.286,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     },
     {
@@ -1034,18 +1034,18 @@
       "intent_ok": true,
       "params_ok": true,
       "source": "model",
-      "latency_ms": 283.38575000088895,
+      "latency_ms": 295.956958005263,
       "metrics": {
         "backend": "mlx",
-        "ttft_ms": 68.7,
-        "total_ms": 278.5,
+        "ttft_ms": 76.9,
+        "total_ms": 291.7,
         "prompt_tokens": 22,
         "cached_tokens": 1118,
         "generated_tokens": 16,
-        "prompt_tps": 322.1,
-        "generation_tps": 80.0,
+        "prompt_tps": 289.0,
+        "generation_tps": 78.5,
         "peak_memory_gb": 1.296,
-        "cache_source": "built"
+        "cache_source": "disk"
       }
     }
   ]
