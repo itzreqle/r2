@@ -16,9 +16,12 @@ leaves your machine.
 ![MLX](https://img.shields.io/badge/runs%20on-MLX-2a78d6)
 ![SwiftUI](https://img.shields.io/badge/app-SwiftUI-F05138?logo=swift&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-42%20passing-1baf7a)
+![License: MIT](https://img.shields.io/badge/license-MIT-a3a29b)
+![Whitepaper](https://img.shields.io/badge/whitepaper-PDF-eb6834)
 
 [Features](#features) · [Quick start](#quick-start) · [Results](#results) ·
-[How it works](#how-it-works) · [Academic use](#academic-use)
+[How it works](#how-it-works) · [Academic use](#academic-use) ·
+[Whitepaper](paper/r2-whitepaper.pdf)
 
 </div>
 
@@ -251,6 +254,12 @@ version), so a stale cache is never reused.
 R2 is small enough to read in an afternoon and complete enough to measure, so it works well
 for coursework, a thesis chapter or a reading group on efficient on-device LLMs.
 
+**Whitepaper.** [*R2: A Narrow, On-Device Voice Assistant with Persistent Prefix KV Caching
+and Constrained Intent Decoding*](paper/r2-whitepaper.pdf) covers the theory (prefix
+invariance, KV memory, a prefill/decode cost model, the decoding mask), the architecture, and
+every benchmark, including a context-length sweep from 128 to 4,096 tokens. LaTeX source and
+figure scripts are in [`paper/`](paper/).
+
 **Research questions it answers**
 
 1. How much does prefix KV caching cut latency for a narrow assistant with a long, fixed
@@ -269,7 +278,10 @@ uv run python training/bench_kv.py                                    # KV cache
 uv run python training/evaluate.py --backend mlx                      # dev set
 uv run python training/evaluate.py --backend mlx --eval data/eval_fresh.jsonl
 uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain   # ablation
+uv run python training/bench_scaling.py                               # context-length sweep
+uv run python training/bench_voice.py                                 # speech latency
 uv run python scripts/make_readme_charts.py                           # redraw the charts
+uv run python paper/make_figures.py                                   # whitepaper figures
 ```
 
 **Teach with the notebooks**
@@ -307,11 +319,14 @@ The open items are tracked in [docs/R2_PLAN.md](docs/R2_PLAN.md).
 **Cite**
 
 ```bibtex
-@software{r2_narrow_ai_2026,
-  title  = {R2: A Narrow, On-Device Voice Assistant with Prefix KV Caching},
-  author = {itzreqle},
-  year   = {2026},
-  note   = {Qwen3-1.7B-4bit on Apple MLX; persistent prefix KV cache; constrained intent decoding}
+@techreport{shokrtalab2026r2,
+  title       = {R2: A Narrow, On-Device Voice Assistant with Persistent Prefix KV Caching
+                 and Constrained Intent Decoding},
+  author      = {Shokrtalab, Siavash and Panahdoost, Alireza},
+  institution = {Islamic Azad University, North Tehran Branch},
+  type        = {Whitepaper},
+  year        = {2026},
+  url         = {https://github.com/itzreqle/r2}
 }
 ```
 
@@ -323,6 +338,13 @@ The open items are tracked in [docs/R2_PLAN.md](docs/R2_PLAN.md).
 [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) via mlx-audio ·
 [Pydantic](https://docs.pydantic.dev) · [Rich](https://github.com/Textualize/rich) ·
 [Typer](https://typer.tiangolo.com) · SwiftUI
+
+## Authors and license
+
+**Siavash Shokrtalab** (full-stack engineering) and **Alireza Panahdoost** (research and ML),
+Department of Computer Engineering, Islamic Azad University, North Tehran Branch.
+
+Released under the [MIT License](LICENSE).
 
 Contributors and coding agents: please read [AGENTS.md](AGENTS.md). Model output is never
 authorization, tests never download models or use the microphone, and nothing is trained or
