@@ -1,0 +1,112 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "narrow-ai"
+version = "0.1.0"
+description = "Local-first narrow macOS developer voice assistant (MLX, tools, LoRA)."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+authors = [{ name = "Narrow AI" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "pydantic>=2.10",
+  "pydantic-settings>=2.7",
+  "typer>=0.15",
+  "rich>=13.9",
+  "python-dotenv>=1.0",
+  "tomli>=2.2; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+ml = [
+  "mlx>=0.26; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "mlx-lm>=0.24; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "huggingface-hub>=0.28",
+]
+speech = [
+  "mlx-whisper>=0.4; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "sounddevice>=0.5",
+  "soundfile>=0.13",
+  "numpy>=2.2",
+]
+notebooks = [
+  "jupyterlab>=4.3",
+  "ipykernel>=6.29",
+  "ipywidgets>=8.1",
+  "matplotlib>=3.10",
+  "pandas>=2.2",
+]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.25",
+  "ruff>=0.11",
+]
+all = [
+  "narrow-ai[ml,speech,notebooks,dev]",
+]
+
+[project.scripts]
+narrow-ai = "narrow_ai.cli:app"
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.25",
+  "ruff>=0.11",
+]
+ml = [
+  "mlx>=0.26; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "mlx-lm>=0.24; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "huggingface-hub>=0.28",
+]
+speech = [
+  "mlx-whisper>=0.4; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "sounddevice>=0.5",
+  "soundfile>=0.13",
+  "numpy>=2.2",
+]
+notebooks = [
+  "jupyterlab>=4.3",
+  "ipykernel>=6.29",
+  "ipywidgets>=8.1",
+  "matplotlib>=3.10",
+  "pandas>=2.2",
+]
+
+[tool.uv]
+default-groups = ["ml", "notebooks", "dev"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/narrow_ai"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/README.md",
+  "/pyproject.toml",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+  "mlx: requires local MLX model weights (opt-in)",
+  "speech: requires microphone / speech deps (opt-in)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "scripts", "training", "notebooks", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

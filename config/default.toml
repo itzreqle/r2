@@ -1,0 +1,58 @@
+[assistant]
+name = "Narrow AI"
+domain = "macos_developer"
+system_prompt = """You are a narrow macOS developer voice assistant.
+Respond with a single JSON object: {"intent": "<name>", "parameters": {...}, "requires_confirmation": false}.
+Supported intents: general_help, git_status, git_diff_summary, search_files, read_file,
+explain_test_output, run_tests, open_app, remember_preference, recall_preference,
+clarify_request, unsupported.
+Never invent shell commands. Prefer unsupported when unsure."""
+
+[workspace]
+# Empty = current working directory at launch
+path = ""
+
+[model]
+backend = "fake"  # fake | mlx
+model_id = "mlx-community/Qwen3-1.7B-4bit"
+adapter_path = ""
+max_tokens = 256
+temperature = 0.1
+max_history_turns = 8
+# Peak memory guard for 16 GB Apple Silicon
+exclusive_heavy_jobs = true
+max_kv_size = 4096
+
+[tools]
+allow_git_status = true
+allow_git_diff = true
+allow_search_files = true
+allow_read_file = false
+allow_run_tests = false
+allow_open_app = false
+command_timeout_sec = 30
+max_output_chars = 8000
+approved_apps = ["Terminal", "Visual Studio Code", "Cursor"]
+approved_test_commands = []
+
+[memory]
+enabled = true
+# Empty = ~/.local/share/narrow-ai/preferences.db
+db_path = ""
+max_preferences = 100
+
+[speech]
+enabled = false
+stt_backend = "mlx_whisper"
+tts_backend = "macos_say"
+whisper_model = "mlx-community/whisper-tiny"
+sample_rate = 16000
+
+[logging]
+level = "INFO"
+json = false
+
+[security]
+require_confirmation_for_writes = true
+block_path_escape = true
+redact_secrets_in_logs = true

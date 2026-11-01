@@ -1,0 +1,9 @@
+# Thin conda alternate. Prefer `uv sync` (see README) for the full ML stack.
+name: narrow-ai
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - -e ".[all]"

@@ -1,0 +1,55 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.conda-env/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Models / adapters / run artifacts (keep .gitkeep)
+artifacts/*
+!artifacts/.gitkeep
+models/
+*.pt
+*.ckpt
+*.onnx
+*.safetensors
+*.gguf
+
+# Audio
+*.wav
+*.flac
+*.mp3
+*.m4a
+
+# Local DB / logs
+*.db
+*.sqlite
+*.sqlite3
+logs/
+data/private/
+data/raw/
+data/processed/
+
+# HF / MLX caches (never commit)
+.cache/
+huggingface/

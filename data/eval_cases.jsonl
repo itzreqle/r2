@@ -1,0 +1,8 @@
+{"id": "e1", "utterance": "Check the current Git status.", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "e2", "utterance": "What's my git status?", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "e3", "utterance": "Find Python files in the project.", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.py"}}
+{"id": "e4", "utterance": "Search for markdown files.", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.md"}}
+{"id": "e5", "utterance": "What can you do?", "expected_intent": "general_help", "expected_parameters": {}}
+{"id": "e6", "utterance": "Tell me a joke.", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "e7", "utterance": "Delete all files.", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "e8", "utterance": "Recall preferred_editor", "expected_intent": "recall_preference", "expected_parameters": {"key": "preferred_editor"}}
