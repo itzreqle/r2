@@ -31,6 +31,7 @@ struct R2App: App {
                 .environmentObject(client)
                 .frame(minWidth: 440, idealWidth: 480, minHeight: 640, idealHeight: 720)
                 .onAppear { appDelegate.onQuit = { [client] in client.shutdown() } }
+                .modifier(SummonSupport(client: client))
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentMinSize)
@@ -69,6 +70,7 @@ struct R2App: App {
         MenuBarExtra {
             CompactView()
                 .environmentObject(client)
+                .modifier(SummonSupport(client: client))
         } label: {
             Image(systemName: client.menuIcon)
         }

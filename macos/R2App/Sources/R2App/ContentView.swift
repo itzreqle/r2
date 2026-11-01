@@ -278,9 +278,32 @@ struct CompactView: View {
 
 struct SettingsView: View {
     @EnvironmentObject var r2: R2Client
+    @State private var openAtLogin = LoginItem.isEnabled
+    @State private var loginError = ""
 
     var body: some View {
         Form {
+            Section("General") {
+                Toggle(isOn: $r2.hotKeyEnabled) {
+                    Text("Summon R2 with ⌥Space")
+                    Text("Brings R2 forward and starts listening; press again to stop.")
+                }
+                if !r2.hotKeyError.isEmpty {
+                    Label(r2.hotKeyError, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.orange)
+                        .font(.callout)
+                }
+                Toggle("Open at login", isOn: $openAtLogin)
+                    .onChange(of: openAtLogin) { _, on in
+                        loginError = LoginItem.set(on) ?? ""
+                        openAtLogin = LoginItem.isEnabled
+                    }
+                if !loginError.isEmpty {
+                    Label(loginError, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.orange)
+                        .font(.callout)
+                }
+            }
             Section("Voice") {
                 Toggle("Speak replies", isOn: $r2.speakReplies)
                 Toggle("Natural voice (on-device neural, Kokoro)", isOn: $r2.naturalVoice)

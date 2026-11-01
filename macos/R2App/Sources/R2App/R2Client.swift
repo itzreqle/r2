@@ -35,6 +35,13 @@ final class R2Client: ObservableObject {
     @Published var naturalVoice: Bool { didSet { defaults.set(naturalVoice, forKey: "naturalVoice") } }
     @Published var voiceName: String { didSet { defaults.set(voiceName, forKey: "voiceName") } }
     @Published var speechSpeed: Double { didSet { defaults.set(speechSpeed, forKey: "speechSpeed") } }
+    @Published var hotKeyEnabled: Bool {
+        didSet { defaults.set(hotKeyEnabled, forKey: "hotKeyEnabled"); applyHotKey() }
+    }
+    @Published var hotKeyError = ""
+
+    /// Set by a scene (needs SwiftUI's openWindow); lets the hot key reopen a closed window.
+    var openMainWindow: (() -> Void)?
 
     static let voices: [(id: String, label: String)] = [
         ("af_heart", "Heart — warm, natural"), ("af_bella", "Bella — bright, friendly"),
@@ -53,7 +60,9 @@ final class R2Client: ObservableObject {
 
     init() {
         defaults.register(defaults: ["speakReplies": true, "playSounds": true, "autoStartCore": true,
-                                     "naturalVoice": true, "voiceName": "af_heart", "speechSpeed": 1.0])
+                                     "naturalVoice": true, "voiceName": "af_heart", "speechSpeed": 1.0,
+                                     "hotKeyEnabled": true])
+        hotKeyEnabled = defaults.bool(forKey: "hotKeyEnabled")
         speakReplies = defaults.bool(forKey: "speakReplies")
         playSounds = defaults.bool(forKey: "playSounds")
         autoStartCore = defaults.bool(forKey: "autoStartCore")
@@ -76,6 +85,33 @@ final class R2Client: ObservableObject {
             self.phase = self.awaitingConfirm ? .confirm : .idle
         }
         if CommandLine.arguments.contains("--demo") { runDemo() } else { boot() }
+    }
+
+    // MARK: - Summon (⌥Space)
+
+    func applyHotKey() {
+        guard hotKeyEnabled else {
+            GlobalHotKey.uninstall()
+            hotKeyError = ""
+            return
+        }
+        let ok = GlobalHotKey.install { [weak self] in self?.summon() }
+        hotKeyError = ok ? "" : "⌥Space is taken by another app."
+    }
+
+    /// Bring R2 forward and toggle listening, like pressing the Siri key.
+    func summon() {
+        NSApp.activate(ignoringOtherApps: true)
+        if let w = NSApp.windows.first(where: { $0.identifier?.rawValue == "main" }) {
+            w.makeKeyAndOrderFront(nil)
+        } else {
+            openMainWindow?()
+        }
+        switch phase {
+        case .idle, .speaking, .error: startListening()
+        case .listening: stopListening()
+        default: break   // offline/starting/thinking/confirm: just show the window
+        }
     }
 
     /// `R2 --demo`: cycles every orb phase with a simulated level (visual QA, no core).
