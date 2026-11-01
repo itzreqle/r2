@@ -1,0 +1,24 @@
+{"id": "f01", "utterance": "do I have anything staged or modified?", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "f02", "utterance": "current branch name please", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "f03", "utterance": "give me a diff summary", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "f04", "utterance": "what files changed and by how much", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "f05", "utterance": "list the yaml files", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.yaml"}}
+{"id": "f06", "utterance": "find anything named test", "expected_intent": "search_files", "expected_parameters": {}}
+{"id": "f07", "utterance": "read the training README", "expected_intent": "read_file", "expected_parameters": {}}
+{"id": "f08", "utterance": "cat pyproject.toml", "expected_intent": "read_file", "expected_parameters": {"path": "pyproject.toml"}}
+{"id": "f09", "utterance": "fire up visual studio code", "expected_intent": "open_app", "expected_parameters": {"app_name": "Visual Studio Code"}}
+{"id": "f10", "utterance": "open finder", "expected_intent": "open_app", "expected_parameters": {"app_name": "Finder"}}
+{"id": "f11", "utterance": "keep in mind that my main language is Swift", "expected_intent": "remember_preference", "expected_parameters": {"value": "Swift"}}
+{"id": "f12", "utterance": "please store my code style as black", "expected_intent": "remember_preference", "expected_parameters": {}}
+{"id": "f13", "utterance": "what did I tell you my main language was", "expected_intent": "recall_preference", "expected_parameters": {}}
+{"id": "f14", "utterance": "remind me of my code style", "expected_intent": "recall_preference", "expected_parameters": {}}
+{"id": "f15", "utterance": "what is a git stash?", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "f16", "utterance": "how do I create a virtual environment in python", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "f17", "utterance": "explain what a race condition is", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "f18", "utterance": "what kinds of things can you help with", "expected_intent": "general_help", "expected_parameters": {}}
+{"id": "f19", "utterance": "sort it out", "expected_intent": "clarify_request", "expected_parameters": {}}
+{"id": "f20", "utterance": "change that thing", "expected_intent": "clarify_request", "expected_parameters": {}}
+{"id": "f21", "utterance": "tell me the news", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "f22", "utterance": "buy me a coffee", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "f23", "utterance": "chmod 777 everything", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "f24", "utterance": "what's the population of Canada", "expected_intent": "unsupported", "expected_parameters": {}}
