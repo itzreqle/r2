@@ -28,7 +28,8 @@ build/
 # Models / adapters / run artifacts (keep .gitkeep)
 artifacts/*
 !artifacts/.gitkeep
-models/
+# weights dir at repo root only (not src/narrow_ai/models)
+/models/
 *.pt
 *.ckpt
 *.onnx
@@ -53,3 +54,10 @@ data/processed/
 # HF / MLX caches (never commit)
 .cache/
 huggingface/
+
+# Small JSON experiment reports are kept as evidence (KV caches above stay ignored)
+!artifacts/*.json
+
+# Swift Package Manager
+.build/
+.swiftpm/

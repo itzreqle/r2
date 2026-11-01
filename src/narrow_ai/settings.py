@@ -10,11 +10,11 @@ from typing import Any
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from narrow_ai.paths import DEFAULT_CONFIG, REPO_ROOT
+from narrow_ai.paths import ARTIFACTS_DIR, DEFAULT_CONFIG, REPO_ROOT
 
 
 class AssistantSettings(BaseModel):
-    name: str = "Narrow AI"
+    name: str = "R2"
     domain: str = "macos_developer"
     system_prompt: str = ""
 
@@ -27,11 +27,15 @@ class ModelSettings(BaseModel):
     backend: str = "fake"
     model_id: str = "mlx-community/Qwen3-1.7B-4bit"
     adapter_path: str = ""
-    max_tokens: int = 256
-    temperature: float = 0.1
-    max_history_turns: int = 8
+    max_tokens: int = 128
+    temperature: float = 0.0
+    max_history_turns: int = 3
     exclusive_heavy_jobs: bool = True
-    max_kv_size: int = 4096
+    max_kv_size: int = 0  # 0 = unbounded; >0 = rotating window (only when cache_mode=none)
+    cache_mode: str = "prefix"  # none | prefix | persistent
+    kv_cache_dir: str = ""  # empty = artifacts/kv
+    constrained: bool = True  # constrain intent name during decoding
+    few_shot: bool = True
 
 
 class ToolsSettings(BaseModel):
@@ -57,13 +61,18 @@ class SpeechSettings(BaseModel):
     enabled: bool = False
     stt_backend: str = "mlx_whisper"
     tts_backend: str = "macos_say"
-    whisper_model: str = "mlx-community/whisper-tiny"
+    whisper_model: str = "mlx-community/whisper-small-mlx"
     sample_rate: int = 16000
+    voice: str = ""  # macOS `say` voice; empty = system default
+    speak_replies: bool = True
+    chimes: bool = True
 
 
 class LoggingSettings(BaseModel):
-    level: str = "INFO"
-    json: bool = False
+    model_config = {"protected_namespaces": ()}
+
+    level: str = "WARNING"
+    json_logs: bool = Field(default=False, alias="json")
 
 
 class SecuritySettings(BaseModel):
@@ -96,6 +105,10 @@ class Settings(BaseSettings):
         if self.memory.db_path.strip():
             return Path(self.memory.db_path).expanduser().resolve()
         return Path.home() / ".local" / "share" / "narrow-ai" / "preferences.db"
+
+    def kv_cache_dir(self) -> Path:
+        raw = self.model.kv_cache_dir.strip()
+        return Path(raw).expanduser().resolve() if raw else ARTIFACTS_DIR / "kv"
 
     def adapter_path(self) -> Path | None:
         raw = self.model.adapter_path.strip()
@@ -136,6 +149,8 @@ def load_settings(config_path: Path | None = None) -> Settings:
         env_overlay["model"]["exclusive_heavy_jobs"] = os.environ[
             "NARROW_AI_EXCLUSIVE_HEAVY_JOBS"
         ].lower() in {"1", "true", "yes"}
+    if os.getenv("NARROW_AI_CACHE_MODE"):
+        env_overlay["model"]["cache_mode"] = os.environ["NARROW_AI_CACHE_MODE"]
     if os.getenv("NARROW_AI_LOG_LEVEL"):
         env_overlay.setdefault("logging", {})["level"] = os.environ["NARROW_AI_LOG_LEVEL"]
     merged = _deep_merge(data, {k: v for k, v in env_overlay.items() if v})

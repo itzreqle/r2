@@ -51,7 +51,11 @@ def read_workspace_file(workspace: Path, relative: str, *, max_chars: int = 8000
         raise FileNotFoundError(relative)
     # Refuse likely secrets
     name = path.name.lower()
-    if name in {".env", "credentials.json", "id_rsa", "id_ed25519"} or name.endswith(".pem"):
+    if (
+        name.startswith(".env")
+        or name in {"credentials.json", "id_rsa", "id_ed25519", ".netrc", ".npmrc", ".pypirc"}
+        or name.endswith((".pem", ".key", ".p12"))
+    ):
         raise PathEscapeError(f"Refusing to read sensitive file: {relative}")
     text = path.read_text(encoding="utf-8", errors="replace")
     return text[:max_chars]

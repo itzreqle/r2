@@ -1,18 +1,41 @@
-"""Local speech-to-text via MLX Whisper when available."""
+"""Local speech-to-text via MLX Whisper (model stays cached in-process)."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 
-def transcribe_wav(path: Path, *, model: str = "mlx-community/whisper-tiny") -> str:
+def transcribe_wav(
+    path: Path, *, model: str = "mlx-community/whisper-small-mlx", language: str | None = "en"
+) -> str:
     try:
         import mlx_whisper
     except ImportError as exc:
         raise RuntimeError(
             "mlx-whisper not installed. uv sync --group speech  (Apple Silicon)"
         ) from exc
-    result = mlx_whisper.transcribe(str(path), path_or_hf_repo=model)
+    kwargs = {"path_or_hf_repo": model}
+    if language:
+        kwargs["language"] = language
+    result = mlx_whisper.transcribe(str(path), **kwargs)
     if isinstance(result, dict):
         return str(result.get("text", "")).strip()
     return str(result).strip()
+
+
+def synthesize_to_wav(text: str, out: Path, *, voice: str | None = None) -> Path:
+    """Use macOS `say` to create a 16 kHz WAV (handy for testing STT without a mic)."""
+    import subprocess
+
+    aiff = out.with_suffix(".aiff")
+    cmd = ["say", "-o", str(aiff)]
+    if voice:
+        cmd += ["-v", voice]
+    subprocess.run([*cmd, text], check=True, timeout=60)
+    subprocess.run(
+        ["afconvert", "-f", "WAVE", "-d", "LEI16@16000", "-c", "1", str(aiff), str(out)],
+        check=True,
+        timeout=60,
+    )
+    aiff.unlink(missing_ok=True)
+    return out

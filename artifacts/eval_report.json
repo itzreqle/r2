@@ -1,0 +1,30 @@
+{
+  "accuracy": 0.875,
+  "n": 8,
+  "malformed_rate": 0.0,
+  "per_intent_f1": {
+    "general_help": 1.0,
+    "git_status": 1.0,
+    "recall_preference": 1.0,
+    "search_files": 0.8,
+    "unsupported": 0.6666666666666666
+  },
+  "confusion": {
+    "git_status": {
+      "git_status": 2
+    },
+    "search_files": {
+      "search_files": 2
+    },
+    "general_help": {
+      "general_help": 1
+    },
+    "unsupported": {
+      "unsupported": 1,
+      "search_files": 1
+    },
+    "recall_preference": {
+      "recall_preference": 1
+    }
+  }
+}

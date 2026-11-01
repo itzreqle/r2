@@ -24,7 +24,7 @@ def _build(workspace: Optional[Path], backend_name: Optional[str], load_mlx: boo
         settings.workspace.path = str(workspace.resolve())
     if backend_name:
         settings.model.backend = backend_name
-    setup_logging(settings.logging.level, json_logs=settings.logging.json)
+    setup_logging(settings.logging.level, json_logs=settings.logging.json_logs)
     backend = create_backend(settings, load_mlx=load_mlx)
     return AssistantOrchestrator(settings, backend)
 

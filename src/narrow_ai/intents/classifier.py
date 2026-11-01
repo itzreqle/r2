@@ -8,9 +8,43 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from narrow_ai.intents.schemas import IntentDecision, IntentName
+from narrow_ai.intents.schemas import PARAMS_BY_INTENT, IntentDecision, IntentName
 
-_JSON_RE = re.compile(r"\{.*\}", re.DOTALL)
+_EXT_WORDS = {
+    "python": "py", "py": "py", "typescript": "ts", "ts": "ts", "javascript": "js", "js": "js",
+    "markdown": "md", "md": "md", "json": "json", "yaml": "yaml", "yml": "yml", "toml": "toml",
+    "swift": "swift", "rust": "rs", "go": "go", "java": "java", "html": "html", "css": "css",
+    "shell": "sh", "sh": "sh", "notebook": "ipynb", "notebooks": "ipynb", "ipynb": "ipynb",
+    "csv": "csv", "txt": "txt", "text": "txt",
+}
+
+
+def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
+    """Make model output easier to validate *without* widening what is allowed.
+
+    - unknown parameter keys are dropped (tools only ever read declared fields)
+    - bare search words become globs: "json" -> "*.json", "config" -> "*config*"
+    """
+    try:
+        intent = IntentName(data.get("intent"))
+    except ValueError:
+        return data  # unknown intent → validation will reject it
+    params = data.get("parameters")
+    if not isinstance(params, dict):
+        params = {}
+    fields = PARAMS_BY_INTENT[intent].model_fields
+    params = {k: v for k, v in params.items() if k in fields}
+    if intent == IntentName.SEARCH_FILES and isinstance(params.get("pattern"), str):
+        pat = params["pattern"].strip()
+        if pat and not any(c in pat for c in "*?["):
+            word = pat.lower().lstrip(".")
+            pat = f"*.{_EXT_WORDS[word]}" if word in _EXT_WORDS else f"*{pat}*"
+        params["pattern"] = pat
+        params.setdefault("workspace", "active")
+    data["parameters"] = params
+    return data
+
+_DECODER = json.JSONDecoder()
 
 
 class IntentParseError(ValueError):
@@ -28,16 +62,20 @@ def extract_json_object(text: str) -> dict[str, Any]:
             return data
     except json.JSONDecodeError:
         pass
-    match = _JSON_RE.search(text)
-    if not match:
-        raise IntentParseError("No JSON object found in model output")
-    try:
-        data = json.loads(match.group(0))
-    except json.JSONDecodeError as exc:
-        raise IntentParseError(f"Invalid JSON: {exc}") from exc
-    if not isinstance(data, dict):
-        raise IntentParseError("JSON root must be an object")
-    return data
+    # Scan for the first decodable object (non-greedy, unlike a {.*} regex).
+    idx = text.find("{")
+    last_err: Exception | None = None
+    while idx >= 0:
+        try:
+            data, _ = _DECODER.raw_decode(text[idx:])
+            if isinstance(data, dict):
+                return data
+        except json.JSONDecodeError as exc:
+            last_err = exc
+        idx = text.find("{", idx + 1)
+    if last_err is not None:
+        raise IntentParseError(f"Invalid JSON: {last_err}")
+    raise IntentParseError("No JSON object found in model output")
 
 
 def parse_intent_decision(text: str) -> IntentDecision:
@@ -47,6 +85,7 @@ def parse_intent_decision(text: str) -> IntentDecision:
         data["intent"] = data.pop("name")
     data.setdefault("parameters", {})
     data.setdefault("requires_confirmation", False)
+    data = normalize_decision_data(data)
     try:
         decision = IntentDecision.model_validate(data)
         decision.validated_params()  # validate param schema
@@ -57,9 +96,12 @@ def parse_intent_decision(text: str) -> IntentDecision:
 
 def heuristic_intent(user_text: str) -> IntentDecision:
     """Deterministic Phase-1 / FakeBackend routing for tests and offline use."""
-    t = user_text.lower().strip()
+    raw = user_text.strip()
+    t = raw.lower()
     if any(k in t for k in ("help", "what can you", "capabilities")):
         return IntentDecision(intent=IntentName.GENERAL_HELP, parameters={})
+    if "diff" in t:
+        return IntentDecision(intent=IntentName.GIT_DIFF_SUMMARY, parameters={})
     if "git status" in t or ("git" in t and "status" in t) or t in {"status", "git"}:
         return IntentDecision(intent=IntentName.GIT_STATUS, parameters={})
     if "find" in t or "search" in t or "files" in t:
@@ -75,8 +117,8 @@ def heuristic_intent(user_text: str) -> IntentDecision:
             parameters={"pattern": pattern, "workspace": "active"},
         )
     if t.startswith("remember ") or "remember that" in t:
-        # remember KEY=VALUE or remember KEY is VALUE
-        body = t.removeprefix("remember ").strip()
+        # remember KEY=VALUE (value keeps the user's casing)
+        body = raw[len("remember ") :].strip() if t.startswith("remember ") else raw
         if "=" in body:
             key, _, value = body.partition("=")
             return IntentDecision(

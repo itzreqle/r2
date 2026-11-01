@@ -1,38 +1,39 @@
 [assistant]
-name = "Narrow AI"
+name = "R2"
 domain = "macos_developer"
-system_prompt = """You are a narrow macOS developer voice assistant.
-Respond with a single JSON object: {"intent": "<name>", "parameters": {...}, "requires_confirmation": false}.
-Supported intents: general_help, git_status, git_diff_summary, search_files, read_file,
-explain_test_output, run_tests, open_app, remember_preference, recall_preference,
-clarify_request, unsupported.
-Never invent shell commands. Prefer unsupported when unsure."""
+# Persona line only. Intents, rules and few-shot examples are generated from the
+# intent registry in src/narrow_ai/models/prompt_templates.py (single source of truth).
+system_prompt = """You are R2, a narrow, local macOS developer assistant (like Siri, but only for developer tasks in the user's active workspace)."""
 
 [workspace]
 # Empty = current working directory at launch
 path = ""
 
 [model]
-backend = "fake"  # fake | mlx
+backend = "mlx"  # fake | mlx   (tests always use fake)
 model_id = "mlx-community/Qwen3-1.7B-4bit"
 adapter_path = ""
-max_tokens = 256
-temperature = 0.1
-max_history_turns = 8
-# Peak memory guard for 16 GB Apple Silicon
+max_tokens = 128
+temperature = 0.0
+max_history_turns = 3
 exclusive_heavy_jobs = true
-max_kv_size = 4096
+# KV cache: none | prefix | persistent  (persistent = prefix cache saved to artifacts/kv)
+cache_mode = "persistent"
+kv_cache_dir = ""
+max_kv_size = 0
+constrained = true
+few_shot = true
 
 [tools]
 allow_git_status = true
 allow_git_diff = true
 allow_search_files = true
-allow_read_file = false
+allow_read_file = true
 allow_run_tests = false
-allow_open_app = false
+allow_open_app = true
 command_timeout_sec = 30
 max_output_chars = 8000
-approved_apps = ["Terminal", "Visual Studio Code", "Cursor"]
+approved_apps = ["Terminal", "Visual Studio Code", "Cursor", "Xcode", "Safari", "Finder"]
 approved_test_commands = []
 
 [memory]
@@ -42,14 +43,17 @@ db_path = ""
 max_preferences = 100
 
 [speech]
-enabled = false
+enabled = true
 stt_backend = "mlx_whisper"
 tts_backend = "macos_say"
-whisper_model = "mlx-community/whisper-tiny"
+whisper_model = "mlx-community/whisper-small-mlx"
 sample_rate = 16000
+voice = ""
+speak_replies = true
+chimes = true
 
 [logging]
-level = "INFO"
+level = "WARNING"
 json = false
 
 [security]

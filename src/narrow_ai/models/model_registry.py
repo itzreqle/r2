@@ -19,7 +19,9 @@ def create_backend(settings: Settings, *, load_mlx: bool = True) -> ModelBackend
             adapter_path=settings.adapter_path(),
             max_tokens=settings.model.max_tokens,
             temperature=settings.model.temperature,
-            max_kv_size=settings.model.max_kv_size,
+            max_kv_size=settings.model.max_kv_size or None,
+            cache_mode=settings.model.cache_mode,
+            cache_dir=settings.kv_cache_dir(),
             load=load_mlx,
         )
     raise ValueError(f"Unknown model backend: {backend}")

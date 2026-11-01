@@ -1173,9 +1173,9 @@ wheels = [
 
 [[package]]
 name = "narrow-ai"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
-default-groups = ["dev", "ml", "notebooks"]
+default-groups = ["dev", "ml", "notebooks", "speech"]
 dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },

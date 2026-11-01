@@ -1,42 +1,41 @@
-"""Text-to-speech abstraction with macOS `say` fallback."""
+"""Text-to-speech (macOS `say`) and Siri-style chimes."""
 
 from __future__ import annotations
 
 import shutil
 import subprocess
 
+_CHIMES = {
+    "listen": "/System/Library/Sounds/Tink.aiff",
+    "done": "/System/Library/Sounds/Pop.aiff",
+    "error": "/System/Library/Sounds/Basso.aiff",
+}
 
-def synthesize_speech(text: str, *, backend: str = "macos_say", voice: str | None = None) -> None:
+
+def chime(kind: str) -> None:
+    """Play a short non-blocking system sound."""
+    path = _CHIMES.get(kind)
+    if path and shutil.which("afplay"):
+        subprocess.Popen(  # noqa: S603 - fixed system binary + fixed path
+            ["afplay", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+
+
+def synthesize_speech(
+    text: str, *, backend: str = "macos_say", voice: str | None = None, block: bool = True
+) -> subprocess.Popen | None:
     text = text.strip()
     if not text:
-        return
-    if backend in {"macos_say", "say"}:
-        _macos_say(text, voice=voice)
-        return
-    if backend in {"kokoro", "kokoro_mlx"}:
-        try:
-            _kokoro_mlx(text, voice=voice)
-            return
-        except Exception:
-            _macos_say(text, voice=voice)
-            return
-    raise ValueError(f"Unknown TTS backend: {backend}")
-
-
-def _macos_say(text: str, *, voice: str | None) -> None:
+        return None
+    if backend not in {"macos_say", "say"}:
+        raise ValueError(f"Unknown TTS backend: {backend}")
     if not shutil.which("say"):
         raise RuntimeError("macOS `say` not found")
     cmd = ["say"]
     if voice:
         cmd.extend(["-v", voice])
     cmd.append(text)
-    subprocess.run(cmd, check=False, timeout=120)
-
-
-def _kokoro_mlx(text: str, *, voice: str | None) -> None:
-    # Optional dependency — verify package presence at call time.
-    try:
-        import kokoro_mlx  # type: ignore  # noqa: F401
-    except ImportError as exc:
-        raise RuntimeError("Kokoro-MLX not installed; using fallback") from exc
-    raise RuntimeError("Kokoro-MLX integration pending verified API; use macos_say")
+    if block:
+        subprocess.run(cmd, check=False, timeout=120)
+        return None
+    return subprocess.Popen(cmd)

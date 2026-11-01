@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "narrow-ai"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local-first narrow macOS developer voice assistant (MLX, tools, LoRA)."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
@@ -56,6 +56,7 @@ all = [
 
 [project.scripts]
 narrow-ai = "narrow_ai.cli:app"
+r2 = "narrow_ai.r2.app:run"
 
 [dependency-groups]
 dev = [
@@ -83,7 +84,7 @@ notebooks = [
 ]
 
 [tool.uv]
-default-groups = ["ml", "notebooks", "dev"]
+default-groups = ["ml", "speech", "notebooks", "dev"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/narrow_ai"]

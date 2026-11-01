@@ -1,0 +1,125 @@
+"""Tiny local HTTP API for R2 (stdlib only, binds to 127.0.0.1).
+
+The model and KV cache stay warm in this one process, and pending confirmations
+survive between requests.
+
+GET  /health            -> {"ok": true}
+GET  /status            -> model / KV cache / state
+POST /ask      {"text": "...", "speak": bool}
+POST /confirm  {"speak": bool}
+POST /cancel
+POST /reset
+POST /listen/start                      (server-side mic, push-to-talk)
+POST /listen/stop {"speak": bool}       -> transcript + response
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+MAX_BODY = 64 * 1024
+
+
+def make_handler(r2: Any, *, speak_default: bool = True) -> type[BaseHTTPRequestHandler]:
+    lock = threading.Lock()
+
+    def speak_async(text: str, want: bool) -> None:
+        if want:
+            threading.Thread(target=r2.speak, args=(text,), daemon=True).start()
+
+    class Handler(BaseHTTPRequestHandler):
+        server_version = "R2/0.2"
+
+        def log_message(self, fmt: str, *args: Any) -> None:  # quieter logs
+            logger.info("%s - %s", self.address_string(), fmt % args)
+
+        def _send(self, code: int, payload: dict[str, Any]) -> None:
+            body = json.dumps(payload).encode()
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def _body(self) -> dict[str, Any]:
+            n = int(self.headers.get("Content-Length") or 0)
+            if n <= 0:
+                return {}
+            if n > MAX_BODY:
+                raise ValueError("request too large")
+            data = json.loads(self.rfile.read(n) or b"{}")
+            if not isinstance(data, dict):
+                raise ValueError("JSON object expected")
+            return data
+
+        def do_GET(self) -> None:  # noqa: N802
+            if self.path == "/health":
+                return self._send(200, {"ok": True})
+            if self.path == "/status":
+                return self._send(200, r2.status())
+            return self._send(404, {"error": "not found"})
+
+        def do_POST(self) -> None:  # noqa: N802
+            try:
+                body = self._body()
+            except (ValueError, json.JSONDecodeError) as exc:
+                return self._send(400, {"error": str(exc)})
+            want_speech = bool(body.get("speak", speak_default))
+            try:
+                with lock:
+                    if self.path == "/ask":
+                        text = str(body.get("text", "")).strip()[:2000]
+                        if not text:
+                            return self._send(400, {"error": "text required"})
+                        resp = r2.ask(text)
+                    elif self.path == "/confirm":
+                        resp = r2.confirm()
+                    elif self.path == "/cancel":
+                        resp = r2.cancel()
+                    elif self.path == "/reset":
+                        r2.reset()
+                        return self._send(200, {"ok": True})
+                    elif self.path == "/listen/start":
+                        r2.listen_start()
+                        return self._send(200, {"state": "listening"})
+                    elif self.path == "/listen/stop":
+                        transcript, resp = r2.listen_stop()
+                        if resp is None:
+                            return self._send(
+                                200,
+                                {"transcript": "", "text": "I didn't catch that.",
+                                 "speech": "I didn't catch that.", "state": "idle"},
+                            )
+                        payload = resp.to_dict()
+                        payload["transcript"] = transcript
+                        speak_async(resp.spoken_text(), want_speech)
+                        return self._send(200, payload)
+                    else:
+                        return self._send(404, {"error": "not found"})
+            except Exception as exc:  # noqa: BLE001
+                logger.exception("request failed")
+                return self._send(500, {"error": str(exc), "state": "error"})
+            speak_async(resp.spoken_text(), want_speech)
+            return self._send(200, resp.to_dict())
+
+    return Handler
+
+
+def make_server(r2: Any, *, host: str = "127.0.0.1", port: int = 8765, speak: bool = True):
+    return ThreadingHTTPServer((host, port), make_handler(r2, speak_default=speak))
+
+
+def serve_forever(r2: Any, *, host: str = "127.0.0.1", port: int = 8765, speak: bool = True):
+    httpd = make_server(r2, host=host, port=port, speak=speak)
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.server_close()

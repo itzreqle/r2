@@ -26,7 +26,7 @@ class IntentRegistry:
 
 
 def default_registry() -> IntentRegistry:
-    """Phase 1: only general_help, git_status, search_files, clarify, unsupported."""
+    """R2 intents. run_tests / explain_test_output are not implemented yet."""
     specs = [
         IntentSpec(
             name=IntentName.GENERAL_HELP,
@@ -44,7 +44,7 @@ def default_registry() -> IntentRegistry:
             name=IntentName.GIT_DIFF_SUMMARY,
             description="Summarize git changes (read-only)",
             permission=PermissionLevel.READ,
-            implemented=False,
+            implemented=True,
         ),
         IntentSpec(
             name=IntentName.SEARCH_FILES,
@@ -56,7 +56,7 @@ def default_registry() -> IntentRegistry:
             name=IntentName.READ_FILE,
             description="Read an approved workspace file",
             permission=PermissionLevel.READ,
-            implemented=False,
+            implemented=True,
         ),
         IntentSpec(
             name=IntentName.EXPLAIN_TEST_OUTPUT,
@@ -74,7 +74,7 @@ def default_registry() -> IntentRegistry:
             name=IntentName.OPEN_APP,
             description="Open an approved application",
             permission=PermissionLevel.EXECUTE,
-            implemented=False,
+            implemented=True,
         ),
         IntentSpec(
             name=IntentName.REMEMBER_PREFERENCE,
