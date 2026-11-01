@@ -1,0 +1,663 @@
+{
+  "accuracy": 0.9583333333333334,
+  "param_accuracy": 0.9166666666666666,
+  "n": 24,
+  "malformed_rate": 0.0,
+  "fallback_rate": 0.0,
+  "latency_ms_mean": 318.12475704191456,
+  "latency_ms_p50": 305.4812500013213,
+  "ttft_ms_mean": 95.02916666666667,
+  "per_intent_f1": {
+    "answer_question": 1.0,
+    "clarify_request": 0.6666666666666666,
+    "general_help": 1.0,
+    "git_diff_summary": 1.0,
+    "git_status": 1.0,
+    "open_app": 1.0,
+    "read_file": 1.0,
+    "recall_preference": 1.0,
+    "remember_preference": 1.0,
+    "search_files": 1.0,
+    "unsupported": 0.888888888888889
+  },
+  "confusion": {
+    "git_status": {
+      "git_status": 2
+    },
+    "git_diff_summary": {
+      "git_diff_summary": 2
+    },
+    "search_files": {
+      "search_files": 2
+    },
+    "read_file": {
+      "read_file": 2
+    },
+    "open_app": {
+      "open_app": 2
+    },
+    "remember_preference": {
+      "remember_preference": 2
+    },
+    "recall_preference": {
+      "recall_preference": 2
+    },
+    "answer_question": {
+      "answer_question": 3
+    },
+    "general_help": {
+      "general_help": 1
+    },
+    "clarify_request": {
+      "clarify_request": 1,
+      "unsupported": 1
+    },
+    "unsupported": {
+      "unsupported": 4
+    }
+  },
+  "config": {
+    "backend": "mlx",
+    "model_id": "mlx-community/Qwen3-1.7B-4bit",
+    "cache_mode": "persistent",
+    "constrained": true,
+    "few_shot": true,
+    "adapter": ""
+  },
+  "cases": [
+    {
+      "id": "f01",
+      "utterance": "do I have anything staged or modified?",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 572.6422500010813,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 173.7,
+        "total_ms": 308.9,
+        "prompt_tokens": 24,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 142.1,
+        "generation_tps": 63.3,
+        "peak_memory_gb": 1.312,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f02",
+      "utterance": "current branch name please",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 172.17983400041703,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 69.6,
+        "total_ms": 170.2,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 288.5,
+        "generation_tps": 87.6,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f03",
+      "utterance": "give me a diff summary",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 274.6080839933711,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 77.3,
+        "total_ms": 270.6,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 273.5,
+        "generation_tps": 49.0,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f04",
+      "utterance": "what files changed and by how much",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 252.88016599370167,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.4,
+        "total_ms": 250.4,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 14,
+        "prompt_tps": 319.4,
+        "generation_tps": 83.1,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f05",
+      "utterance": "list the yaml files",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.yml",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 317.9406250055763,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 112.0,
+        "total_ms": 312.7,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 179.7,
+        "generation_tps": 67.8,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f06",
+      "utterance": "find anything named test",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*test*",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 243.93116700230166,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.5,
+        "total_ms": 241.2,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 277.5,
+        "generation_tps": 82.0,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f07",
+      "utterance": "read the training README",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "trainingREADME.md"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 346.8724580015987,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 122.1,
+        "total_ms": 342.0,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 14,
+        "prompt_tps": 164.8,
+        "generation_tps": 66.7,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f08",
+      "utterance": "cat pyproject.toml",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "pyproject.toml"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 279.7012500013807,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 75.4,
+        "total_ms": 276.4,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 15,
+        "prompt_tps": 280.0,
+        "generation_tps": 78.4,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f09",
+      "utterance": "fire up visual studio code",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Visual Studio Code"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 371.0844579982222,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 121.5,
+        "total_ms": 366.0,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 15,
+        "prompt_tps": 174.0,
+        "generation_tps": 64.0,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f10",
+      "utterance": "open finder",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Finder"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 245.00412499764934,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 74.1,
+        "total_ms": 241.6,
+        "prompt_tokens": 18,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 244.6,
+        "generation_tps": 82.5,
+        "peak_memory_gb": 1.263,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f11",
+      "utterance": "keep in mind that my main language is Swift",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "main_language",
+        "value": "Swift"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 407.6841249989229,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 120.6,
+        "total_ms": 402.1,
+        "prompt_tokens": 25,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 208.4,
+        "generation_tps": 69.9,
+        "peak_memory_gb": 1.32,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f12",
+      "utterance": "please store my code style as black",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "code_style",
+        "value": "black"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 319.8022500000661,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 70.9,
+        "total_ms": 315.9,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 326.7,
+        "generation_tps": 81.3,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f13",
+      "utterance": "what did I tell you my main language was",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "editor"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 315.97933300508885,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 119.4,
+        "total_ms": 311.7,
+        "prompt_tokens": 25,
+        "cached_tokens": 1118,
+        "generated_tokens": 12,
+        "prompt_tps": 210.6,
+        "generation_tps": 65.8,
+        "peak_memory_gb": 1.32,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f14",
+      "utterance": "remind me of my code style",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "code_style"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 246.7747920018155,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.7,
+        "total_ms": 243.7,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 318.1,
+        "generation_tps": 80.8,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f15",
+      "utterance": "what is a git stash?",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "what is a git stash?"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 380.39199999911943,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 118.4,
+        "total_ms": 375.6,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 186.8,
+        "generation_tps": 68.8,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f16",
+      "utterance": "how do I create a virtual environment in python",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "how do I create a virtual environment in python"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 339.4321250016219,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 78.0,
+        "total_ms": 335.2,
+        "prompt_tokens": 25,
+        "cached_tokens": 1118,
+        "generated_tokens": 20,
+        "prompt_tps": 323.5,
+        "generation_tps": 80.8,
+        "peak_memory_gb": 1.32,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f17",
+      "utterance": "explain what a race condition is",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "explain what a race condition is"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 308.3488749980461,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 74.9,
+        "total_ms": 302.7,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 296.3,
+        "generation_tps": 78.0,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f18",
+      "utterance": "what kinds of things can you help with",
+      "expected": "general_help",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 265.1364170014858,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 124.5,
+        "total_ms": 260.0,
+        "prompt_tokens": 24,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 194.0,
+        "generation_tps": 63.3,
+        "peak_memory_gb": 1.312,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f19",
+      "utterance": "sort it out",
+      "expected": "clarify_request",
+      "predicted": "clarify_request",
+      "parameters": {
+        "question": "What should I sort it out?"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 444.35366700054146,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 115.8,
+        "total_ms": 441.9,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 164.7,
+        "generation_tps": 59.8,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f20",
+      "utterance": "change that thing",
+      "expected": "clarify_request",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 338.5125839995453,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 117.8,
+        "total_ms": 334.9,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 162.1,
+        "generation_tps": 81.8,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f21",
+      "utterance": "tell me the news",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "News is outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 288.3016249979846,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.7,
+        "total_ms": 283.5,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 16,
+        "prompt_tps": 277.4,
+        "generation_tps": 79.7,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f22",
+      "utterance": "buy me a coffee",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 301.49525000160793,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 73.2,
+        "total_ms": 296.9,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 276.1,
+        "generation_tps": 79.6,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f23",
+      "utterance": "chmod 777 everything",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 299.323084000207,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 75.2,
+        "total_ms": 294.5,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 295.3,
+        "generation_tps": 81.5,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "f24",
+      "utterance": "what's the population of Canada",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Demographics is outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 302.61362500459654,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 76.0,
+        "total_ms": 297.3,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 292.2,
+        "generation_tps": 80.6,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    }
+  ]
+}

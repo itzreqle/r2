@@ -37,22 +37,28 @@ _PARAM_HINTS: dict[IntentName, str] = {
 }
 
 _WHEN: dict[IntentName, str] = {
-    IntentName.GENERAL_HELP: "user asks what you can do or how to use you",
+    IntentName.GENERAL_HELP: "ONLY when the user asks about R2 itself: what you can do / how to use you",
     IntentName.GIT_STATUS: "branch, repo status, uncommitted or changed files",
     IntentName.GIT_DIFF_SUMMARY: "summary or size of the diff / what changed in the code",
     IntentName.SEARCH_FILES: "find, list or locate files by name or type",
     IntentName.READ_FILE: "show, read, print or display the contents of a specific file",
     IntentName.OPEN_APP: "launch or open an application",
-    IntentName.REMEMBER_PREFERENCE: "user asks you to remember or save a preference",
-    IntentName.RECALL_PREFERENCE: "user asks for something you were told to remember",
-    IntentName.ANSWER_QUESTION: (
-        "a programming / developer knowledge question (git, Python, Swift, shell, tools, "
-        "concepts, how-to) that needs an explanation, not an action on the workspace"
+    IntentName.REMEMBER_PREFERENCE: (
+        "user tells you a personal preference or fact about themselves to remember/save/note"
     ),
-    IntentName.CLARIFY_REQUEST: "developer-related but too vague to act on",
+    IntentName.RECALL_PREFERENCE: (
+        "user asks about their OWN previously saved preference or what they told you before"
+    ),
+    IntentName.ANSWER_QUESTION: (
+        "a software-development knowledge question (git, Python, Swift, shell, tools, "
+        "concepts, how-to) that needs an explanation; NOT math, trivia or general knowledge"
+    ),
+    IntentName.CLARIFY_REQUEST: (
+        "a vague command whose target is unclear (it, that, this, the thing) — ask what they mean"
+    ),
     IntentName.UNSUPPORTED: (
-        "anything else: chit-chat, web, email, weather, deleting files, "
-        "arbitrary shell commands, system changes"
+        "clearly outside software development (chit-chat, web, email, weather, math, trivia), "
+        "or destructive / arbitrary shell commands and system changes"
     ),
     IntentName.RUN_TESTS: "run the project's approved test command",
     IntentName.EXPLAIN_TEST_OUTPUT: "explain pasted test output",
@@ -74,12 +80,16 @@ FEW_SHOT: list[tuple[str, dict]] = [
     ),
     ("what's my test runner?", {"intent": "recall_preference", "parameters": {"key": "test_runner"}}),
     ("which editor did I say I use", {"intent": "recall_preference", "parameters": {"key": "editor"}}),
+    ("save that my shell is zsh", {"intent": "remember_preference", "parameters": {"key": "shell", "value": "zsh"}}),
+    ("what was my shell again?", {"intent": "recall_preference", "parameters": {"key": "shell"}}),
     ("what can you do", {"intent": "general_help", "parameters": {}}),
     ("how do I undo my last commit?", {"intent": "answer_question", "parameters": {"question": "how do I undo my last commit?"}}),
     ("what is a KV cache", {"intent": "answer_question", "parameters": {"question": "what is a KV cache"}}),
     ("difference between a list and a tuple in python", {"intent": "answer_question", "parameters": {"question": "difference between a list and a tuple in python"}}),
     ("fix it", {"intent": "clarify_request", "parameters": {"question": "What should I fix?"}}),
     ("handle this one", {"intent": "clarify_request", "parameters": {"question": "What would you like me to handle?"}}),
+    ("update it", {"intent": "clarify_request", "parameters": {"question": "What should I update?"}}),
+    ("what is 15 times 7", {"intent": "unsupported", "parameters": {"reason": "Math is outside my developer scope"}}),
     ("tell me a joke", {"intent": "unsupported", "parameters": {"reason": "Chit-chat is outside my developer scope"}}),
     ("what's the weather in Paris", {"intent": "unsupported", "parameters": {"reason": "Weather is outside my developer scope"}}),
     ("delete every file in this folder", {"intent": "unsupported", "parameters": {"reason": "Destructive actions are not allowed"}}),
