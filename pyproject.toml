@@ -114,6 +114,7 @@ markers = [
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["notebooks/archive"]
 target-version = "py312"
 src = ["src", "scripts", "training", "notebooks", "tests"]
 
@@ -127,3 +128,5 @@ select = ["E", "F", "I", "UP", "B"]
 # Typer's documented idiom: typer.Option(...) in argument defaults.
 "src/narrow_ai/cli.py" = ["B008", "E501"]
 "src/narrow_ai/r2/app.py" = ["B008"]
+# Notebooks are compact, cell-by-cell demos (sys.path setup, one-liners); archive is frozen.
+"notebooks/**" = ["E401", "E402", "E501", "E702", "I001", "B905"]
