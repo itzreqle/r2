@@ -143,6 +143,10 @@ class MlxBackend(ModelBackend):
         prefix_text, prefix_tokens = self._prefix(msgs, full)
         if prefix_tokens and self.kv is not None:
             self.kv.prepare(prefix_text, prefix_tokens)
+        # Compile Metal kernels now so the user's first request is fast.
+        self.generate(msgs, max_tokens=1)
+        if self.kv is not None:
+            self.kv.stats.hits = self.kv.stats.misses = 0
 
     def cache_stats(self) -> CacheStats:
         if self.kv is None:

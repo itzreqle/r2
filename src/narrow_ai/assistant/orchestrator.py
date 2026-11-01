@@ -117,8 +117,13 @@ class AssistantOrchestrator:
         return self.engine.system_prompt
 
     def warmup(self) -> None:
-        """Precompute the KV prefix cache so the first request is fast."""
+        """Precompute the KV prefix cache and compile the decode path (incl. the
+        intent constraint's vocabulary index) so the first real request is fast."""
         self.backend.warmup(self.engine.system_prompt)
+        self.engine.decide("what can you do")  # not recorded in history
+        if self.backend.name == "mlx":
+            st = self.backend.cache_stats()
+            st.hits = st.misses = 0
 
     @property
     def pending(self) -> IntentDecision | None:

@@ -5,8 +5,19 @@ from __future__ import annotations
 from pathlib import Path
 
 
+# Biases Whisper toward R2's vocabulary (wake name, git terms, app names).
+VOCAB_PROMPT = (
+    "Hey R2. Git status, git diff, branch, commit, README, pyproject.toml, Python, Swift, "
+    "TypeScript, markdown, Cursor, Xcode, Visual Studio Code, Terminal."
+)
+
+
 def transcribe_wav(
-    path: Path, *, model: str = "mlx-community/whisper-small-mlx", language: str | None = "en"
+    path: Path,
+    *,
+    model: str = "mlx-community/whisper-small-mlx",
+    language: str | None = "en",
+    initial_prompt: str | None = VOCAB_PROMPT,
 ) -> str:
     try:
         import mlx_whisper
@@ -17,6 +28,8 @@ def transcribe_wav(
     kwargs = {"path_or_hf_repo": model}
     if language:
         kwargs["language"] = language
+    if initial_prompt:
+        kwargs["initial_prompt"] = initial_prompt
     result = mlx_whisper.transcribe(str(path), **kwargs)
     if isinstance(result, dict):
         return str(result.get("text", "")).strip()
