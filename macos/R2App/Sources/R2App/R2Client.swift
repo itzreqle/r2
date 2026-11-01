@@ -197,6 +197,15 @@ final class R2Client: ObservableObject {
         reply = "Hi, I'm R2."
         detail = ""
         if playSounds { NSSound(named: "Glass")?.play() }
+        // `R2 --ask "find the swift files"`: send one request at launch (scripting, screenshots).
+        let args = CommandLine.arguments
+        if let i = args.firstIndex(of: "--ask"), i + 1 < args.count {
+            let text = args[i + 1]
+            Task {
+                try? await Task.sleep(nanoseconds: 600_000_000)
+                ask(text)
+            }
+        }
     }
 
     @discardableResult
@@ -355,9 +364,11 @@ final class R2Client: ObservableObject {
         }
         let speech = (r["speech"] as? String) ?? (r["text"] as? String) ?? ""
         let text = (r["text"] as? String) ?? ""
+        let needsConfirm = (r["needs_confirmation"] as? Bool) ?? false
         withAnimation(.smooth(duration: 0.35)) {
             reply = speech
-            detail = text == speech ? "" : text
+            // A confirmation's text only restates the question; the buttons say the rest.
+            detail = (text == speech || needsConfirm) ? "" : text
         }
         intent = (r["intent"] as? String ?? "").replacingOccurrences(of: "_", with: " ")
         if let m = r["metrics"] as? [String: Any], let think = m["think_ms"] as? Double {
@@ -370,7 +381,7 @@ final class R2Client: ObservableObject {
             history.append(Exchange(user: user, reply: speech))
             if history.count > 20 { history.removeFirst() }
         }
-        awaitingConfirm = (r["needs_confirmation"] as? Bool) ?? false
+        awaitingConfirm = needsConfirm
         if speakReplies && !speech.isEmpty {
             phase = .speaking
             say(speech)

@@ -33,7 +33,8 @@ struct ContentView: View {
 
                 if !r2.detail.isEmpty { detailCard.padding(.top, 16) }
 
-                if r2.detail.isEmpty && (r2.phase == .idle || r2.phase == .offline) {
+                // Ideas only before the first request (and after New Conversation).
+                if r2.detail.isEmpty && r2.caption.isEmpty && (r2.phase == .idle || r2.phase == .offline) {
                     SuggestionChips()
                         .padding(.top, 22)
                         .transition(.opacity)
@@ -67,18 +68,28 @@ struct ContentView: View {
 
     private var replyView: some View {
         Text(r2.reply)
-            .font(.system(size: 26, weight: .semibold, design: .rounded))
+            .font(.system(size: replySize, weight: .semibold, design: .rounded))
             .foregroundStyle(
                 LinearGradient(colors: [.white, .white.opacity(0.82)], startPoint: .top, endPoint: .bottom))
             .multilineTextAlignment(.center)
-            .lineLimit(4)
-            .minimumScaleFactor(0.7)
+            .lineLimit(8)
+            .minimumScaleFactor(0.8)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 36)
             .textSelection(.enabled)
             .id("reply-\(r2.reply)")
             .transition(.asymmetric(
                 insertion: .opacity.combined(with: .offset(y: 8)).combined(with: .scale(scale: 0.98)),
                 removal: .opacity))
+    }
+
+    /// Short replies are big like Siri's; spoken answers get smaller so they fit in full.
+    private var replySize: CGFloat {
+        switch r2.reply.count {
+        case ..<70: return 26
+        case ..<150: return 21
+        default: return 18
+        }
     }
 
     private var confirmBar: some View {

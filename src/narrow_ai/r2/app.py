@@ -98,9 +98,11 @@ def _show(resp, *, heard: str | None = None) -> None:
     )
     icon, color = ORB.get(state, ORB["idle"])
     items = []
-    if resp.speech and resp.speech != resp.text:
+    if resp.speech and resp.speech != resp.text and not resp.needs_confirmation:
         items.append(Text(resp.speech, style="bold"))
         items.append(Text(resp.text, style="white"))
+    elif resp.needs_confirmation:
+        items.append(Text(resp.speech or resp.text, style="bold"))
     else:
         items.append(Text(resp.text, style="bold" if len(resp.text) < 200 else "white"))
     line = _metrics_line(resp)

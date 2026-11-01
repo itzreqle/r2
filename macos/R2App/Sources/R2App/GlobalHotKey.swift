@@ -51,12 +51,19 @@ final class GlobalHotKey {
 /// Wires the hot key and window-opening into the client once a scene appears.
 struct SummonSupport: ViewModifier {
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
     let client: R2Client
+    private static var openedSettings = false
 
     func body(content: Content) -> some View {
         content.onAppear {
             client.openMainWindow = { openWindow(id: "main") }
             client.applyHotKey()
+            // `R2 --settings`: open Settings at launch (docs screenshots).
+            if CommandLine.arguments.contains("--settings") && !Self.openedSettings {
+                Self.openedSettings = true
+                openSettings()
+            }
         }
     }
 }
