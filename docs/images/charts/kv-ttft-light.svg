@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="252" viewBox="0 0 760 252" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>Time to first token</title><desc>No cache: 1,460 ms; Prefix cache: 71 ms  ·  20.5× faster; Persistent cache: 75 ms  ·  19.5× faster</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">Time to first token</text>
+<text x="0" y="48" font-size="13" fill="#52514e">Mean of 20 requests · 1,118 cached prompt tokens, ~22 new per request</text>
+<line x1="200.0" y1="66" x2="200.0" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="200.0" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="268.3" y1="66" x2="268.3" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="268.3" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">250 ms</text>
+<line x1="336.7" y1="66" x2="336.7" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="336.7" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">500 ms</text>
+<line x1="405.0" y1="66" x2="405.0" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="405.0" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">750 ms</text>
+<line x1="473.3" y1="66" x2="473.3" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="473.3" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">1,000 ms</text>
+<line x1="541.7" y1="66" x2="541.7" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="541.7" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">1,250 ms</text>
+<line x1="610.0" y1="66" x2="610.0" y2="222" stroke="#e1e0d9" stroke-width="1"/>
+<text x="610.0" y="240" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">1,500 ms</text>
+<line x1="200" y1="66" x2="200" y2="222" stroke="#c3c2b7" stroke-width="1"/>
+<text x="188" y="86.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">No cache</text>
+<text x="188" y="102.0" font-size="11.5" fill="#6f6e69" text-anchor="end">full prompt every time</text>
+<path d="M200.0,80.0 H595.0 A4,4 0 0 1 599.0,84.0 V94.0 A4,4 0 0 1 595.0,98.0 H200.0 Z" fill="#a3a29b"/>
+<text x="607.0" y="93.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">1,460 ms</text>
+<text x="188" y="138.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Prefix cache</text>
+<text x="188" y="154.0" font-size="11.5" fill="#6f6e69" text-anchor="end">built once, kept in RAM</text>
+<path d="M200.0,132.0 H215.5 A4,4 0 0 1 219.5,136.0 V146.0 A4,4 0 0 1 215.5,150.0 H200.0 Z" fill="#2a78d6"/>
+<text x="227.5" y="145.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">71 ms  ·  20.5× faster</text>
+<text x="188" y="190.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Persistent cache</text>
+<text x="188" y="206.0" font-size="11.5" fill="#6f6e69" text-anchor="end">loaded from disk</text>
+<path d="M200.0,184.0 H216.4 A4,4 0 0 1 220.4,188.0 V198.0 A4,4 0 0 1 216.4,202.0 H200.0 Z" fill="#2a78d6"/>
+<text x="228.4" y="197.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">75 ms  ·  19.5× faster</text>
+</svg>

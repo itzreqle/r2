@@ -30,7 +30,9 @@ and the repo path the app uses to start the core), and ad-hoc signs the bundle.
 | `CoreLauncher.swift` | starts `uv run r2 --mute serve`, logs to `~/Library/Logs/R2/core.log` |
 | `OrbSnapshot.swift` | `R2 --render-orb <dir>` writes orb PNGs for the docs |
 
-`R2 --demo` cycles through every orb state without the core (useful for screenshots).
+Launch options: `R2 --ask "find the swift files"` sends one request once the core is ready,
+`R2 --settings` opens Settings, and `R2 --demo` cycles through every orb state without the core.
+The README screenshots were taken this way, with `screencapture -l <window id>`.
 
 ## HTTP API (served by `uv run r2 serve`)
 

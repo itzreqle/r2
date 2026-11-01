@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="302" viewBox="0 0 760 302" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>Intent and parameter accuracy</title><desc>Dev set (40 cases): intent 92.5%, parameters 92.5%; Fresh test set (24 cases, before tuning): intent 87.5%, parameters 83.3%; Fresh test set (24 cases, final): intent 95.8%, parameters 91.7%</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">Intent and parameter accuracy</text>
+<text x="0" y="48" font-size="13" fill="#52514e">Qwen3-1.7B-4bit on MLX · 0% malformed JSON in every run</text>
+<rect x="0" y="66" width="12" height="12" rx="3" fill="#2a78d6"/>
+<text x="18" y="76.5" font-size="13" fill="#52514e">Intent accuracy</text>
+<rect x="153" y="66" width="12" height="12" rx="3" fill="#eb6834"/>
+<text x="171" y="76.5" font-size="13" fill="#52514e">Parameter accuracy</text>
+<line x1="200.0" y1="92" x2="200.0" y2="272" stroke="#e1e0d9" stroke-width="1"/>
+<text x="200.0" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
+<line x1="302.5" y1="92" x2="302.5" y2="272" stroke="#e1e0d9" stroke-width="1"/>
+<text x="302.5" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
+<line x1="405.0" y1="92" x2="405.0" y2="272" stroke="#e1e0d9" stroke-width="1"/>
+<text x="405.0" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
+<line x1="507.5" y1="92" x2="507.5" y2="272" stroke="#e1e0d9" stroke-width="1"/>
+<text x="507.5" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
+<line x1="610.0" y1="92" x2="610.0" y2="272" stroke="#e1e0d9" stroke-width="1"/>
+<text x="610.0" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
+<line x1="200" y1="92" x2="200" y2="272" stroke="#c3c2b7" stroke-width="1"/>
+<text x="188" y="116.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Dev set</text>
+<text x="188" y="132.0" font-size="11.5" fill="#6f6e69" text-anchor="end">40 cases</text>
+<path d="M200.0,100.0 H575.2 A4,4 0 0 1 579.2,104.0 V114.0 A4,4 0 0 1 575.2,118.0 H200.0 Z" fill="#2a78d6"/>
+<text x="587.2" y="113.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
+<path d="M200.0,120.0 H575.2 A4,4 0 0 1 579.2,124.0 V134.0 A4,4 0 0 1 575.2,138.0 H200.0 Z" fill="#eb6834"/>
+<text x="587.2" y="133.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
+<text x="188" y="176.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Fresh test set</text>
+<text x="188" y="192.0" font-size="11.5" fill="#6f6e69" text-anchor="end">24 cases, before tuning</text>
+<path d="M200.0,160.0 H554.8 A4,4 0 0 1 558.8,164.0 V174.0 A4,4 0 0 1 554.8,178.0 H200.0 Z" fill="#2a78d6"/>
+<text x="566.8" y="173.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M200.0,180.0 H537.7 A4,4 0 0 1 541.7,184.0 V194.0 A4,4 0 0 1 537.7,198.0 H200.0 Z" fill="#eb6834"/>
+<text x="549.7" y="193.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">83.3%</text>
+<text x="188" y="236.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Fresh test set</text>
+<text x="188" y="252.0" font-size="11.5" fill="#6f6e69" text-anchor="end">24 cases, final</text>
+<path d="M200.0,220.0 H588.9 A4,4 0 0 1 592.9,224.0 V234.0 A4,4 0 0 1 588.9,238.0 H200.0 Z" fill="#2a78d6"/>
+<text x="600.9" y="233.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">95.8%</text>
+<path d="M200.0,240.0 H571.8 A4,4 0 0 1 575.8,244.0 V254.0 A4,4 0 0 1 571.8,258.0 H200.0 Z" fill="#eb6834"/>
+<text x="583.8" y="253.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">91.7%</text>
+</svg>
