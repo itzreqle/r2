@@ -23,6 +23,8 @@ def create_backend(settings: Settings, *, load_mlx: bool = True) -> ModelBackend
             cache_mode=settings.model.cache_mode,
             cache_dir=settings.kv_cache_dir(),
             cache_max_files=settings.model.kv_cache_max_files,
+            conversation_cache=settings.model.conversation_cache,
+            conversation_entries=settings.model.conversation_cache_entries,
             load=load_mlx,
         )
     raise ValueError(f"Unknown model backend: {backend}")

@@ -16,11 +16,11 @@ Multi-step:  /run → ClausePlanner → Plan (≤5 steps) → AgentRunner → To
 | Package | Responsibility |
 | ------- | -------------- |
 | `assistant` | Orchestration, conversation state, pending action (id, TTL, digest) |
-| `models` | Fake / MLX backends, prompts, prefix KV cache, fingerprint, intent mask, JSON-schema grammar |
+| `models` | Fake / MLX backends, prompts, prefix KV cache, conversation (token-prefix) reuse, fingerprint, intent mask, JSON-schema grammar |
 | `intents` | Schemas, registry, strict normaliser, heuristic classifier |
 | `tools` | Permission gate, path guard, `ToolRegistry` + handlers, git/file/app tools |
 | `agent` | Plans, planners, `AgentRunner`, events, run store (see `AGENT_RUNTIME.md`) |
-| `memory` | Bounded chat history + SQLite preferences |
+| `memory` | Bounded chat history (`sliding` or `block` window) + SQLite preferences |
 | `speech` | Push-to-talk capture, Whisper STT, TTS |
 | `r2` | Core facade, local HTTP server, API token |
 | `evaluation` | Dataset loaders, metrics, runner |

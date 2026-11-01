@@ -16,11 +16,17 @@ adapter_path = ""
 max_tokens = 128
 temperature = 0.0
 max_history_turns = 3
+history_window = "sliding"   # sliding | block (block keeps the KV prefix stable longer)
 exclusive_heavy_jobs = true
 # KV cache: none | prefix | persistent  (persistent = prefix cache saved to artifacts/kv)
 cache_mode = "persistent"
 kv_cache_dir = ""
 kv_cache_max_files = 8   # older persistent caches are evicted (LRU)
+# Reuse the KV of the previous routing prompt (history included) by token-prefix match.
+# Measured: helps only with a stable history prefix (history_window = "block"); see
+# docs/EVALUATION.md. Each stored entry costs ~147 MB.
+conversation_cache = false
+conversation_cache_entries = 1
 max_kv_size = 0
 constrained = true
 # Decode-time constraint: none | intent (intent name only) | json (whole decision via

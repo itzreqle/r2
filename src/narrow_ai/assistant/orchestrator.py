@@ -69,9 +69,17 @@ class IntentEngine:
                 require_llguidance()
 
     def decide(
-        self, user_text: str, history: list[dict[str, str]] | None = None
+        self,
+        user_text: str,
+        history: list[dict[str, str]] | None = None,
+        *,
+        conversation: bool = False,
     ) -> tuple[IntentDecision, GenerationResult | None, str]:
-        """Return (decision, generation, source) where source is model|retry|heuristic."""
+        """Return (decision, generation, source) where source is model|retry|heuristic.
+
+        ``conversation``: this is a turn of the live conversation, so the backend may
+        keep its KV for the next turn. Planner clauses, evals and warmup leave it off
+        so they never evict the conversation's entry."""
         messages = [{"role": "system", "content": self.system_prompt}]
         messages += history or []
         messages.append({"role": "user", "content": user_text})
@@ -81,6 +89,7 @@ class IntentEngine:
             "prefill": INTENT_PREFILL,
             "constrain_intents": self.allowed if self.constraint == "intent" else None,
             "constraint_schema": self.schema,
+            "conversation": conversation,
         }
         gen = self.backend.generate(messages, **kwargs)
         try:
@@ -124,7 +133,9 @@ class AssistantOrchestrator:
             )
         self.engine = IntentEngine(settings, backend, self.registry)
         # History holds only (user, assistant-JSON) pairs: short and format-consistent.
-        self.conversation = ConversationStore(max_turns=settings.model.max_history_turns)
+        self.conversation = ConversationStore(
+            max_turns=settings.model.max_history_turns, window=settings.model.history_window
+        )
         self.audit = AuditLog()
         self.state = AssistantState.IDLE
         self.clock = clock
@@ -180,6 +191,7 @@ class AssistantOrchestrator:
         if self.backend.name == "mlx":
             st = self.backend.cache_stats()
             st.hits = st.misses = 0
+            self.backend.reset_conversation()  # warmup turns are not a conversation
 
     @property
     def pending(self) -> IntentDecision | None:
@@ -247,7 +259,9 @@ class AssistantOrchestrator:
         self.state = AssistantState.THINKING
         t0 = time.perf_counter()
         try:
-            decision, gen, source = self.engine.decide(user_text, self.conversation.as_chat())
+            decision, gen, source = self.engine.decide(
+                user_text, self.conversation.as_chat(), conversation=True
+            )
         except Exception as exc:  # noqa: BLE001
             self.state = AssistantState.ERROR
             logger.exception("generation failed")
@@ -311,3 +325,6 @@ class AssistantOrchestrator:
     def reset(self) -> None:
         self.cancel()
         self.conversation.clear()
+        reset_kv = getattr(self.backend, "reset_conversation", None)
+        if reset_kv is not None:  # free the stored conversation prompts
+            reset_kv()

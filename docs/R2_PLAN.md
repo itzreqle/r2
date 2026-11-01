@@ -29,7 +29,9 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] Equivalence check: cached vs uncached greedy output must match (20/20 identical)
 - [x] Multi-prefix LRU (intent prompt + answer prompt both stay cached)
 - [x] Benchmark script `training/bench_kv.py` → `artifacts/kv_bench.json` (TTFT 1460 → 71 ms, 20.5×)
-- [ ] Multi-turn conversation cache via `LRUPromptCache` (token-prefix matching)
+- [x] Multi-turn conversation cache via `LRUPromptCache` (token-prefix matching): `model.conversation_cache`,
+      off by default; only pays off with a stable history prefix (`training/bench_conversation.py`, docs/EVALUATION.md)
+- [ ] Multi-turn follow-up eval set ("open it", "why did that fail?") to choose the history policy
 - [ ] Quantized KV (`kv_bits=4/8`) ablation — expected ~no gain at <2k tokens
 - [ ] Rotating-window (`max_kv_size`) study for long sessions
 

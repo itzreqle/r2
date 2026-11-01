@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import tomllib
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -30,11 +30,19 @@ class ModelSettings(BaseModel):
     max_tokens: int = 128
     temperature: float = 0.0
     max_history_turns: int = 3
+    # How history is cut once it holds max_history_turns: "sliding" drops the oldest
+    # turn every time; "block" keeps only the latest turn, so the token prefix stays
+    # stable for longer (see conversation_cache).
+    history_window: Literal["sliding", "block"] = "sliding"
     exclusive_heavy_jobs: bool = True
     max_kv_size: int = 0  # 0 = unbounded; >0 = rotating window (only when cache_mode=none)
     cache_mode: str = "prefix"  # none | prefix | persistent
     kv_cache_dir: str = ""  # empty = artifacts/kv
     kv_cache_max_files: int = 8  # persistent caches kept on disk (LRU by last use)
+    # Keep each routing prompt's KV and reuse the longest shared token prefix next
+    # turn (history included). Needs cache_mode prefix|persistent and max_kv_size 0.
+    conversation_cache: bool = False
+    conversation_cache_entries: int = Field(default=1, ge=1, le=16)  # ~147 MB each
     constrained: bool = True  # legacy switch: True = "intent", False = "none"
     # Decode-time constraint: none | intent (intent name only) | json (whole decision,
     # needs the llguidance `grammar` group). Empty = derived from `constrained`.

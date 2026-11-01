@@ -925,6 +925,53 @@ last position ranges from 0 to 0.5 (\cref{tab:scaling}), while the argmax token 
 nine lengths. End-to-end, greedy outputs with and without the cache were identical in 20 of 20
 requests in both cached modes. Caching therefore changes latency, not behaviour.
 
+\subsection{Conversation-level reuse}\label{sec:convreuse}
+
+\begin{table}[t]
+\centering\small
+\caption{Multi-turn routing (\emph{new in revision 2}): 10 sessions $\times$ 10 held-out requests,
+history $\le$3 turns, all five configurations interleaved per session in rotated order. Absolute
+times are higher than in \cref{tab:kvmodes} because of background load during the run; compare
+rows. Pref.: tokens prefilled per turn. Exact: decision vs.\ the single-turn label.}
+\label{tab:convreuse}
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+History / cache & TTFT & Turns 1--4 & Turns 5+ & Pref. & Exact \\
+\midrule
+None / prefix & 96 & 96 & 95 & 21 & 92 \\
+Sliding / prefix (default) & 254 & 192 & 295 & 103 & 90 \\
+Sliding / + conversation & 235 & 138 & 300 & 87 & 90 \\
+Block / prefix & 208 & 181 & 227 & 82 & 87 \\
+Block / + conversation & \textbf{147} & 136 & \textbf{154} & 42 & 87 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The prefix cache stops at the system prompt, so a request with three turns of history still
+prefills about 100 tokens and its TTFT roughly triples. R2 can therefore keep the KV state of each
+routing prompt and, on the next turn, reuse the longest token prefix it shares with a stored one.
+The store is mlx-lm's \texttt{LRUPromptCache}, a token trie that hands out copies, which are cheap
+because MLX arrays are copy-on-write (about 3\,ms per turn). Generated tokens are trimmed off before
+storing, because Qwen3 renders earlier assistant turns without the empty think block, so each turn
+still prefills the previous reply and the new request. Only live conversation turns are stored;
+planner clauses, evaluation and warm-up are not, so they cannot evict the entry.
+
+\Cref{tab:convreuse} gives three results. First, reuse does not change behaviour: all 100 intents
+and graded parameters were identical with and without it, and the only differences were free-text
+refusal reasons (3 and 2 of 100), as \cref{sec:equiv} predicts. Second, with R2's sliding
+window, reuse helps only while history grows (turns 2--4, $-28\%$). Once the window is full,
+the oldest turn is dropped and every later token shifts position. Nothing beyond the system prefix
+then matches, and turns 5+ are unchanged. Third, a \emph{block} window, which keeps only the latest
+turn when the window overflows, keeps the prefix stable and gives a flat $\approx$150\,ms
+($-42\%$ overall, $-48\%$ after turn 4). The shorter history, however, cost 3 of 100 exact
+decisions, among them ``make it better'' routed to a (confirmation-gated)
+\texttt{remember\_preference}. Without any history, routing is 2.7$\times$ faster than the default
+and no less accurate on these single-turn labels. The benefit of history for follow-ups (``open
+it'', ``why did that fail?'') is not measured by this set. Conversation reuse therefore ships
+\emph{off} by default (one stored entry costs 147\,MB), and the history policy, not the cache, is the
+larger lever.
+
 \subsection{Accuracy}
 
 \begin{figure}[t]
@@ -1140,8 +1187,9 @@ possible into a stable prefix, and keep the variable part short.
   synthesised rather than recorded, accented or noisy speech.
 \item \textbf{Free-form answers.} \texttt{answer\_question} replies from a 1.7B model are short and
   sometimes imprecise. They are labelled as answers and never executed.
-\item \textbf{Prefix only.} The cache reuses the system prefix but not the conversation history.
-  Multi-turn reuse would require radix-style matching~\cite{zheng2024sglang}.
+\item \textbf{History reuse needs a stable prefix.} Conversation-level reuse is implemented
+  (\cref{sec:convreuse}), but with a sliding history window it only helps the first turns, and the
+  block window that keeps it effective cost some accuracy. Neither is on by default.
 \item \textbf{Grammars choose values.} A schema grammar always produces \emph{some} legal string,
   so constraining allow-listed values (app names) turns an unknown request into a wrong one. R2
   leaves such values free and lets the gate refuse them.
@@ -1172,8 +1220,10 @@ metadata and never file contents, diffs or answers.
 \section{Future Work}
 
 \begin{enumerate}
-\item \textbf{Conversation-level reuse:} match the longest cached prefix including history, with a
-  token-level radix tree~\cite{zheng2024sglang}.
+\item \textbf{History policy:} a multi-turn set with real follow-ups (``open it'', ``why did that
+  fail?'') to decide how much history routing needs, and whether a block window with conversation
+  reuse~\cite{zheng2024sglang} is worth its accuracy cost. A further step would be to prefill the
+  next turn's rendered reply while the answer is spoken.
 \item \textbf{KV quantisation:} measure 8- and 4-bit caches~\cite{liu2024kivi,hooper2024kvquant},
   expected to matter only for longer contexts.
 \item \textbf{Multi-step evaluation:} a multi-step set written by someone other than the
@@ -1202,9 +1252,10 @@ request, under the user's control.
 All numbers in this paper are produced by scripts in the repository and stored in
 \texttt{artifacts/}:
 \begin{lstlisting}[language=bash,numbers=none,basicstyle=\ttfamily\scriptsize]
-uv sync && uv run python -m pytest          # 195 tests
+uv sync && uv run python -m pytest          # 249 tests
 uv run python training/bench_kv.py           # Table 3, Fig. 3
 uv run python training/bench_scaling.py      # Table 4, Figs. 4-5
+uv run python training/bench_conversation.py # conversation reuse table
 uv run python training/evaluate.py --backend mlx [--eval data/eval_fresh.jsonl]
 uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain
 uv run python training/ablation.py           # constraint modes, Table 7
@@ -1226,7 +1277,8 @@ and Origin checks to the local API and binds confirmations to a single-use, expi
 (\cref{sec:safety}); derives the cache fingerprint from content and validates every cache layer,
 with atomic writes and on-disk eviction (\cref{sec:impl}); rejects unknown parameters and adds
 schema-constrained decoding with its ablation (\cref{sec:constrained,sec:ablation}); hardens the
-file tools against links and races; and adds bounded multi-step requests with a client view (\cref{sec:agent}).
+file tools against links and races; adds bounded multi-step requests with a client view (\cref{sec:agent}); and measures
+conversation-level KV reuse (\cref{sec:convreuse}).
 Revision 1 numbers are unchanged; new measurements are marked as such.
 
 \section*{Acknowledgements}

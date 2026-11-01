@@ -65,3 +65,50 @@ built and validated, never executed. Fresh-set exact-plan accuracy: original cla
 66.7%, clause planner with `split_and` + `question_guard` (default) **93.3%** (95% CI
 78.7–98.2), one-shot model planner 40.0% with 0% reject recall. Details and failure analysis:
 [AGENT_RUNTIME.md](AGENT_RUNTIME.md#planning).
+
+## Conversation-level KV reuse
+
+`training/bench_conversation.py` routes 10 sessions × 10 held-out requests with history,
+the way the orchestrator does. One (user, decision) pair is added per turn, no tool runs,
+and `max_history_turns = 3`. All five configurations run on every session, in rotated
+order, so drift on the machine spreads evenly. Absolute times in this run are higher than
+in the KV table above because macOS background work was using the CPU; compare rows.
+Output goes to `artifacts/conversation_bench.json`.
+
+| History / cache | TTFT mean | Turns 1–4 | Turns 5+ | Prefilled tok | Exact |
+|---|---:|---:|---:|---:|---:|
+| none / prefix | 96 ms | 96 ms | 95 ms | 21 | 92% |
+| sliding / prefix (default) | 254 ms | 192 ms | 295 ms | 103 | 90% |
+| sliding / + conversation | 235 ms | 138 ms | 300 ms | 87 | 90% |
+| block / prefix | 208 ms | 181 ms | 227 ms | 82 | 87% |
+| block / + conversation | **147 ms** | 136 ms | **154 ms** | 42 | 87% |
+
+How it works (`models/conversation_cache.py`):
+
+- Each live routing prompt's KV is kept in mlx-lm's `LRUPromptCache`, a token trie.
+- The next turn reuses the longest shared token prefix and prefills only the rest.
+- Generated tokens are trimmed before storing, because Qwen3 renders earlier replies
+  without the empty think block.
+- Copies are copy-on-write, about 3 ms, so the shared system-prefix cache is never mutated.
+
+What this shows:
+
+- **Reuse never changed a decision.** All 100 intents and graded parameters were identical.
+  The only differences were free-text `reason` strings on refusals (3 and 2 of 100), the
+  same bf16 kernel-shape effect as in the equivalence check.
+- **The sliding window defeats reuse after turn 4.** Once history is full, the oldest turn
+  is dropped and every later token moves. Nothing past the system prefix then matches, so
+  reuse only helps turns 2–4 (−28%).
+- **A block window keeps the prefix stable.** It keeps only the latest turn when the window
+  overflows, which gives a flat ≈150 ms (−42% overall, −48% after turn 4).
+- **The block window cost accuracy here.** It lost 3 of 100 exact decisions, including "make
+  it better" routed to a confirmation-gated `remember_preference`.
+- **No history is fastest and was no worse on these labels.** Routing without history was
+  2.7× faster than the default and no less accurate. These labels are single-turn, though,
+  so the value of history for follow-ups is not measured.
+- **Memory:** one stored entry is 147 MB (`conversation_cache_entries = 1`; 2 entries = 294 MB).
+
+Decision: `conversation_cache = false` and `history_window = "sliding"` stay the defaults.
+The history policy matters more than the cache. Choosing it needs a multi-turn follow-up set,
+which is listed as open in `docs/R2_PLAN.md`.
+
