@@ -25,7 +25,9 @@ def transcribe_wav(
         raise RuntimeError(
             "mlx-whisper not installed. uv sync --group speech  (Apple Silicon)"
         ) from exc
-    kwargs = {"path_or_hf_repo": model}
+    from narrow_ai.models.hub import local_or_repo
+
+    kwargs = {"path_or_hf_repo": local_or_repo(model)}
     if language:
         kwargs["language"] = language
     if initial_prompt:

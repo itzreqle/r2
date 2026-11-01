@@ -69,10 +69,13 @@ class MlxBackend(ModelBackend):
         t0 = time.perf_counter()
         adapter = str(self.adapter_path) if self.adapter_path else None
         logger.info("Loading MLX model %s (adapter=%s)", self.model_id, adapter)
+        from narrow_ai.models.hub import local_or_repo
+
+        source = local_or_repo(self.model_id)
         if adapter:
-            self._model, self._tokenizer = mlx_load(self.model_id, adapter_path=adapter)
+            self._model, self._tokenizer = mlx_load(source, adapter_path=adapter)
         else:
-            self._model, self._tokenizer = mlx_load(self.model_id)
+            self._model, self._tokenizer = mlx_load(source)
         self._load_time_ms = (time.perf_counter() - t0) * 1000
         logger.info("Model loaded in %.0f ms", self._load_time_ms)
         template = getattr(self._tokenizer, "chat_template", "") or ""
