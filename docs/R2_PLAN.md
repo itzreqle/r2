@@ -73,3 +73,11 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] `05_voice_loop` — synthesize → transcribe → R2 → speak
 - [x] Kernel `Python (narrow-ai)` + VSCodium fix (`scripts/fix_vscodium_pet.sh`)
 - [ ] LoRA training notebook (kept as old `06_lora_train_smoke` stub)
+
+### 8. Hardening and extensibility (post-review)
+- [x] M1 local API: per-session bearer token (0600), `Host` allowlist, no browser `Origin`, JSON-only bodies, loopback-only bind
+- [x] M1 confirmations: single-use, expiring `confirmation_id` bound to the decision digest (button, typed and spoken "yes")
+- [x] M1 file tools: `O_NOFOLLOW` + fd real-path check (TOCTOU), no symlinked-dir search, filename sanitising; adversarial tests in `tests/security/`
+- [ ] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
+- [ ] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance)
+- [ ] M4 agent runtime foundation: tool registry, bounded plan → gate → execute loop

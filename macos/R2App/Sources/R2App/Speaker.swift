@@ -28,14 +28,15 @@ final class Speaker: NSObject, AVSpeechSynthesizerDelegate, AVAudioPlayerDelegat
 
     var isSpeaking: Bool { synth.isSpeaking || (player?.isPlaying ?? false) }
 
-    func speak(_ text: String, natural: Bool, voice: String, speed: Double, server: URL) {
+    func speak(_ text: String, natural: Bool, voice: String, speed: Double, server: URL, token: String?) {
         stop()
-        guard natural else { return speakSystem(text, speed: speed) }
+        guard natural, let token, !token.isEmpty else { return speakSystem(text, speed: speed) }
 
         var req = URLRequest(url: server.appendingPathComponent("tts"))
         req.httpMethod = "POST"
         req.timeoutInterval = 20
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         req.httpBody = try? JSONSerialization.data(withJSONObject: ["text": text, "voice": voice, "speed": speed])
         let task = URLSession.shared.dataTask(with: req) { [weak self] data, resp, _ in
             DispatchQueue.main.async {

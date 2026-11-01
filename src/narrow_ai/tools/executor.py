@@ -24,7 +24,7 @@ from narrow_ai.intents.schemas import (
 from narrow_ai.memory.preferences import PreferenceStore
 from narrow_ai.settings import Settings
 from narrow_ai.tools.application_tools import AppToolError, open_approved_app
-from narrow_ai.tools.file_tools import read_workspace_file, search_files
+from narrow_ai.tools.file_tools import display_name, read_workspace_file, search_files
 from narrow_ai.tools.git_tools import GitToolError, git_diff_stat, git_status
 from narrow_ai.tools.path_guard import PathEscapeError
 from narrow_ai.tools.permissions import PermissionGate
@@ -146,7 +146,8 @@ class ToolExecutor:
                 if not hits:
                     msg = f"No files matching {params.pattern}"
                     return ToolResult(True, intent, msg, data={"files": []}, speech=msg + ".")
-                msg = f"Found {len(hits)} match(es) for {params.pattern}:\n" + "\n".join(hits)
+                listing = "\n".join(display_name(h) for h in hits)
+                msg = f"Found {len(hits)} match(es) for {params.pattern}:\n{listing}"
                 more = " or more" if len(hits) >= 50 else ""
                 return ToolResult(
                     True,

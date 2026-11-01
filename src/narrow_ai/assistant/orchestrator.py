@@ -22,6 +22,7 @@ from narrow_ai.models.prompt_templates import (
     implemented_intent_names,
 )
 from narrow_ai.security.audit import AuditLog
+from narrow_ai.security.confirmation import Clock, ConfirmCheck, PendingAction
 from narrow_ai.settings import Settings
 from narrow_ai.tools.executor import ToolExecutor
 
@@ -96,6 +97,7 @@ class AssistantOrchestrator:
         *,
         registry: IntentRegistry | None = None,
         preferences: PreferenceStore | None = None,
+        clock: Clock = time.monotonic,
     ) -> None:
         self.settings = settings
         self.backend = backend
@@ -111,7 +113,8 @@ class AssistantOrchestrator:
         self.conversation = ConversationStore(max_turns=settings.model.max_history_turns)
         self.audit = AuditLog()
         self.state = AssistantState.IDLE
-        self._pending: IntentDecision | None = None
+        self.clock = clock
+        self._pending: PendingAction | None = None
 
     @property
     def system_prompt(self) -> str:
@@ -146,23 +149,62 @@ class AssistantOrchestrator:
 
     @property
     def pending(self) -> IntentDecision | None:
+        return self._pending.decision if self._pending else None
+
+    @property
+    def pending_action(self) -> PendingAction | None:
         return self._pending
 
-    def handle_text(self, user_text: str, *, confirmed: bool = False) -> AssistantResponse:
+    def confirm(
+        self, confirmation_id: str | None = None, *, require_id: bool = True
+    ) -> AssistantResponse:
+        """Approve the parked action. Fail closed: any invalid attempt cancels it.
+
+        ``require_id=False`` is only for trusted in-process front ends (terminal UI,
+        notebooks) where the person typing *is* the one who saw the prompt. The
+        HTTP API always requires the single-use id issued with the prompt.
+        """
+        pending = self._pending
+        if pending is None:
+            return AssistantResponse(text="Nothing to confirm.", speech="Nothing to confirm.")
+        check = pending.check(confirmation_id, require_id=require_id)
+        self._pending = None  # single use, whatever the outcome
+        intent = pending.decision.intent.value
+        self.audit.record(intent, check == ConfirmCheck.OK, f"confirmation {check}")
+        if check != ConfirmCheck.OK:
+            self.state = AssistantState.IDLE
+            msg = (
+                "That confirmation expired, so I cancelled it. Please ask again."
+                if check == ConfirmCheck.EXPIRED
+                else "That confirmation didn't match the pending action, so I cancelled it."
+            )
+            logger.warning("confirmation rejected (%s) for %s", check, intent)
+            return AssistantResponse(
+                text=msg, state=AssistantState.IDLE, speech="Okay, I cancelled that."
+            )
+        return self._execute(pending.decision, confirmed=True)
+
+    def handle_text(
+        self,
+        user_text: str,
+        *,
+        confirmation_id: str | None = None,
+        require_confirmation_id: bool = False,
+    ) -> AssistantResponse:
         user_text = user_text.strip()
         lowered = _norm(user_text)
 
         if self._pending is not None:
-            if confirmed or lowered in YES:
-                decision = self._pending
-                self._pending = None
-                return self._execute(decision, confirmed=True)
+            if lowered in YES:
+                return self.confirm(confirmation_id, require_id=require_confirmation_id)
             if lowered in NO:
+                self.audit.record(self._pending.decision.intent.value, False, "cancelled")
                 self.cancel()
                 return AssistantResponse(
                     text="Okay, cancelled.", state=AssistantState.IDLE, speech="Okay, cancelled."
                 )
             # Anything else: drop the pending action and treat as a new request.
+            self.audit.record(self._pending.decision.intent.value, False, "superseded")
             self._pending = None
 
         if not user_text:
@@ -186,7 +228,7 @@ class AssistantOrchestrator:
                 ensure_ascii=False,
             ),
         )
-        resp = self._execute(decision, confirmed=confirmed)
+        resp = self._execute(decision, confirmed=False)
         resp.metrics = gen.metrics() if gen else {}
         resp.metrics["think_ms"] = round(think_ms, 1)
         resp.metrics["source"] = source
@@ -204,8 +246,14 @@ class AssistantOrchestrator:
         result = executor.execute(decision)
         self.audit.record(decision.intent.value, result.ok, result.message)
 
+        pending: PendingAction | None = None
         if result.needs_confirmation:
-            self._pending = decision
+            pending = PendingAction(
+                decision,
+                ttl_sec=float(self.settings.security.confirmation_ttl_sec),
+                clock=self.clock,
+            )
+            self._pending = pending
             self.state = AssistantState.AWAITING_CONFIRMATION
         else:
             self.state = AssistantState.IDLE
@@ -216,6 +264,8 @@ class AssistantOrchestrator:
             state=self.state,
             needs_confirmation=result.needs_confirmation,
             speech=result.speech,
+            confirmation_id=pending.id if pending else "",
+            expires_in=pending.ttl_sec if pending else 0.0,
         )
 
     def cancel(self) -> None:

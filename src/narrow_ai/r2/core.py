@@ -76,21 +76,51 @@ class R2:
                 "misses": st.misses,
                 "mb": round(st.extra.get("nbytes", 0) / 1e6, 1),
             },
-            "pending": self.orch.pending.model_dump() if self.orch.pending else None,
+            # The confirmation id is deliberately not exposed here.
+            "pending": (
+                {
+                    **pa.decision.model_dump(mode="json"),
+                    "expires_in": round(pa.expires_in, 1),
+                }
+                if (pa := self.orch.pending_action)
+                else None
+            ),
         }
 
     # ----------------------------------------------------------------- text
-    def ask(self, text: str, *, speak: bool = False) -> AssistantResponse:
+    def ask(
+        self,
+        text: str,
+        *,
+        speak: bool = False,
+        confirmation_id: str | None = None,
+        require_confirmation_id: bool = False,
+    ) -> AssistantResponse:
+        """One text turn. A "yes" approves the pending action only if allowed:
+        the HTTP API passes ``require_confirmation_id=True`` plus the client's id."""
         with self._lock:
-            resp = self.orch.handle_text(text)
+            resp = self.orch.handle_text(
+                text,
+                confirmation_id=confirmation_id,
+                require_confirmation_id=require_confirmation_id,
+            )
         if speak:
             self.speak(resp.spoken_text())
         return resp
 
-    def confirm(self, *, speak: bool = False) -> AssistantResponse:
-        if self.orch.pending is None:
-            return AssistantResponse(text="Nothing to confirm.", speech="Nothing to confirm.")
-        return self.ask("yes", speak=speak)
+    def confirm(
+        self,
+        confirmation_id: str | None = None,
+        *,
+        require_id: bool = False,
+        speak: bool = False,
+    ) -> AssistantResponse:
+        """Approve the pending action (``require_id=False`` only for in-process UIs)."""
+        with self._lock:
+            resp = self.orch.confirm(confirmation_id, require_id=require_id)
+        if speak:
+            self.speak(resp.spoken_text())
+        return resp
 
     def cancel(self) -> AssistantResponse:
         with self._lock:
@@ -160,7 +190,13 @@ class R2:
         self.chime("listen")
         self._recorder.start()
 
-    def listen_stop(self, *, speak: bool = False) -> tuple[str, AssistantResponse | None]:
+    def listen_stop(
+        self,
+        *,
+        speak: bool = False,
+        confirmation_id: str | None = None,
+        require_confirmation_id: bool = False,
+    ) -> tuple[str, AssistantResponse | None]:
         if self._recorder is None or not self._recorder.active:
             raise RuntimeError("not listening")
         wav = self._recorder.stop()
@@ -171,10 +207,27 @@ class R2:
             wav.unlink(missing_ok=True)
         if not transcript.strip():
             return "", None
-        return transcript, self.ask(transcript, speak=speak)
+        return transcript, self.ask(
+            transcript,
+            speak=speak,
+            confirmation_id=confirmation_id,
+            require_confirmation_id=require_confirmation_id,
+        )
 
-    def ask_audio(self, wav: Path, *, speak: bool = False) -> tuple[str, AssistantResponse | None]:
+    def ask_audio(
+        self,
+        wav: Path,
+        *,
+        speak: bool = False,
+        confirmation_id: str | None = None,
+        require_confirmation_id: bool = False,
+    ) -> tuple[str, AssistantResponse | None]:
         transcript = self.transcribe(wav)
         if not transcript.strip():
             return "", None
-        return transcript, self.ask(transcript, speak=speak)
+        return transcript, self.ask(
+            transcript,
+            speak=speak,
+            confirmation_id=confirmation_id,
+            require_confirmation_id=require_confirmation_id,
+        )

@@ -80,6 +80,10 @@ class SecuritySettings(BaseModel):
     require_confirmation_for_writes: bool = True
     block_path_escape: bool = True
     redact_secrets_in_logs: bool = True
+    # Local HTTP API (r2 serve): bearer token file, rotated on every start (0600).
+    api_token_path: str = ""  # empty = ~/.local/share/narrow-ai/api-token
+    # Pending privileged actions expire after this many seconds.
+    confirmation_ttl_sec: int = 120
 
 
 class Settings(BaseSettings):
@@ -106,6 +110,12 @@ class Settings(BaseSettings):
         if self.memory.db_path.strip():
             return Path(self.memory.db_path).expanduser().resolve()
         return Path.home() / ".local" / "share" / "narrow-ai" / "preferences.db"
+
+    def api_token_path(self) -> Path:
+        raw = self.security.api_token_path.strip()
+        if raw:
+            return Path(raw).expanduser().resolve()
+        return Path.home() / ".local" / "share" / "narrow-ai" / "api-token"
 
     def kv_cache_dir(self) -> Path:
         raw = self.model.kv_cache_dir.strip()

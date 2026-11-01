@@ -56,6 +56,13 @@ final class R2Client: ObservableObject {
     private let speaker = Speaker()
     let core = CoreLauncher()
     private var awaitingConfirm = false
+    /// Single-use id of the confirmation prompt currently shown. The core only approves
+    /// a privileged action when this exact id comes back (button, typed or spoken "yes").
+    private var pendingConfirmationId: String?
+    /// Per-session bearer token written by `r2 serve` (0600, rotated on every start).
+    private var apiToken: String?
+    static let tokenURL = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent(".local/share/narrow-ai/api-token")
     private var bootTask: Task<Void, Never>?
 
     init() {
@@ -150,6 +157,7 @@ final class R2Client: ObservableObject {
 
     func boot() {
         bootTask?.cancel()
+        loadToken()
         bootTask = Task {
             if await refreshStatus() { return greet() }
             guard autoStartCore else {
@@ -229,16 +237,44 @@ final class R2Client: ObservableObject {
 
     // MARK: - Requests
 
+    @discardableResult
+    private func loadToken() -> String? {
+        let t = (try? String(contentsOf: Self.tokenURL, encoding: .utf8))?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        apiToken = (t?.isEmpty ?? true) ? nil : t
+        return apiToken
+    }
+
+    /// Sends a request with the bearer token; on 401 (core restarted → new token)
+    /// re-reads the token file and retries once.
+    private func authorized(_ make: () throws -> URLRequest,
+                            send: (URLRequest) async throws -> (Data, URLResponse)) async throws -> Data {
+        if apiToken == nil { loadToken() }
+        for attempt in 0..<2 {
+            var req = try make()
+            if let apiToken { req.setValue("Bearer \(apiToken)", forHTTPHeaderField: "Authorization") }
+            let (data, resp) = try await send(req)
+            if (resp as? HTTPURLResponse)?.statusCode == 401, attempt == 0 {
+                loadToken()
+                continue
+            }
+            return data
+        }
+        throw URLError(.userAuthenticationRequired)
+    }
+
     private func call(_ path: String, body: [String: Any] = [:], get: Bool = false,
                       timeout: TimeInterval = 120) async throws -> [String: Any] {
-        var req = URLRequest(url: base.appendingPathComponent(path))
-        req.timeoutInterval = timeout
-        if !get {
-            req.httpMethod = "POST"
-            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            req.httpBody = try JSONSerialization.data(withJSONObject: body)
-        }
-        let (data, _) = try await URLSession.shared.data(for: req)
+        let data = try await authorized({
+            var req = URLRequest(url: base.appendingPathComponent(path))
+            req.timeoutInterval = timeout
+            if !get {
+                req.httpMethod = "POST"
+                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                req.httpBody = try JSONSerialization.data(withJSONObject: body)
+            }
+            return req
+        }, send: { try await URLSession.shared.data(for: $0) })
         return (try JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
     }
 
@@ -247,13 +283,19 @@ final class R2Client: ObservableObject {
         guard !t.isEmpty, phase != .offline, phase != .starting else { return }
         speaker.stop()
         caption = t
-        send("ask", body: ["text": t, "speak": false], user: t)
+        var body: [String: Any] = ["text": t, "speak": false]
+        if let id = pendingConfirmationId { body["confirmation_id"] = id }  // typed "yes"
+        send("ask", body: body, user: t)
     }
 
-    func confirm() { send("confirm", body: ["speak": false], user: "Yes") }
+    func confirm() {
+        send("confirm", body: ["speak": false, "confirmation_id": pendingConfirmationId ?? ""],
+             user: "Yes")
+    }
 
     func cancel() {
         if phase == .listening { _ = audio.stop(); level = 0 }
+        pendingConfirmationId = nil
         send("cancel", body: [:], user: "Cancel")
     }
 
@@ -262,6 +304,7 @@ final class R2Client: ObservableObject {
         history.removeAll()
         caption = ""; reply = "Hi, I'm R2."; detail = ""; intent = ""; latency = ""
         awaitingConfirm = false
+        pendingConfirmationId = nil
         if phase != .offline && phase != .starting { phase = .idle }
         Task { _ = try? await call("reset") }
     }
@@ -324,14 +367,23 @@ final class R2Client: ObservableObject {
         }
         phase = .thinking
         caption = "…"
+        // A spoken "yes" only counts for the prompt on screen: send its id along.
+        var comps = URLComponents(url: base.appendingPathComponent("ask_audio"),
+                                  resolvingAgainstBaseURL: false)!
+        comps.queryItems = [URLQueryItem(name: "speak", value: "0")]
+        if let id = pendingConfirmationId {
+            comps.queryItems?.append(URLQueryItem(name: "confirmation_id", value: id))
+        }
+        let url = comps.url!
         Task {
             do {
-                var req = URLRequest(url: base.appendingPathComponent("ask_audio"))
-                req.url = URL(string: base.absoluteString + "/ask_audio?speak=0")
-                req.httpMethod = "POST"
-                req.setValue("audio/wav", forHTTPHeaderField: "Content-Type")
-                req.timeoutInterval = 120
-                let (data, _) = try await URLSession.shared.upload(for: req, from: wav)
+                let data = try await authorized({
+                    var req = URLRequest(url: url)
+                    req.httpMethod = "POST"
+                    req.setValue("audio/wav", forHTTPHeaderField: "Content-Type")
+                    req.timeoutInterval = 120
+                    return req
+                }, send: { try await URLSession.shared.upload(for: $0, from: wav) })
                 let r = (try JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
                 let heard = r["transcript"] as? String ?? ""
                 caption = heard.isEmpty ? "" : heard
@@ -346,7 +398,8 @@ final class R2Client: ObservableObject {
     // MARK: - Voice output
 
     func say(_ text: String) {
-        speaker.speak(text, natural: naturalVoice, voice: voiceName, speed: speechSpeed, server: base)
+        speaker.speak(text, natural: naturalVoice, voice: voiceName, speed: speechSpeed, server: base,
+                      token: apiToken)
     }
 
     func previewVoice() {
@@ -382,6 +435,7 @@ final class R2Client: ObservableObject {
             if history.count > 20 { history.removeFirst() }
         }
         awaitingConfirm = needsConfirm
+        pendingConfirmationId = needsConfirm ? (r["confirmation_id"] as? String) : nil
         if speakReplies && !speech.isEmpty {
             phase = .speaking
             say(speech)

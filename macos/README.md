@@ -38,10 +38,22 @@ The README screenshots were taken this way, with `screencapture -l <window id>`.
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| GET | `/health`, `/status`, `/voices` | liveness, model + KV cache info, voice list |
-| POST | `/ask` `{"text"}` | text request → reply, speech, intent, metrics |
-| POST | `/confirm`, `/cancel`, `/reset` | answer a pending confirmation, clear history |
-| POST | `/ask_audio` (raw WAV) | Whisper → R2 |
+| GET | `/health` | liveness (the only endpoint without auth) |
+| GET | `/status`, `/voices` | model + KV cache info, voice list |
+| POST | `/ask` `{"text", "confirmation_id"?}` | text request → reply, speech, intent, metrics |
+| POST | `/confirm` `{"confirmation_id"}` | approve the pending action shown to the user |
+| POST | `/cancel`, `/reset` | drop the pending action, clear history |
+| POST | `/ask_audio?confirmation_id=…` (raw WAV) | Whisper → R2 |
 | POST | `/tts` `{"text","voice","speed"}` | Kokoro speech as WAV |
 
-The server binds to 127.0.0.1 only.
+Security (see [docs/SECURITY.md](../docs/SECURITY.md#local-http-api)):
+
+- The server binds to loopback only and refuses any other `--host`.
+- Every request except `/health` needs `Authorization: Bearer <token>`. `r2 serve` writes
+  a fresh token to `~/.local/share/narrow-ai/api-token` (mode 0600) on every start and
+  deletes it on exit. The app reads it and re-reads it after a 401 (core restarted).
+- Requests with a foreign `Host`, any `Origin` header, or a non-JSON body are refused,
+  so web pages in a browser can't reach the API.
+- A privileged action returns a single-use `confirmation_id` that expires after 120 s.
+  Only `/confirm` with that id, or a typed or spoken "yes" sent with it, approves the action.
+  A missing or wrong id cancels the action instead.

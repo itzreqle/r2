@@ -18,6 +18,9 @@ class AssistantResponse:
     needs_confirmation: bool = False
     speech: str = ""
     metrics: dict[str, Any] = field(default_factory=dict)
+    # Single-use id that must be echoed back to approve (HTTP API); "" = none pending.
+    confirmation_id: str = ""
+    expires_in: float = 0.0
 
     def spoken_text(self) -> str:
         """Short Siri-style sentence for TTS."""
@@ -33,4 +36,6 @@ class AssistantResponse:
             "state": str(self.state),
             "needs_confirmation": self.needs_confirmation,
             "metrics": self.metrics,
+            "confirmation_id": self.confirmation_id or None,
+            "expires_in": round(self.expires_in, 1) if self.confirmation_id else None,
         }

@@ -294,8 +294,14 @@ def serve(
         f"[dim]neural voice: {'Kokoro ready' if voice_ok else 'unavailable (system voice)'}[/dim]"
     )
     console.print(_banner(r2))
+    token_path = r2.settings.api_token_path()
     console.print(f"[cyan]R2 API listening on http://{host}:{port}[/cyan]  (Ctrl+C to stop)")
-    serve_forever(r2, host=host, port=port, speak=not o.get("mute"))
+    console.print(f"[dim]bearer token (rotated each start, 0600): {token_path}[/dim]")
+    try:
+        serve_forever(r2, token_path=token_path, host=host, port=port, speak=not o.get("mute"))
+    except ValueError as exc:  # e.g. non-loopback --host
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(2) from exc
 
 
 def run() -> None:  # console-script entry point
