@@ -41,6 +41,7 @@ class MlxBackend(ModelBackend):
         max_kv_size: int | None = None,
         cache_mode: str = "prefix",
         cache_dir: Path | None = None,
+        cache_max_files: int = 8,
         stop_at_json: bool = True,
         load: bool = True,
     ) -> None:
@@ -51,6 +52,7 @@ class MlxBackend(ModelBackend):
         self.max_kv_size = max_kv_size
         self.cache_mode = cache_mode
         self.cache_dir = cache_dir
+        self.cache_max_files = cache_max_files
         self.stop_at_json = stop_at_json
         self._model: Any = None
         self._tokenizer: Any = None
@@ -78,16 +80,39 @@ class MlxBackend(ModelBackend):
             self._model, self._tokenizer = mlx_load(source)
         self._load_time_ms = (time.perf_counter() - t0) * 1000
         logger.info("Model loaded in %.0f ms", self._load_time_ms)
-        template = getattr(self._tokenizer, "chat_template", "") or ""
+        self._fingerprint = self._build_fingerprint(source, adapter, mlx_lm)
+        self.set_cache_mode(self.cache_mode)
+
+    def _build_fingerprint(self, source: str, adapter: str | None, mlx_lm: Any) -> dict[str, str]:
+        """Identity of everything a cached prefix depends on (see models/fingerprint.py)."""
         import hashlib
 
-        self._fingerprint = {
+        import mlx.core as mx
+
+        from narrow_ai.models.fingerprint import (
+            FP_VERSION,
+            adapter_fingerprint,
+            snapshot_fingerprint,
+        )
+
+        template = getattr(self._tokenizer, "chat_template", "") or ""
+        t0 = time.perf_counter()
+        fp = {
+            "fp_version": FP_VERSION,
             "model_id": self.model_id,
-            "adapter": adapter or "",
+            **snapshot_fingerprint(source),
+            "adapter_sha": adapter_fingerprint(adapter),
             "template_sha": hashlib.sha256(template.encode()).hexdigest()[:16],
             "mlx_lm": getattr(mlx_lm, "__version__", "?"),
+            "mlx": getattr(mx, "__version__", "?"),
         }
-        self.set_cache_mode(self.cache_mode)
+        logger.info(
+            "KV fingerprint: revision=%s weights=%s (%.1f ms)",
+            fp["revision"],
+            fp["weights_sha"][:12],
+            (time.perf_counter() - t0) * 1000,
+        )
+        return fp
 
     def set_cache_mode(self, mode: str) -> None:
         """Swap KV cache strategy at runtime (used by benchmarks / notebooks)."""
@@ -97,6 +122,7 @@ class MlxBackend(ModelBackend):
             mode=mode,
             cache_dir=self.cache_dir,
             base_fingerprint=self._fingerprint,
+            max_files=self.cache_max_files,
         )
 
     @property

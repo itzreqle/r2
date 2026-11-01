@@ -23,7 +23,8 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 ### 2. KV cache system (the core research piece)
 - [x] System-prompt **prefix KV cache**: prefill once, reuse every request, trim back after
 - [x] **Persistent KV cache on disk** (`artifacts/kv/*.safetensors`) with metadata guard
-      (model id, adapter, prompt hash, template hash) — rejects stale caches
+      (snapshot revision, weight/tokenizer/config/adapter content hashes, prompt + template hash,
+      mlx versions) — rejects stale caches; every layer validated on load
 - [x] Cache modes: `none | prefix | persistent` (config + CLI flag) for experiments
 - [x] Equivalence check: cached vs uncached greedy output must match (20/20 identical)
 - [x] Multi-prefix LRU (intent prompt + answer prompt both stay cached)
@@ -78,6 +79,6 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] M1 local API: per-session bearer token (0600), `Host` allowlist, no browser `Origin`, JSON-only bodies, loopback-only bind
 - [x] M1 confirmations: single-use, expiring `confirmation_id` bound to the decision digest (button, typed and spoken "yes")
 - [x] M1 file tools: `O_NOFOLLOW` + fd real-path check (TOCTOU), no symlinked-dir search, filename sanitising; adversarial tests in `tests/security/`
-- [ ] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
+- [x] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
 - [ ] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance)
 - [ ] M4 agent runtime foundation: tool registry, bounded plan → gate → execute loop

@@ -34,6 +34,7 @@ class ModelSettings(BaseModel):
     max_kv_size: int = 0  # 0 = unbounded; >0 = rotating window (only when cache_mode=none)
     cache_mode: str = "prefix"  # none | prefix | persistent
     kv_cache_dir: str = ""  # empty = artifacts/kv
+    kv_cache_max_files: int = 8  # persistent caches kept on disk (LRU by last use)
     constrained: bool = True  # constrain intent name during decoding
     few_shot: bool = True
 

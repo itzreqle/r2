@@ -236,8 +236,11 @@ Three techniques keep the output reliable:
 - **Validation.** Pydantic validates the result; anything that still fails falls back to a safe
   heuristic, or R2 asks you to clarify.
 
-The cache on disk is tagged with a fingerprint (model, prompt template, prefix text, mlx-lm
-version), so a stale cache is never reused.
+The cache on disk is tagged with a content fingerprint. It covers the Hugging Face snapshot
+revision, content hashes of the weights, tokenizer, config and LoRA adapter, the chat template,
+the prefix text, and the mlx / mlx-lm versions. Every layer is validated on load, so a stale or
+damaged cache is rebuilt instead of reused. Saves are atomic, and only the 8 most recently used
+cache files are kept (`model.kv_cache_max_files`).
 
 | Folder | What's inside |
 | --- | --- |

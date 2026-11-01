@@ -20,6 +20,7 @@ exclusive_heavy_jobs = true
 # KV cache: none | prefix | persistent  (persistent = prefix cache saved to artifacts/kv)
 cache_mode = "persistent"
 kv_cache_dir = ""
+kv_cache_max_files = 8   # older persistent caches are evicted (LRU)
 max_kv_size = 0
 constrained = true
 few_shot = true
