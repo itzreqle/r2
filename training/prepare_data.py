@@ -5,26 +5,32 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-SYSTEM = (
-    "You are a narrow macOS developer voice assistant. "
-    "Output concise, valid JSON intents."
-)
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from narrow_ai.assistant.orchestrator import system_prompt_for  # noqa: E402
+from narrow_ai.intents.registry import default_registry  # noqa: E402
+from narrow_ai.settings import load_settings  # noqa: E402
+
+# Exactly the prompt R2 uses at runtime (no train/serve skew).
+SYSTEM = system_prompt_for(load_settings(), default_registry())
 
 SEED = [
-    ("Check the current Git status.", {"intent": "git_status", "parameters": {}, "requires_confirmation": False}),
-    ("What's my git status?", {"intent": "git_status", "parameters": {}, "requires_confirmation": False}),
-    ("Find Python files in the project.", {"intent": "search_files", "parameters": {"pattern": "*.py", "workspace": "active"}, "requires_confirmation": False}),
-    ("Search for markdown files.", {"intent": "search_files", "parameters": {"pattern": "*.md", "workspace": "active"}, "requires_confirmation": False}),
-    ("What can you do?", {"intent": "general_help", "parameters": {}, "requires_confirmation": False}),
-    ("Tell me a joke.", {"intent": "unsupported", "parameters": {"reason": "Outside supported domain"}, "requires_confirmation": False}),
-    ("Delete all files.", {"intent": "unsupported", "parameters": {"reason": "Destructive action not allowed"}, "requires_confirmation": False}),
-    ("Run rm -rf /", {"intent": "unsupported", "parameters": {"reason": "Arbitrary shell not allowed"}, "requires_confirmation": False}),
-    ("Remember preferred_editor=Cursor", {"intent": "remember_preference", "parameters": {"key": "preferred_editor", "value": "Cursor"}, "requires_confirmation": True}),
-    ("Recall preferred_editor", {"intent": "recall_preference", "parameters": {"key": "preferred_editor"}, "requires_confirmation": False}),
-    ("status", {"intent": "clarify_request", "parameters": {"question": "Do you mean git status?"}, "requires_confirmation": False}),
-    ("Open my bank app and transfer money", {"intent": "unsupported", "parameters": {"reason": "Outside supported domain"}, "requires_confirmation": False}),
+    ("Check the current Git status.", {"intent": "git_status", "parameters": {}}),
+    ("What's my git status?", {"intent": "git_status", "parameters": {}}),
+    ("Find Python files in the project.", {"intent": "search_files", "parameters": {"pattern": "*.py", "workspace": "active"}}),
+    ("Search for markdown files.", {"intent": "search_files", "parameters": {"pattern": "*.md", "workspace": "active"}}),
+    ("What can you do?", {"intent": "general_help", "parameters": {}}),
+    ("Tell me a joke.", {"intent": "unsupported", "parameters": {"reason": "Outside supported domain"}}),
+    ("Delete all files.", {"intent": "unsupported", "parameters": {"reason": "Destructive action not allowed"}}),
+    ("Run rm -rf /", {"intent": "unsupported", "parameters": {"reason": "Arbitrary shell not allowed"}}),
+    ("Remember preferred_editor=Cursor", {"intent": "remember_preference", "parameters": {"key": "preferred_editor", "value": "Cursor"}}),
+    ("Recall preferred_editor", {"intent": "recall_preference", "parameters": {"key": "preferred_editor"}}),
+    ("status", {"intent": "clarify_request", "parameters": {"question": "Do you mean git status?"}}),
+    ("Open my bank app and transfer money", {"intent": "unsupported", "parameters": {"reason": "Outside supported domain"}}),
 ]
 
 
