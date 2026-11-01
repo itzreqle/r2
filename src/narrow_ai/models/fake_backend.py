@@ -20,8 +20,9 @@ class FakeModelBackend(ModelBackend):
         temperature: float | None = None,
         prefill: str = "",
         constrain_intents: list[str] | None = None,
+        constraint_schema: dict | None = None,
     ) -> GenerationResult:
-        _ = max_tokens, temperature, prefill, constrain_intents
+        _ = max_tokens, temperature, prefill, constrain_intents, constraint_schema
         t0 = time.perf_counter()
         user = ""
         for msg in reversed(messages):

@@ -10,6 +10,11 @@ from pydantic import ValidationError
 
 from narrow_ai.intents.schemas import PARAMS_BY_INTENT, IntentDecision, IntentName
 
+
+class IntentParseError(ValueError):
+    pass
+
+
 _EXT_WORDS = {
     "python": "py",
     "py": "py",
@@ -43,7 +48,9 @@ _EXT_WORDS = {
 def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
     """Make model output easier to validate *without* widening what is allowed.
 
-    - unknown parameter keys are dropped (tools only ever read declared fields)
+    - unknown parameter keys are **rejected**, not dropped: the contract is strict,
+      so a model that drifts off-schema is visible (retry → heuristic) instead of
+      silently "fixed"
     - bare search words become globs: "json" -> "*.json", "config" -> "*config*"
     - language words win over substring globs: "*swift*" / "swift files" -> "*.swift"
     """
@@ -52,10 +59,15 @@ def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
     except ValueError:
         return data  # unknown intent → validation will reject it
     params = data.get("parameters")
-    if not isinstance(params, dict):
+    if params is None:
         params = {}
+    if not isinstance(params, dict):
+        raise IntentParseError("parameters must be a JSON object")
     fields = PARAMS_BY_INTENT[intent].model_fields
-    params = {k: v for k, v in params.items() if k in fields}
+    unknown = sorted(k for k in params if k not in fields)
+    if unknown:
+        raise IntentParseError(f"unknown parameters for {intent.value}: {', '.join(unknown)}")
+    params = dict(params)
     if intent == IntentName.SEARCH_FILES and isinstance(params.get("pattern"), str):
         pat = params["pattern"].strip()
         # "swift", "swift files", "*swift*", ".swift" all mean files of that language.
@@ -71,10 +83,6 @@ def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
 
 
 _DECODER = json.JSONDecoder()
-
-
-class IntentParseError(ValueError):
-    pass
 
 
 def extract_json_object(text: str) -> dict[str, Any]:

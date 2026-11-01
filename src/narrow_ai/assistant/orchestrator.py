@@ -54,6 +54,16 @@ class IntentEngine:
         self.registry = registry
         self.system_prompt = system_prompt_for(settings, registry)
         self.allowed = implemented_intent_names(registry)
+        self.constraint = settings.model.constraint_mode()
+        self.schema: dict | None = None
+        if self.constraint == "json":
+            from narrow_ai.models.grammar import decision_json_schema
+
+            self.schema = decision_json_schema(registry)
+            if backend.name == "mlx":  # fail at startup, never silently downgrade
+                from narrow_ai.models.json_constraint import require_llguidance
+
+                require_llguidance()
 
     def decide(
         self, user_text: str, history: list[dict[str, str]] | None = None
@@ -66,7 +76,8 @@ class IntentEngine:
             "max_tokens": self.settings.model.max_tokens,
             "temperature": self.settings.model.temperature,
             "prefill": INTENT_PREFILL,
-            "constrain_intents": self.allowed if self.settings.model.constrained else None,
+            "constrain_intents": self.allowed if self.constraint == "intent" else None,
+            "constraint_schema": self.schema,
         }
         gen = self.backend.generate(messages, **kwargs)
         try:

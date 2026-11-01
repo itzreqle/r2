@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from narrow_ai.intents.classifier import (
+    IntentParseError,
     extract_json_object,
     heuristic_intent,
     parse_intent_decision,
@@ -25,9 +26,27 @@ def test_first_json_object_not_greedy():
     assert extract_json_object(text)["intent"] == "git_status"
 
 
-def test_unknown_params_dropped_for_parameterless_intent():
-    d = parse_intent_decision('{"intent": "git_diff_summary", "parameters": {"lines": "1"}}')
-    assert d.intent == IntentName.GIT_DIFF_SUMMARY and d.parameters == {}
+@pytest.mark.parametrize(
+    "text",
+    [
+        '{"intent": "git_diff_summary", "parameters": {"lines": "1"}}',
+        '{"intent": "read_file", "parameters": {"path": "a.py", "shell": "cat /etc/passwd"}}',
+        '{"intent": "search_files", "parameters": {"pattern": "*.py", "root": "/"}}',
+        '{"intent": "git_status", "parameters": ["x"]}',
+    ],
+)
+def test_unknown_or_malformed_params_are_rejected(text):
+    """Strict contract: off-schema fields are an error, never silently dropped."""
+    with pytest.raises(IntentParseError):
+        parse_intent_decision(text)
+
+
+def test_declared_optional_params_are_accepted():
+    d = parse_intent_decision(
+        '{"intent": "search_files", "parameters": {"pattern": "*.py", "workspace": "active"}}'
+    )
+    assert d.parameters == {"pattern": "*.py", "workspace": "active"}
+    assert parse_intent_decision('{"intent": "git_status"}').parameters == {}
 
 
 def test_top_level_extra_fields_still_rejected():

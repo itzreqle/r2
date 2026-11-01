@@ -37,7 +37,7 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] Response prefill: the assistant turn is forced to start with `{"intent": "`
 - [x] Intent-name **constrained decoding** (logits processor over allowed intent names)
 - [x] Pydantic validation + heuristic fallback (fail closed)
-- [ ] Full JSON-schema grammar (Outlines / XGrammar) for parameters too
+- [x] Full JSON-schema grammar for parameters too (llguidance; see section 8 / M3)
 
 ### 4. Tools R2 can use
 - [x] git status, git diff summary, file search, read file (path-guarded, secrets refused)
@@ -80,5 +80,5 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] M1 confirmations: single-use, expiring `confirmation_id` bound to the decision digest (button, typed and spoken "yes")
 - [x] M1 file tools: `O_NOFOLLOW` + fd real-path check (TOCTOU), no symlinked-dir search, filename sanitising; adversarial tests in `tests/security/`
 - [x] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
-- [ ] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance)
+- [x] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance), default `constraint = "json"` after a 3×2 ablation
 - [ ] M4 agent runtime foundation: tool registry, bounded plan → gate → execute loop

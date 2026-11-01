@@ -23,6 +23,9 @@ kv_cache_dir = ""
 kv_cache_max_files = 8   # older persistent caches are evicted (LRU)
 max_kv_size = 0
 constrained = true
+# Decode-time constraint: none | intent (intent name only) | json (whole decision via
+# llguidance, `uv sync --group grammar`). Empty = derived from `constrained` above.
+constraint = "json"   # measured best: see docs/EVALUATION.md (strict validation + json grammar)
 few_shot = true
 
 [tools]

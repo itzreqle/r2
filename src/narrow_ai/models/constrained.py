@@ -5,7 +5,9 @@ spell an intent. This logits processor masks every token that would make the
 generated text diverge from the allowed names, so the model *cannot* produce an
 unknown intent. Once a full name plus its closing quote is produced, the
 processor switches off and parameters are generated freely (then validated by
-Pydantic).
+Pydantic). If tokenization ever leaves no allowed token, the processor fails
+*closed*: only EOS stays possible, so the output fails to parse (retry →
+heuristic) instead of decoding an unconstrained intent name.
 
 Works with ``mlx_lm`` logits processors: ``processor(tokens, logits) -> logits``
 where ``tokens`` = prompt tokens fed this call + generated tokens.
@@ -41,6 +43,7 @@ class IntentNameConstraint:
         self.targets = [n + '"' for n in names]
         self.n_prompt = n_prompt
         self.done = False
+        self.failed = ""
         self.masked_steps = 0
         key = (id(tokenizer), tuple(self.targets))
         if key not in _CANDIDATE_CACHE:
@@ -73,9 +76,11 @@ class IntentNameConstraint:
             self.done = True
             return logits
         allowed = self.allowed_ids(text)
-        if not allowed:  # cannot help any more; validation will catch problems
-            self.done = True
-            return logits
+        if not allowed:  # fail closed: end generation rather than decode freely
+            from narrow_ai.models.json_constraint import eos_ids, eos_only
+
+            self.failed = f"no allowed token after {text!r}"
+            return eos_only(logits, eos_ids(self.tokenizer))
         vocab_size = logits.shape[-1]
         mask = np.full((vocab_size,), -np.inf, dtype=np.float32)
         mask[[a for a in allowed if a < vocab_size]] = 0.0

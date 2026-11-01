@@ -1,0 +1,576 @@
+[
+  {
+    "few_shot": true,
+    "constraint": "none",
+    "constrained": false,
+    "intent_acc": 0.875,
+    "param_acc": 0.875,
+    "malformed": 0.05,
+    "fallback": 0.05,
+    "latency_ms": 295,
+    "ttft_ms": 74.4,
+    "decode_ms_per_token": 13.01,
+    "n": 40,
+    "misses": [
+      {
+        "id": "h01",
+        "utterance": "is my working tree clean?",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h06",
+        "utterance": "how many lines did I change",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h28",
+        "utterance": "do the thing",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h29",
+        "utterance": "make it better",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h30",
+        "utterance": "check that",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Command not supported"
+        },
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": true,
+    "constraint": "intent",
+    "constrained": true,
+    "intent_acc": 0.875,
+    "param_acc": 0.875,
+    "malformed": 0.05,
+    "fallback": 0.05,
+    "latency_ms": 287,
+    "ttft_ms": 82.4,
+    "decode_ms_per_token": 13.83,
+    "n": 40,
+    "misses": [
+      {
+        "id": "h01",
+        "utterance": "is my working tree clean?",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h06",
+        "utterance": "how many lines did I change",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h28",
+        "utterance": "do the thing",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h29",
+        "utterance": "make it better",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h30",
+        "utterance": "check that",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Command not supported"
+        },
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": true,
+    "constraint": "json",
+    "constrained": true,
+    "intent_acc": 0.925,
+    "param_acc": 0.925,
+    "malformed": 0.0,
+    "fallback": 0.0,
+    "latency_ms": 263,
+    "ttft_ms": 71.3,
+    "decode_ms_per_token": 13.81,
+    "n": 40,
+    "misses": [
+      {
+        "id": "h28",
+        "utterance": "do the thing",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h29",
+        "utterance": "make it better",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h30",
+        "utterance": "check that",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Command not supported"
+        },
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "none",
+    "constrained": false,
+    "intent_acc": 0.725,
+    "param_acc": 0.65,
+    "malformed": 0.15,
+    "fallback": 0.15,
+    "latency_ms": 287,
+    "ttft_ms": 79.8,
+    "decode_ms_per_token": 12.07,
+    "n": 40,
+    "misses": [
+      {
+        "id": "h01",
+        "utterance": "is my working tree clean?",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h03",
+        "utterance": "git status please",
+        "expected": "git_status",
+        "got": "git_status",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "h04",
+        "utterance": "tell me which branch this is",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h06",
+        "utterance": "how many lines did I change",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h07",
+        "utterance": "what did I modify in the code since the last commit, roughly",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h08",
+        "utterance": "list all python files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "/*.py*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h09",
+        "utterance": "find markdown docs",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "README*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h13",
+        "utterance": "open pyproject.toml and show it to me",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Visual Studio Code"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h16",
+        "utterance": "display config/default.toml",
+        "expected": "read_file",
+        "got": "read_file",
+        "params": {
+          "path": "default.toml"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h24",
+        "utterance": "which default branch did I tell you?",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "which default branch did I tell you?"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h29",
+        "utterance": "make it better",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "h30",
+        "utterance": "check that",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "h32",
+        "utterance": "what's the capital of France",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h37",
+        "utterance": "write me a poem about cats",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "intent",
+    "constrained": true,
+    "intent_acc": 0.725,
+    "param_acc": 0.65,
+    "malformed": 0.15,
+    "fallback": 0.15,
+    "latency_ms": 274,
+    "ttft_ms": 77.3,
+    "decode_ms_per_token": 12.41,
+    "n": 40,
+    "misses": [
+      {
+        "id": "h01",
+        "utterance": "is my working tree clean?",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h03",
+        "utterance": "git status please",
+        "expected": "git_status",
+        "got": "git_status",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "h04",
+        "utterance": "tell me which branch this is",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h06",
+        "utterance": "how many lines did I change",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h07",
+        "utterance": "what did I modify in the code since the last commit, roughly",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h08",
+        "utterance": "list all python files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "/*.py*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h09",
+        "utterance": "find markdown docs",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "README*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h13",
+        "utterance": "open pyproject.toml and show it to me",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Visual Studio Code"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h16",
+        "utterance": "display config/default.toml",
+        "expected": "read_file",
+        "got": "read_file",
+        "params": {
+          "path": "default.toml"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h24",
+        "utterance": "which default branch did I tell you?",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "which default branch did I tell you?"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h29",
+        "utterance": "make it better",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "h30",
+        "utterance": "check that",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "h32",
+        "utterance": "what's the capital of France",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "h37",
+        "utterance": "write me a poem about cats",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "json",
+    "constrained": true,
+    "intent_acc": 0.85,
+    "param_acc": 0.775,
+    "malformed": 0.0,
+    "fallback": 0.0,
+    "latency_ms": 208,
+    "ttft_ms": 64.7,
+    "decode_ms_per_token": 12.45,
+    "n": 40,
+    "misses": [
+      {
+        "id": "h08",
+        "utterance": "list all python files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "/*.py*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h09",
+        "utterance": "find markdown docs",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "README*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h13",
+        "utterance": "open pyproject.toml and show it to me",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Visual Studio Code"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h16",
+        "utterance": "display config/default.toml",
+        "expected": "read_file",
+        "got": "read_file",
+        "params": {
+          "path": "default.toml"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h24",
+        "utterance": "which default branch did I tell you?",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "which default branch did I tell you?"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h29",
+        "utterance": "make it better",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "h30",
+        "utterance": "check that",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "h32",
+        "utterance": "what's the capital of France",
+        "expected": "unsupported",
+        "got": "answer_question",
+        "params": {
+          "question": "what's the capital of France"
+        },
+        "source": "model"
+      },
+      {
+        "id": "h37",
+        "utterance": "write me a poem about cats",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  }
+]

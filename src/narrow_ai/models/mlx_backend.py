@@ -192,6 +192,7 @@ class MlxBackend(ModelBackend):
         temperature: float | None = None,
         prefill: str = "",
         constrain_intents: list[str] | None = None,
+        constraint_schema: dict | None = None,
     ) -> GenerationResult:
         if self._model is None or self._tokenizer is None:
             self.load()
@@ -209,8 +210,15 @@ class MlxBackend(ModelBackend):
         cache, suffix, n_cached = self.kv.acquire(full_tokens)
 
         processors = None
-        constraint = None
-        if constrain_intents and prefill:
+        constraint: Any = None
+        if constraint_schema is not None:
+            from narrow_ai.models.json_constraint import JsonSchemaConstraint
+
+            constraint = JsonSchemaConstraint(
+                self._tokenizer, constraint_schema, len(suffix), prefill=prefill
+            )
+            processors = [constraint]
+        elif constrain_intents and prefill:
             constraint = IntentNameConstraint(self._tokenizer, constrain_intents, len(suffix))
             processors = [constraint]
 
@@ -259,6 +267,12 @@ class MlxBackend(ModelBackend):
                 "model_id": self.model_id,
                 "temperature": temp,
                 "constrained_steps": constraint.masked_steps if constraint else 0,
+                "constraint": (
+                    "json"
+                    if constraint_schema is not None
+                    else ("intent" if constraint else "none")
+                ),
+                "constraint_failed": getattr(constraint, "failed", "") or "",
             },
             ttft_ms=ttft,
             prompt_tokens=last.prompt_tokens if last else len(suffix),

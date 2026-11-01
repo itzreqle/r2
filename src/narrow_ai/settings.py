@@ -35,8 +35,17 @@ class ModelSettings(BaseModel):
     cache_mode: str = "prefix"  # none | prefix | persistent
     kv_cache_dir: str = ""  # empty = artifacts/kv
     kv_cache_max_files: int = 8  # persistent caches kept on disk (LRU by last use)
-    constrained: bool = True  # constrain intent name during decoding
+    constrained: bool = True  # legacy switch: True = "intent", False = "none"
+    # Decode-time constraint: none | intent (intent name only) | json (whole decision,
+    # needs the llguidance `grammar` group). Empty = derived from `constrained`.
+    constraint: str = ""
     few_shot: bool = True
+
+    def constraint_mode(self) -> str:
+        mode = (self.constraint or ("intent" if self.constrained else "none")).strip().lower()
+        if mode not in {"none", "intent", "json"}:
+            raise ValueError(f"model.constraint must be none|intent|json, got {mode!r}")
+        return mode
 
 
 class ToolsSettings(BaseModel):

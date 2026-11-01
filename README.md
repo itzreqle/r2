@@ -187,6 +187,12 @@ Constrained decoding on its own doesn't change accuracy here. It only constrains
 name*, and the one malformed output put a parameter in the wrong place. It stays on as a
 guarantee: the model can never name an action that doesn't exist.
 
+**Update: strict validation + a full JSON grammar.** Unknown parameters are now rejected
+instead of silently dropped, which on its own costs 5 points on dev (87.5%). The model likes
+to add stray keys. Constraining the *whole* decision to its JSON schema with llguidance wins
+that back exactly (92.5% dev, 95.8% fresh, 0% fallback) at no latency cost, so it is the
+default now. Full table: [docs/EVALUATION.md](docs/EVALUATION.md#strict-validation--decode-time-constraint-m3).
+
 ## How it works
 
 ```mermaid
@@ -233,8 +239,15 @@ Three techniques keep the output reliable:
 - **Response prefill.** Each answer is forced to start with `{"intent": "`.
 - **Intent-name token mask.** While the model writes the action name, tokens that can't lead to
   a real action are blocked.
-- **Validation.** Pydantic validates the result; anything that still fails falls back to a safe
-  heuristic, or R2 asks you to clarify.
+- **Optional full-JSON grammar** (`model.constraint = "json"`). [llguidance](https://github.com/guidance-ai/llguidance)
+  constrains the whole decision to a JSON schema generated from the Pydantic models: parameter
+  names, types, lengths, and no extra keys. Allowlisted values (like app names) are left to
+  the executor on purpose. A grammar that forces "some approved app" turns "open calculator"
+  into "open Terminal".
+- **Validation.** Pydantic validates the result *strictly*: unknown parameters are rejected,
+  not dropped. Anything that still fails falls back to a safe heuristic, or R2 asks you to
+  clarify. Both token masks fail closed: if no valid token remains, generation ends instead
+  of continuing unconstrained.
 
 The cache on disk is tagged with a content fingerprint. It covers the Hugging Face snapshot
 revision, content hashes of the weights, tokenizer, config and LoRA adapter, the chat template,
@@ -280,7 +293,8 @@ figure scripts are in [`paper/`](paper/).
 uv run python training/bench_kv.py                                    # KV cache benchmark
 uv run python training/evaluate.py --backend mlx                      # dev set
 uv run python training/evaluate.py --backend mlx --eval data/eval_fresh.jsonl
-uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain   # ablation
+uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain   # one ablation cell
+uv run python training/ablation.py                                    # few-shot x none/intent/json
 uv run python training/bench_scaling.py                               # context-length sweep
 uv run python training/bench_voice.py                                 # speech latency
 uv run python scripts/make_readme_charts.py                           # redraw the charts
@@ -306,7 +320,6 @@ Run `uv run jupyter lab` and pick the kernel *Python (narrow-ai)*. In VSCodium, 
 - Multi-turn KV reuse across a whole conversation.
 - 4- and 8-bit KV cache quantization.
 - LoRA fine-tuning compared with few-shot prompting.
-- A full JSON-schema grammar for parameters.
 - A comparison with other small models.
 
 The open items are tracked in [docs/R2_PLAN.md](docs/R2_PLAN.md).

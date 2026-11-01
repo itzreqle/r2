@@ -66,12 +66,14 @@ class ModelBackend(ABC):
         temperature: float | None = None,
         prefill: str = "",
         constrain_intents: list[str] | None = None,
+        constraint_schema: dict | None = None,
     ) -> GenerationResult:
         """Generate the assistant reply.
 
         ``prefill`` is text forced at the start of the assistant turn; the returned
         ``text`` always includes it. ``constrain_intents`` restricts the intent name
-        that follows the prefill (backends may ignore it).
+        that follows the prefill; ``constraint_schema`` (takes precedence) restricts
+        the whole JSON decision to a schema. Backends may ignore both.
         """
         raise NotImplementedError
 

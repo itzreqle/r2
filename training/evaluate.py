@@ -23,7 +23,13 @@ def main() -> int:
     parser.add_argument("--model", default=None, help="override model id")
     parser.add_argument("--adapter", type=Path, default=None)
     parser.add_argument("--cache-mode", choices=["none", "prefix", "persistent"], default=None)
-    parser.add_argument("--no-constrain", action="store_true")
+    parser.add_argument("--no-constrain", action="store_true", help="same as --constraint none")
+    parser.add_argument(
+        "--constraint",
+        choices=["none", "intent", "json"],
+        default=None,
+        help="decode-time constraint (json = full schema via llguidance)",
+    )
     parser.add_argument("--no-few-shot", action="store_true")
     parser.add_argument("--out", type=Path, default=ROOT / "artifacts" / "eval_report.json")
     parser.add_argument("--load-mlx", action="store_true", help="kept for compatibility")
@@ -38,6 +44,10 @@ def main() -> int:
     if args.cache_mode:
         settings.model.cache_mode = args.cache_mode
     settings.model.constrained = not args.no_constrain
+    if args.constraint:
+        settings.model.constraint = args.constraint
+    elif args.no_constrain:
+        settings.model.constraint = "none"
     settings.model.few_shot = not args.no_few_shot
 
     backend = create_backend(settings)

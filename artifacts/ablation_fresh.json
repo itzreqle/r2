@@ -1,0 +1,313 @@
+[
+  {
+    "few_shot": true,
+    "constraint": "none",
+    "constrained": false,
+    "intent_acc": 0.917,
+    "param_acc": 0.875,
+    "malformed": 0.042,
+    "fallback": 0.042,
+    "latency_ms": 269,
+    "ttft_ms": 74.6,
+    "decode_ms_per_token": 13.13,
+    "n": 24,
+    "misses": [
+      {
+        "id": "f04",
+        "utterance": "what files changed and by how much",
+        "expected": "git_diff_summary",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f05",
+        "utterance": "list the yaml files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.yml",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "f20",
+        "utterance": "change that thing",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": true,
+    "constraint": "intent",
+    "constrained": true,
+    "intent_acc": 0.917,
+    "param_acc": 0.875,
+    "malformed": 0.042,
+    "fallback": 0.042,
+    "latency_ms": 275,
+    "ttft_ms": 78.4,
+    "decode_ms_per_token": 13.36,
+    "n": 24,
+    "misses": [
+      {
+        "id": "f04",
+        "utterance": "what files changed and by how much",
+        "expected": "git_diff_summary",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f05",
+        "utterance": "list the yaml files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.yml",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "f20",
+        "utterance": "change that thing",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": true,
+    "constraint": "json",
+    "constrained": true,
+    "intent_acc": 0.958,
+    "param_acc": 0.917,
+    "malformed": 0.0,
+    "fallback": 0.0,
+    "latency_ms": 262,
+    "ttft_ms": 71.6,
+    "decode_ms_per_token": 13.86,
+    "n": 24,
+    "misses": [
+      {
+        "id": "f05",
+        "utterance": "list the yaml files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.yml",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "f20",
+        "utterance": "change that thing",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "none",
+    "constrained": false,
+    "intent_acc": 0.75,
+    "param_acc": 0.75,
+    "malformed": 0.167,
+    "fallback": 0.167,
+    "latency_ms": 283,
+    "ttft_ms": 73.8,
+    "decode_ms_per_token": 11.95,
+    "n": 24,
+    "misses": [
+      {
+        "id": "f02",
+        "utterance": "current branch name please",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f03",
+        "utterance": "give me a diff summary",
+        "expected": "git_diff_summary",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "f04",
+        "utterance": "what files changed and by how much",
+        "expected": "git_diff_summary",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f13",
+        "utterance": "what did I tell you my main language was",
+        "expected": "recall_preference",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f21",
+        "utterance": "tell me the news",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "f24",
+        "utterance": "what's the population of Canada",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "intent",
+    "constrained": true,
+    "intent_acc": 0.75,
+    "param_acc": 0.75,
+    "malformed": 0.167,
+    "fallback": 0.167,
+    "latency_ms": 281,
+    "ttft_ms": 74.5,
+    "decode_ms_per_token": 11.75,
+    "n": 24,
+    "misses": [
+      {
+        "id": "f02",
+        "utterance": "current branch name please",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f03",
+        "utterance": "give me a diff summary",
+        "expected": "git_diff_summary",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "f04",
+        "utterance": "what files changed and by how much",
+        "expected": "git_diff_summary",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f13",
+        "utterance": "what did I tell you my main language was",
+        "expected": "recall_preference",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "f21",
+        "utterance": "tell me the news",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "f24",
+        "utterance": "what's the population of Canada",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "json",
+    "constrained": true,
+    "intent_acc": 0.875,
+    "param_acc": 0.875,
+    "malformed": 0.0,
+    "fallback": 0.0,
+    "latency_ms": 240,
+    "ttft_ms": 65.4,
+    "decode_ms_per_token": 12.51,
+    "n": 24,
+    "misses": [
+      {
+        "id": "f13",
+        "utterance": "what did I tell you my main language was",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "what did I tell you my main language was"
+        },
+        "source": "model"
+      },
+      {
+        "id": "f21",
+        "utterance": "tell me the news",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "f24",
+        "utterance": "what's the population of Canada",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  }
+]
