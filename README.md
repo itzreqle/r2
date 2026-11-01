@@ -77,7 +77,7 @@ You need an Apple Silicon Mac with macOS 14 or later, [uv](https://docs.astral.s
 Xcode command-line tools (`xcode-select --install`).
 
 ```bash
-git clone <this-repo> narrow-ai-with-kv && cd narrow-ai-with-kv
+git clone https://github.com/itzreqle/r2.git && cd r2
 uv sync                                  # Python 3.12 environment with everything R2 needs
 uv run pytest                            # 42 tests, no downloads, no microphone
 cd macos/R2App && ./build_app.sh --open  # build R2.app and launch it
