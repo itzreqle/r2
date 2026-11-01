@@ -21,6 +21,10 @@ struct R2App: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var client = R2Client()
 
+    init() {
+        OrbSnapshot.runIfRequested()
+    }
+
     var body: some Scene {
         Window("R2", id: "main") {
             ContentView()

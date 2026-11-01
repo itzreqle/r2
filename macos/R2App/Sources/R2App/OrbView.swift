@@ -106,7 +106,10 @@ final class OrbSimulation {
 
     func draw(in ctx: inout GraphicsContext, size: CGSize, compact: Bool) {
         let c = CGPoint(x: size.width / 2, y: size.height / 2)
-        let R = min(size.width, size.height) * (compact ? 0.40 : 0.33) * scale
+        // The halo must fade to fully transparent *inside* the canvas, otherwise the
+        // canvas bounds clip it into a visible square. Size the sphere from the canvas.
+        let half = min(size.width, size.height) / 2
+        let R = half * 0.46 * scale
         let sphere = Path(ellipseIn: CGRect(x: c.x - R, y: c.y - R, width: 2 * R, height: 2 * R))
         let col = palette.map { Color(red: $0.x, green: $0.y, blue: $0.z) }
 
@@ -114,7 +117,7 @@ final class OrbSimulation {
         ctx.drawLayer { layer in
             layer.blendMode = .plusLighter
             for (i, k) in [(0, 1.9), (2, 1.45)] {
-                let r = R * k * (1 + 0.15 * energy)
+                let r = min(R * k * (1 + 0.12 * energy), half - 1)   // never touch the edge
                 layer.fill(
                     Path(ellipseIn: CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r)),
                     with: .radialGradient(
@@ -173,20 +176,21 @@ final class OrbSimulation {
             }
         }
 
-        // 5. Thinking ring — a rotating band of light on the rim.
+        // 5. Thinking ring — a band of light sweeping around the rim. The sweep comes
+        //    from the conic gradient's angle (no context rotation / blur filters,
+        //    which can leave rectangular artefacts).
         if ring > 0.01 {
             ctx.drawLayer { layer in
                 layer.blendMode = .plusLighter
-                layer.addFilter(.blur(radius: R * 0.05))
-                layer.translateBy(x: c.x, y: c.y)
-                layer.rotate(by: .radians(clock * 3.2))
                 let rr = R * 0.97
-                layer.stroke(
-                    Path(ellipseIn: CGRect(x: -rr, y: -rr, width: 2 * rr, height: 2 * rr)),
-                    with: .conicGradient(
-                        Gradient(colors: [.clear, col[0].opacity(ring), col[2].opacity(ring), .clear, .clear]),
-                        center: .zero),
-                    lineWidth: R * 0.07)
+                let rim = Path(ellipseIn: CGRect(x: c.x - rr, y: c.y - rr, width: 2 * rr, height: 2 * rr))
+                let sweep = GraphicsContext.Shading.conicGradient(
+                    Gradient(colors: [.clear, col[0].opacity(ring), col[2].opacity(ring), .clear, .clear]),
+                    center: c, angle: .radians(clock * 3.2))
+                layer.opacity = 0.35
+                layer.stroke(rim, with: sweep, lineWidth: R * 0.16)   // soft wide glow
+                layer.opacity = 1
+                layer.stroke(rim, with: sweep, lineWidth: R * 0.05)   // bright core
             }
         }
 

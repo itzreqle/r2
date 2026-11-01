@@ -17,8 +17,9 @@ struct ContentView: View {
                 Spacer(minLength: 30)
 
                 OrbView(phase: r2.phase, level: r2.level, speechTick: r2.speechTick)
-                    .frame(width: 280, height: 280)
-                    .contentShape(Circle().inset(by: 50))
+                    .frame(width: 400, height: 400)          // room for the halo to fade out
+                    .padding(.vertical, -60)
+                    .contentShape(Circle().inset(by: 110))
                     .onTapGesture { r2.toggleListening() }
                     .help(r2.phase == .listening ? "Click to stop" : "Click to talk (⌘L)")
 
@@ -216,7 +217,8 @@ struct CompactView: View {
         VStack(spacing: 12) {
             HStack(spacing: 14) {
                 OrbView(phase: r2.phase, level: r2.level, speechTick: r2.speechTick, compact: true)
-                    .frame(width: 64, height: 64)
+                    .frame(width: 96, height: 96)
+                    .padding(-14)
                     .onTapGesture { r2.toggleListening() }
                 VStack(alignment: .leading, spacing: 3) {
                     Text(r2.reply.isEmpty ? "Ask R2" : r2.reply)
