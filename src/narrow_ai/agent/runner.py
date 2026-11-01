@@ -30,7 +30,7 @@ from narrow_ai.security.audit import AuditLog
 from narrow_ai.security.confirmation import Clock, ConfirmCheck, PendingAction
 from narrow_ai.settings import Settings
 from narrow_ai.tools.executor import ToolExecutor
-from narrow_ai.tools.registry import ToolRegistry
+from narrow_ai.tools.registry import ToolRegistry, ToolState
 from narrow_ai.tools.result import ToolResult
 
 logger = logging.getLogger(__name__)
@@ -121,6 +121,8 @@ class AgentRunner:
         *,
         preferences: PreferenceStore | None = None,
         answerer: Callable[[str], str] | None = None,
+        explainer: Callable[[str], str] | None = None,
+        tool_state: ToolState | None = None,
         tools: ToolRegistry | None = None,
         store: RunStore | None = None,
         bus: EventBus | None = None,
@@ -131,6 +133,8 @@ class AgentRunner:
         self.registry = registry
         self.preferences = preferences
         self.answerer = answerer
+        self.explainer = explainer
+        self.tool_state = tool_state if tool_state is not None else ToolState()
         self.tools = tools
         self.store = store
         self.bus = bus or EventBus()
@@ -216,6 +220,8 @@ class AgentRunner:
             confirmed=confirmed,
             answerer=self.answerer,
             tools=self.tools,
+            explainer=self.explainer,
+            state=self.tool_state,
         )
 
     def _advance(self, run: Run) -> None:

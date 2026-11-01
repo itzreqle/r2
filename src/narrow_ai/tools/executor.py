@@ -22,8 +22,9 @@ from narrow_ai.tools.git_tools import GitToolError
 from narrow_ai.tools.handlers import default_tools, normalize_key
 from narrow_ai.tools.path_guard import PathEscapeError
 from narrow_ai.tools.permissions import PermissionGate
-from narrow_ai.tools.registry import ToolContext, ToolRegistry
+from narrow_ai.tools.registry import ToolContext, ToolRegistry, ToolState
 from narrow_ai.tools.result import ToolResult
+from narrow_ai.tools.test_tools import TestToolError, resolve_command
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,8 @@ class ToolExecutor:
         confirmed: bool = False,
         answerer: Callable[[str], str] | None = None,
         tools: ToolRegistry | None = None,
+        explainer: Callable[[str], str] | None = None,
+        state: ToolState | None = None,
     ) -> None:
         self.settings = settings
         self.registry = registry
@@ -57,15 +60,28 @@ class ToolExecutor:
         self.confirmed = confirmed
         # Text-only Q&A via the local model. Output is displayed/spoken, never executed.
         self.answerer = answerer
+        self.explainer = explainer
+        self.state = state
         self.tools = tools or _default_tools()
 
-    def describe(self, decision: IntentDecision) -> str:
-        """Human confirmation prompt for a privileged action."""
+    def describe(self, decision: IntentDecision, *, spoken: bool = False) -> str:
+        """Human confirmation prompt for a privileged action (``spoken``: short form
+        for TTS, without paths or flags)."""
         p = decision.parameters
         if decision.intent == IntentName.OPEN_APP:
             return f"Open {p.get('app_name')}?"
         if decision.intent == IntentName.REMEMBER_PREFERENCE:
             return f"Remember {normalize_key(str(p.get('key', '')))} = {p.get('value')}?"
+        if decision.intent == IntentName.RUN_TESTS:
+            try:
+                cid, argv = resolve_command(
+                    self.settings.tools.test_commands, str(p.get("command_id", ""))
+                )
+            except TestToolError:
+                return "Run the tests?"
+            if spoken:
+                return f"Run the {cid} tests?"
+            return f"Run the {cid} tests ({' '.join(argv)})?"
         return f"Run {decision.intent.value} with {p}?"
 
     def _context(self) -> ToolContext:
@@ -77,6 +93,8 @@ class ToolExecutor:
             max_chars=self.settings.tools.max_output_chars,
             preferences=self.preferences,
             answerer=self.answerer,
+            explainer=self.explainer,
+            state=self.state,
         )
 
     def execute(self, decision: IntentDecision) -> ToolResult:
@@ -114,10 +132,13 @@ class ToolExecutor:
                     f"{prompt} Say yes to confirm or no to cancel.",
                     needs_confirmation=True,
                     data={"decision": decision.model_dump()},
-                    speech=f"{prompt} Say yes or no.",
+                    speech=f"{self.describe(decision, spoken=True)} Say yes or no.",
                 )
 
             return spec.handler(params, ctx)
+        except TestToolError as exc:
+            return ToolResult(False, intent, f"Tests not run: {exc}",
+                              speech="I couldn't run those tests.")
         except (GitToolError, PathEscapeError, AppToolError, FileNotFoundError) as exc:
             msg = str(exc)
             speech = (

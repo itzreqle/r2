@@ -58,7 +58,14 @@ class ToolsSettings(BaseModel):
     command_timeout_sec: int = 30
     max_output_chars: int = 8000
     approved_apps: list[str] = Field(default_factory=list)
-    approved_test_commands: list[str] = Field(default_factory=list)
+    # run_tests: id -> fixed argv (no shell). Order matters: the first is the default.
+    test_commands: dict[str, list[str]] = Field(default_factory=dict)
+    test_timeout_sec: int = Field(default=300, ge=5, le=3600)
+    # After a failing run, make one extra text-only model call to explain the failure.
+    explain_test_failures: bool = True
+
+    def run_tests_enabled(self) -> bool:
+        return self.allow_run_tests and bool(self.test_commands)
 
 
 class MemorySettings(BaseModel):

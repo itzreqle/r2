@@ -38,7 +38,16 @@ allow_open_app = true
 command_timeout_sec = 30
 max_output_chars = 8000
 approved_apps = ["Terminal", "Visual Studio Code", "Cursor", "Xcode", "Safari", "Finder"]
-approved_test_commands = []
+# run_tests: off by default. It runs the *project's* code, so every run asks for
+# confirmation. The model can only pick an id below; the argv is fixed here and runs
+# without a shell (shells as argv[0] are refused). The first entry is the default.
+test_timeout_sec = 300
+explain_test_failures = true   # one extra text-only model call when a run fails
+
+[tools.test_commands]
+# unit = ["uv", "run", "python", "-m", "pytest", "-q"]
+# lint = ["uv", "run", "ruff", "check", "."]
+# swift = ["swift", "test"]
 
 [memory]
 enabled = true

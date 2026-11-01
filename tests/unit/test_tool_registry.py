@@ -13,10 +13,16 @@ from narrow_ai.tools.registry import ToolRegistry, ToolSpec
 from narrow_ai.tools.result import ToolResult
 
 
-def test_handlers_exist_for_exactly_the_implemented_intents():
-    implemented = {s.name for s in default_registry().implemented()}
-    assert default_tools().intents() == implemented
-    assert IntentName.RUN_TESTS not in default_tools().intents()
+def test_handlers_exist_for_exactly_the_implementable_intents():
+    s = Settings()
+    s.tools.allow_run_tests = True
+    s.tools.test_commands = {"unit": ["pytest"]}
+    implementable = {sp.name for sp in default_registry(s).implemented()}
+    assert default_tools().intents() == implementable
+    # By default run_tests is not offered: it has a handler but is not implemented.
+    assert IntentName.RUN_TESTS not in {sp.name for sp in default_registry().implemented()}
+    assert IntentName.RUN_TESTS not in {
+        sp.name for sp in default_registry(Settings()).implemented()}
 
 
 def test_duplicate_registration_is_an_error():
@@ -67,7 +73,7 @@ def test_intent_without_handler_fails_closed(tmp_path):
     )
     s = _settings(tmp_path)
     s.tools.allow_run_tests = True
-    res = ToolExecutor(s, registry).execute(
+    res = ToolExecutor(s, registry, tools=ToolRegistry([])).execute(
         IntentDecision(intent=IntentName.RUN_TESTS, parameters={"command_id": "unit"})
     )
     assert not res.ok and "No executor" in res.message

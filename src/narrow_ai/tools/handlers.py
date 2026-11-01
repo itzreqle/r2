@@ -14,11 +14,13 @@ from pydantic import BaseModel
 from narrow_ai.intents.schemas import (
     AnswerQuestionParams,
     ClarifyRequestParams,
+    ExplainTestOutputParams,
     IntentName,
     OpenAppParams,
     ReadFileParams,
     RecallPreferenceParams,
     RememberPreferenceParams,
+    RunTestsParams,
     SearchFilesParams,
     UnsupportedParams,
 )
@@ -27,6 +29,14 @@ from narrow_ai.tools.file_tools import display_name, read_workspace_file, search
 from narrow_ai.tools.git_tools import git_diff_stat, git_status
 from narrow_ai.tools.registry import ToolContext, ToolRegistry, ToolSpec
 from narrow_ai.tools.result import ToolResult
+from narrow_ai.tools.test_tools import (
+    TestToolError,
+    failure_excerpt,
+    heuristic_explanation,
+    resolve_command,
+    run_test_command,
+    summarize,
+)
 
 I = IntentName  # noqa: E741 - short alias for the table below
 
@@ -205,9 +215,75 @@ def unsupported_tool(params: UnsupportedParams, _: ToolContext) -> ToolResult:
     )
 
 
+# --------------------------------------------------------------------- tests
+def run_tests_precheck(params: RunTestsParams, ctx: ToolContext) -> ToolResult | None:
+    """Refuse unknown ids / bad launchers *before* asking the user to confirm."""
+    try:
+        resolve_command(ctx.settings.tools.test_commands, params.command_id)
+    except TestToolError as exc:
+        return ToolResult(False, I.RUN_TESTS, f"Tests not run: {exc}",
+                          speech="I can't run that test command.")
+    return None
+
+
+def _explain(output: str, ctx: ToolContext) -> tuple[str, str]:
+    """(explanation, source). The model sees only an excerpt, framed as data."""
+    excerpt = failure_excerpt(output)
+    if ctx.explainer is not None:
+        try:
+            text = ctx.explainer(excerpt).strip()
+        except Exception:  # noqa: BLE001 - explanation is optional
+            text = ""
+        if text:
+            return text, "model"
+    return heuristic_explanation(output), "heuristic"
+
+
+def run_tests_tool(params: RunTestsParams, ctx: ToolContext) -> ToolResult:
+    cid, argv = resolve_command(ctx.settings.tools.test_commands, params.command_id)
+    run = run_test_command(ctx.workspace, cid, argv, timeout=ctx.settings.tools.test_timeout_sec)
+    if ctx.state is not None:
+        ctx.state.last_test = run
+    speech = summarize(run)
+    data = {
+        "command_id": cid,
+        "argv": argv,
+        "exit_code": run.exit_code,
+        "timed_out": run.timed_out,
+        "duration_sec": round(run.duration_sec, 2),
+        "counts": run.counts,
+        "truncated": run.truncated,
+    }
+    tail = run.output[-ctx.max_chars:]
+    message = f"{speech}\n\n$ {' '.join(argv)}\n{tail}".rstrip()
+    if not run.passed and ctx.settings.tools.explain_test_failures:
+        explanation, source = _explain(run.output, ctx)
+        data["explanation"], data["explanation_source"] = explanation, source
+        message = f"{speech}\n\nWhy: {explanation}\n\n$ {' '.join(argv)}\n{tail}".rstrip()
+        speech = f"{speech} {explanation}"
+    # ok means "the tool ran"; a red test suite is a valid result, not a tool failure.
+    return ToolResult(True, I.RUN_TESTS, message, data=data, speech=speech[:600])
+
+
+def explain_tests_tool(params: ExplainTestOutputParams, ctx: ToolContext) -> ToolResult:
+    output = params.output.strip()
+    if not output:
+        last = ctx.state.last_test if ctx.state is not None else None
+        if last is None:
+            msg = "There's no test run to explain yet. Ask me to run the tests first."
+            return ToolResult(False, I.EXPLAIN_TEST_OUTPUT, msg, speech=msg)
+        if last.passed:
+            msg = f"Nothing to explain: {summarize(last)}"
+            return ToolResult(True, I.EXPLAIN_TEST_OUTPUT, msg, speech=msg)
+        output = last.output
+    explanation, source = _explain(output, ctx)
+    return ToolResult(True, I.EXPLAIN_TEST_OUTPUT, explanation,
+                      data={"explanation_source": source}, speech=explanation[:600])
+
+
 def default_tools() -> ToolRegistry:
-    """Handlers for every implemented intent. ``run_tests`` / ``explain_test_output``
-    have none, so even a misconfigured registry could not execute them."""
+    """Handlers for every intent that can be implemented. Whether an intent is
+    *offered* is decided by the intent registry and the permission gate."""
     return ToolRegistry(
         [
             ToolSpec(I.GENERAL_HELP, general_help),
@@ -225,5 +301,7 @@ def default_tools() -> ToolRegistry:
             ToolSpec(I.ANSWER_QUESTION, answer_tool),
             ToolSpec(I.CLARIFY_REQUEST, clarify_tool),
             ToolSpec(I.UNSUPPORTED, unsupported_tool),
+            ToolSpec(I.RUN_TESTS, run_tests_tool, precheck=run_tests_precheck),
+            ToolSpec(I.EXPLAIN_TEST_OUTPUT, explain_tests_tool),
         ]
     )

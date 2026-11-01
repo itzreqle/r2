@@ -10,7 +10,7 @@ runtime reuses unchanged.
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -23,6 +23,15 @@ if TYPE_CHECKING:
     from narrow_ai.intents.registry import IntentRegistry
     from narrow_ai.memory.preferences import PreferenceStore
     from narrow_ai.settings import Settings
+    from narrow_ai.tools.test_tools import TestRun
+
+
+@dataclass
+class ToolState:
+    """Per-session tool memory (lives with the orchestrator / agent runner)."""
+
+    last_test: TestRun | None = None
+    history: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -34,6 +43,10 @@ class ToolContext:
     max_chars: int
     preferences: PreferenceStore | None = None
     answerer: Callable[[str], str] | None = None
+    # Second, text-only model call that explains test output (untrusted input; the
+    # reply is displayed/spoken and never parsed into an action).
+    explainer: Callable[[str], str] | None = None
+    state: ToolState | None = None
 
 
 Handler = Callable[[BaseModel, ToolContext], ToolResult]

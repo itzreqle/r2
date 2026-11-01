@@ -45,7 +45,7 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] open approved app (confirmation required)
 - [x] help, clarify, unsupported (refuses out-of-domain / destructive)
 - [x] answer_question: short spoken answers to developer questions (text only, never executed)
-- [ ] run allow-listed tests, explain test output (second LLM call)
+- [x] run allow-listed tests, explain test output (second LLM call): `tools.test_commands` id → fixed argv, always confirmed, bounded, failure explained by a third cached prompt (heuristic fallback offline)
 
 ### 5. R2 app (main app)
 - [x] `r2` command: Siri-style terminal UI (orb/status, transcript, spoken replies)

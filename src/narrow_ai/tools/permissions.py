@@ -48,7 +48,7 @@ class PermissionGate:
             spec.permission in {PermissionLevel.WRITE, PermissionLevel.EXECUTE}
             and self.settings.security.require_confirmation_for_writes
         )
-        if decision.intent == IntentName.REMEMBER_PREFERENCE:
-            needs_confirm = True
+        if decision.intent in {IntentName.REMEMBER_PREFERENCE, IntentName.RUN_TESTS}:
+            needs_confirm = True  # run_tests executes the project's own code
 
         return PermissionDecision(True, "ok", needs_confirmation=needs_confirm)

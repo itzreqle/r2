@@ -134,6 +134,12 @@ def heuristic_intent(user_text: str) -> IntentDecision:
     t = raw.lower()
     if any(k in t for k in ("help", "what can you", "capabilities")):
         return IntentDecision(intent=IntentName.GENERAL_HELP, parameters={})
+    if "test" in t and re.search(r"\b(why|explain|what)\b", t) and re.search(
+        r"\b(fail|failed|failing|broke|broken|output|error)\b", t
+    ):
+        return IntentDecision(intent=IntentName.EXPLAIN_TEST_OUTPUT, parameters={})
+    if re.search(r"\b(run|rerun|re-run|execute)\b.*\b(tests?|test suite|specs?)\b", t):
+        return IntentDecision(intent=IntentName.RUN_TESTS, parameters={})
     if "diff" in t:
         return IntentDecision(intent=IntentName.GIT_DIFF_SUMMARY, parameters={})
     if "git status" in t or ("git" in t and "status" in t) or t in {"status", "git"}:

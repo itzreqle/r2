@@ -68,6 +68,7 @@ leaves your machine.
 | "open Cursor" | opens an app from your approved list | ✓ |
 | "remember my editor is Cursor" · "what's my editor?" | saves or recalls a preference | ✓ |
 | "how do I undo my last commit?" | answers in a sentence or two, never runs anything | |
+| "run the tests" · "why did the tests fail?" | runs a test command you configured, then explains a failure in a sentence or two *(off until you add `[tools.test_commands]`)* | ✓ |
 | "update it" | asks what you meant | |
 | "delete my home folder" · trivia · maths | politely declines | |
 

@@ -17,6 +17,7 @@ from narrow_ai.models.base import GenerationResult, ModelBackend
 from narrow_ai.models.output_parser import parse_model_output
 from narrow_ai.models.prompt_templates import (
     ANSWER_SYSTEM,
+    EXPLAIN_TESTS_SYSTEM,
     INTENT_PREFILL,
     build_system_prompt,
     implemented_intent_names,
@@ -25,6 +26,7 @@ from narrow_ai.security.audit import AuditLog
 from narrow_ai.security.confirmation import Clock, ConfirmCheck, PendingAction
 from narrow_ai.settings import Settings
 from narrow_ai.tools.executor import ToolExecutor
+from narrow_ai.tools.registry import ToolState
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +44,7 @@ def system_prompt_for(settings: Settings, registry: IntentRegistry) -> str:
         registry,
         approved_apps=settings.tools.approved_apps,
         few_shot=settings.model.few_shot,
+        test_command_ids=list(settings.tools.test_commands),
     )
 
 
@@ -112,7 +115,7 @@ class AssistantOrchestrator:
     ) -> None:
         self.settings = settings
         self.backend = backend
-        self.registry = registry or default_registry()
+        self.registry = registry or default_registry(settings)
         self.preferences = preferences
         if preferences is None and settings.memory.enabled:
             self.preferences = PreferenceStore(
@@ -126,6 +129,7 @@ class AssistantOrchestrator:
         self.state = AssistantState.IDLE
         self.clock = clock
         self._pending: PendingAction | None = None
+        self.tool_state = ToolState()  # e.g. the last test run, for "why did it fail?"
 
     @property
     def system_prompt(self) -> str:
@@ -147,12 +151,31 @@ class AssistantOrchestrator:
             text = text[: cut + 1] if cut > 200 else text[:700] + "…"
         return text
 
+    def explain_tests(self, excerpt: str) -> str:
+        """Second, text-only model call: explain a failing test run. The excerpt is
+        untrusted (it is the project's output); the reply is displayed and spoken,
+        never parsed into an action."""
+        if self.backend.name == "fake":
+            return ""  # caller falls back to the deterministic summary
+        gen = self.backend.generate(
+            [
+                {"role": "system", "content": EXPLAIN_TESTS_SYSTEM},
+                {"role": "user", "content": f"<output>\n{excerpt}\n</output>"},
+            ],
+            max_tokens=160,
+            temperature=0.0,
+        )
+        text = gen.text.replace("<think>", "").replace("</think>", "").strip()
+        return text.replace("**", "").replace("`", "")[:700]
+
     def warmup(self) -> None:
         """Precompute the KV prefix cache and compile the decode path (incl. the
         intent constraint's vocabulary index) so the first real request is fast."""
         self.backend.warmup(self.engine.system_prompt)
         if self.backend.name == "mlx":
             self.backend.warmup(ANSWER_SYSTEM)  # second cached prefix for Q&A
+            if self.settings.tools.run_tests_enabled():
+                self.backend.warmup(EXPLAIN_TESTS_SYSTEM)  # third: test explanations
         self.engine.decide("what can you do")  # not recorded in history
         if self.backend.name == "mlx":
             st = self.backend.cache_stats()
@@ -253,6 +276,8 @@ class AssistantOrchestrator:
             self.preferences,
             confirmed=confirmed,
             answerer=self.answer,
+            explainer=self.explain_tests,
+            state=self.tool_state,
         )
         result = executor.execute(decision)
         self.audit.record(decision.intent.value, result.ok, result.message)

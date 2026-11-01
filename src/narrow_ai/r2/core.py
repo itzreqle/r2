@@ -143,6 +143,8 @@ class R2:
                 self.orch.registry,
                 preferences=self.orch.preferences,
                 answerer=self.orch.answer,
+                explainer=self.orch.explain_tests,
+                tool_state=self.orch.tool_state,
                 store=store,
                 audit=self.orch.audit,
                 clock=lambda: self.orch.clock(),
