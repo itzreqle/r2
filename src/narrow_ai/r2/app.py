@@ -283,6 +283,9 @@ def serve(
 
     o = ctx.obj or {}
     r2 = _build(o.get("backend"), o.get("workspace"), o.get("cache_mode"))
+    with console.status("[magenta]Warming up the neural voice…[/magenta]"):
+        voice_ok = r2.warmup_tts()
+    console.print(f"[dim]neural voice: {'Kokoro ready' if voice_ok else 'unavailable (system voice)'}[/dim]")
     console.print(_banner(r2))
     console.print(f"[cyan]R2 API listening on http://{host}:{port}[/cyan]  (Ctrl+C to stop)")
     serve_forever(r2, host=host, port=port, speak=not o.get("mute"))

@@ -32,6 +32,16 @@ final class R2Client: ObservableObject {
     @Published var playSounds: Bool { didSet { defaults.set(playSounds, forKey: "playSounds") } }
     @Published var autoStartCore: Bool { didSet { defaults.set(autoStartCore, forKey: "autoStartCore") } }
     @Published var repoPath: String { didSet { defaults.set(repoPath, forKey: "repoPath") } }
+    @Published var naturalVoice: Bool { didSet { defaults.set(naturalVoice, forKey: "naturalVoice") } }
+    @Published var voiceName: String { didSet { defaults.set(voiceName, forKey: "voiceName") } }
+    @Published var speechSpeed: Double { didSet { defaults.set(speechSpeed, forKey: "speechSpeed") } }
+
+    static let voices: [(id: String, label: String)] = [
+        ("af_heart", "Heart — warm, natural"), ("af_bella", "Bella — bright, friendly"),
+        ("af_nicole", "Nicole — soft, calm"), ("af_sarah", "Sarah — clear, neutral"),
+        ("am_michael", "Michael — warm"), ("am_fenrir", "Fenrir — deep"),
+        ("bf_emma", "Emma — British"), ("bm_george", "George — British"),
+    ]
 
     let base = URL(string: "http://127.0.0.1:8765")!
     private let defaults = UserDefaults.standard
@@ -42,17 +52,25 @@ final class R2Client: ObservableObject {
     private var bootTask: Task<Void, Never>?
 
     init() {
-        defaults.register(defaults: ["speakReplies": true, "playSounds": true, "autoStartCore": true])
+        defaults.register(defaults: ["speakReplies": true, "playSounds": true, "autoStartCore": true,
+                                     "naturalVoice": true, "voiceName": "af_heart", "speechSpeed": 1.0])
         speakReplies = defaults.bool(forKey: "speakReplies")
         playSounds = defaults.bool(forKey: "playSounds")
         autoStartCore = defaults.bool(forKey: "autoStartCore")
         repoPath = defaults.string(forKey: "repoPath") ?? Self.defaultRepoPath()
+        naturalVoice = defaults.bool(forKey: "naturalVoice")
+        voiceName = defaults.string(forKey: "voiceName") ?? "af_heart"
+        speechSpeed = defaults.double(forKey: "speechSpeed")
 
         audio.onLevel = { [weak self] lvl in
             DispatchQueue.main.async { self?.level = lvl }
         }
         speaker.onStart = { [weak self] in self?.phase = .speaking }
         speaker.onWord = { [weak self] in self?.speechTick &+= 1 }
+        speaker.onLevel = { [weak self] lvl in
+            guard let self, self.phase == .speaking || lvl == 0 else { return }
+            self.level = lvl
+        }
         speaker.onFinish = { [weak self] in
             guard let self, self.phase == .speaking else { return }
             self.phase = self.awaitingConfirm ? .confirm : .idle
@@ -261,6 +279,18 @@ final class R2Client: ObservableObject {
         }
     }
 
+    // MARK: - Voice output
+
+    func say(_ text: String) {
+        speaker.speak(text, natural: naturalVoice, voice: voiceName, speed: speechSpeed, server: base)
+    }
+
+    func previewVoice() {
+        guard phase == .idle || phase == .speaking else { return }
+        phase = .speaking
+        say("Hi, I'm R2. This is how I sound.")
+    }
+
     // MARK: - Responses
 
     private func apply(_ r: [String: Any], user: String) {
@@ -288,7 +318,7 @@ final class R2Client: ObservableObject {
         awaitingConfirm = (r["needs_confirmation"] as? Bool) ?? false
         if speakReplies && !speech.isEmpty {
             phase = .speaking
-            speaker.speak(speech)
+            say(speech)
         } else {
             phase = awaitingConfirm ? .confirm : .idle
         }

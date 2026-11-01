@@ -79,8 +79,10 @@ final class OrbSimulation {
             tEnergy = 0.55 + 0.12 * sin(clock * 7); tRing = 1; tSpin = 2.6; tScale = 0.95; tGlow = 0.7
             tPalette = Palette.thinking
         case .speaking:
-            tEnergy = 0.35 + 0.9 * kick; tWave = 0.1 + 0.9 * kick; tSpin = 1.0 + kick; tScale = 0.97 + 0.07 * kick
-            tGlow = 0.6 + 0.4 * kick; tPalette = Palette.speaking
+            // Real voice loudness (neural voice) or word pulses (system voice).
+            let v = max(kick, mic * 1.15)
+            tEnergy = 0.35 + 0.9 * v; tWave = 0.1 + 1.0 * v; tSpin = 1.0 + v; tScale = 0.97 + 0.07 * v
+            tGlow = 0.6 + 0.4 * v; tPalette = Palette.speaking
         case .confirm:
             tEnergy = 0.4 + 0.1 * breathe; tSpin = 0.6; tScale = 0.96 + 0.02 * breathe; tGlow = 0.85
             tPalette = Palette.confirm

@@ -45,10 +45,11 @@ max_preferences = 100
 [speech]
 enabled = true
 stt_backend = "mlx_whisper"
-tts_backend = "macos_say"
+tts_backend = "kokoro"   # kokoro = natural neural voice (tts group) | macos_say
+neural_voice = "af_heart"
 whisper_model = "mlx-community/whisper-small-mlx"
 sample_rate = 16000
-voice = ""
+voice = ""          # macOS `say` voice (fallback)
 speak_replies = true
 chimes = true
 

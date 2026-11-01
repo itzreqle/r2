@@ -12,6 +12,8 @@ POST /reset
 POST /listen/start                      (server-side mic, push-to-talk)
 POST /listen/stop {"speak": bool}       -> transcript + response
 POST /ask_audio?speak=0  (raw audio/wav body, recorded by the client app)
+POST /tts      {"text": "...", "voice": "af_heart", "speed": 1.0} -> audio/wav (neural voice)
+GET  /voices            -> available neural voices
 """
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ MAX_AUDIO = 16 * 1024 * 1024
 
 def make_handler(r2: Any, *, speak_default: bool = True) -> type[BaseHTTPRequestHandler]:
     lock = threading.Lock()
+    tts_lock = threading.Lock()  # TTS runs beside (not behind) the LLM lock
 
     def speak_async(text: str, want: bool) -> None:
         if want:
@@ -65,6 +68,10 @@ def make_handler(r2: Any, *, speak_default: bool = True) -> type[BaseHTTPRequest
                 return self._send(200, {"ok": True})
             if self.path == "/status":
                 return self._send(200, r2.status())
+            if self.path == "/voices":
+                from narrow_ai.speech.neural_tts import VOICES
+
+                return self._send(200, {"voices": VOICES})
             return self._send(404, {"error": "not found"})
 
         def _ask_audio(self) -> None:
@@ -100,9 +107,29 @@ def make_handler(r2: Any, *, speak_default: bool = True) -> type[BaseHTTPRequest
             speak_async(resp.spoken_text(), want)
             return self._send(200, payload)
 
+        def _tts(self) -> None:
+            try:
+                body = self._body()
+                text = str(body.get("text", "")).strip()[:1500]
+                if not text:
+                    return self._send(400, {"error": "text required"})
+                with tts_lock:
+                    data = r2.tts_wav(
+                        text, voice=body.get("voice") or None, speed=float(body.get("speed", 1.0))
+                    )
+            except Exception as exc:  # noqa: BLE001
+                return self._send(503, {"error": str(exc)})
+            self.send_response(200)
+            self.send_header("Content-Type", "audio/wav")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
         def do_POST(self) -> None:  # noqa: N802
             if self.path.startswith("/ask_audio"):
                 return self._ask_audio()
+            if self.path == "/tts":
+                return self._tts()
             try:
                 body = self._body()
             except (ValueError, json.JSONDecodeError) as exc:

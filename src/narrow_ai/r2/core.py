@@ -106,14 +106,38 @@ class R2:
         from narrow_ai.speech.synthesis import synthesize_speech
 
         try:
+            neural = self.settings.speech.tts_backend in {"kokoro", "neural"}
             synthesize_speech(
                 text,
                 backend=self.settings.speech.tts_backend,
-                voice=self.settings.speech.voice or None,
+                voice=(self.settings.speech.neural_voice if neural else self.settings.speech.voice)
+                or None,
                 block=block,
             )
         except Exception as exc:  # noqa: BLE001 - TTS must never crash R2
             logger.warning("TTS failed: %s", exc)
+
+    def tts_wav(self, text: str, *, voice: str | None = None, speed: float = 1.0) -> bytes:
+        """Natural-voice WAV for clients (raises if the tts group is missing)."""
+        from narrow_ai.speech.neural_tts import shared_tts
+
+        tts = shared_tts()
+        if tts is None:
+            raise RuntimeError("Neural TTS not installed: uv sync --group tts")
+        return tts.wav_bytes(text, voice=voice or self.settings.speech.neural_voice, speed=speed)
+
+    def warmup_tts(self) -> bool:
+        from narrow_ai.speech.neural_tts import shared_tts
+
+        tts = shared_tts()
+        if tts is None:
+            return False
+        try:
+            tts.warmup()
+            return True
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("neural TTS unavailable: %s", exc)
+            return False
 
     def chime(self, kind: str) -> None:
         if self.settings.speech.chimes:

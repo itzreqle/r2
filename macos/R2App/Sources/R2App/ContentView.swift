@@ -33,6 +33,12 @@ struct ContentView: View {
 
                 if !r2.detail.isEmpty { detailCard.padding(.top, 16) }
 
+                if r2.detail.isEmpty && (r2.phase == .idle || r2.phase == .offline) {
+                    SuggestionChips()
+                        .padding(.top, 22)
+                        .transition(.opacity)
+                }
+
                 Spacer(minLength: 16)
 
                 inputBar
@@ -277,6 +283,22 @@ struct SettingsView: View {
         Form {
             Section("Voice") {
                 Toggle("Speak replies", isOn: $r2.speakReplies)
+                Toggle("Natural voice (on-device neural, Kokoro)", isOn: $r2.naturalVoice)
+                Picker("Voice", selection: $r2.voiceName) {
+                    ForEach(R2Client.voices, id: \.id) { v in Text(v.label).tag(v.id) }
+                }
+                .disabled(!r2.naturalVoice)
+                LabeledContent("Speed") {
+                    Slider(value: $r2.speechSpeed, in: 0.8...1.2, step: 0.05) {
+                        EmptyView()
+                    } minimumValueLabel: { Image(systemName: "tortoise") } maximumValueLabel: {
+                        Image(systemName: "hare")
+                    }
+                }
+                HStack {
+                    Spacer()
+                    Button("Preview Voice") { r2.previewVoice() }
+                }
                 Toggle("Play sounds", isOn: $r2.playSounds)
             }
             Section("R2 Core") {

@@ -60,10 +60,11 @@ class MemorySettings(BaseModel):
 class SpeechSettings(BaseModel):
     enabled: bool = False
     stt_backend: str = "mlx_whisper"
-    tts_backend: str = "macos_say"
+    tts_backend: str = "kokoro"  # kokoro (neural, natural) | macos_say
     whisper_model: str = "mlx-community/whisper-small-mlx"
     sample_rate: int = 16000
     voice: str = ""  # macOS `say` voice; empty = system default
+    neural_voice: str = "af_heart"  # Kokoro voice
     speak_replies: bool = True
     chimes: bool = True
 
