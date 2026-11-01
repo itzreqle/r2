@@ -11,6 +11,7 @@ POST /cancel
 POST /reset
 POST /listen/start                      (server-side mic, push-to-talk)
 POST /listen/stop {"speak": bool}       -> transcript + response
+POST /ask_audio?speak=0  (raw audio/wav body, recorded by the client app)
 """
 
 from __future__ import annotations
@@ -24,6 +25,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 MAX_BODY = 64 * 1024
+MAX_AUDIO = 16 * 1024 * 1024
 
 
 def make_handler(r2: Any, *, speak_default: bool = True) -> type[BaseHTTPRequestHandler]:
@@ -65,7 +67,42 @@ def make_handler(r2: Any, *, speak_default: bool = True) -> type[BaseHTTPRequest
                 return self._send(200, r2.status())
             return self._send(404, {"error": "not found"})
 
+        def _ask_audio(self) -> None:
+            import tempfile
+            from pathlib import Path
+            from urllib.parse import parse_qs, urlparse
+
+            n = int(self.headers.get("Content-Length") or 0)
+            if n <= 44 or n > MAX_AUDIO:
+                return self._send(400, {"error": "WAV body required (max 16 MB)"})
+            data = self.rfile.read(n)
+            if data[:4] != b"RIFF":
+                return self._send(400, {"error": "body must be a WAV file"})
+            q = parse_qs(urlparse(self.path).query)
+            want = q.get("speak", ["1" if speak_default else "0"])[0] == "1"
+            fd, name = tempfile.mkstemp(suffix=".wav", prefix="r2-client-")
+            wav = Path(name)
+            try:
+                with open(fd, "wb") as fh:
+                    fh.write(data)
+                with lock:
+                    transcript, resp = r2.ask_audio(wav)
+            except Exception as exc:  # noqa: BLE001
+                logger.exception("audio request failed")
+                return self._send(500, {"error": str(exc), "state": "error"})
+            finally:
+                wav.unlink(missing_ok=True)
+            if resp is None:
+                return self._send(200, {"transcript": "", "text": "I didn't catch that.",
+                                        "speech": "I didn't catch that.", "state": "idle"})
+            payload = resp.to_dict()
+            payload["transcript"] = transcript
+            speak_async(resp.spoken_text(), want)
+            return self._send(200, payload)
+
         def do_POST(self) -> None:  # noqa: N802
+            if self.path.startswith("/ask_audio"):
+                return self._ask_audio()
             try:
                 body = self._body()
             except (ValueError, json.JSONDecodeError) as exc:
