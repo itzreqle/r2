@@ -132,6 +132,8 @@ def heuristic_intent(user_text: str) -> IntentDecision:
             intent=IntentName.RECALL_PREFERENCE,
             parameters={"key": key[:64]},
         )
+    if t.startswith(("how do i", "how to", "what is", "what's the difference", "why ", "explain ")):
+        return IntentDecision(intent=IntentName.ANSWER_QUESTION, parameters={"question": raw[:1000]})
     if len(t.split()) < 2:
         return IntentDecision(
             intent=IntentName.CLARIFY_REQUEST,

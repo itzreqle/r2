@@ -10,6 +10,9 @@ Three modes (``model.cache_mode``):
                   (safetensors) and re-loaded on the next start, so even the first
                   request after a restart skips the system-prompt prefill.
 
+Several prefixes can be cached at once (e.g. the intent-routing prompt and the
+question-answering prompt), so alternating between them never rebuilds anything.
+
 A disk cache is only valid for the exact model, adapter, chat template, prefix
 text and mlx-lm version it was built with; a fingerprint in the file's metadata
 is checked on load and stale caches are rebuilt.
@@ -21,6 +24,7 @@ import hashlib
 import json
 import logging
 import time
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +48,7 @@ class PrefixKVCache:
         mode: str = "prefix",
         cache_dir: Path | None = None,
         base_fingerprint: dict[str, str] | None = None,
+        max_entries: int = 4,
     ) -> None:
         if mode not in CACHE_MODES:
             raise ValueError(f"cache mode must be one of {CACHE_MODES}, got {mode!r}")
@@ -54,6 +59,9 @@ class PrefixKVCache:
         self._cache: list[Any] | None = None
         self._prefix_tokens: list[int] = []
         self._prefix_text: str = ""
+        self.max_entries = max_entries
+        # prefix text -> (cache, prefix tokens); most recently used last
+        self._entries: OrderedDict[str, tuple[list[Any], list[int]]] = OrderedDict()
         self.stats = CacheStats(mode=mode)
 
     # ------------------------------------------------------------------ build
@@ -63,14 +71,30 @@ class PrefixKVCache:
             return
         if self._cache is not None and prefix_text == self._prefix_text:
             return
+        if prefix_text in self._entries:  # switch to an already-cached prefix
+            self._entries.move_to_end(prefix_text)
+            self._cache, self._prefix_tokens = self._entries[prefix_text]
+            self._prefix_text = prefix_text
+            return
         self._cache = None
         self._prefix_text = prefix_text
         self._prefix_tokens = list(prefix_tokens)
-        self.stats.prefix_tokens = len(prefix_tokens)
+        if not self._entries:  # report the primary (first) prefix
+            self.stats.prefix_tokens = len(prefix_tokens)
+        try:
+            self._load_or_build(prefix_text)
+        finally:
+            if self._cache is not None:
+                self._entries[prefix_text] = (self._cache, self._prefix_tokens)
+                while len(self._entries) > self.max_entries:
+                    self._entries.popitem(last=False)
+            self.stats.extra["entries"] = len(self._entries)
+
+    def _load_or_build(self, prefix_text: str) -> None:
         fp = fingerprint(
             **self.base_fingerprint,
             prefix_sha=hashlib.sha256(prefix_text.encode()).hexdigest(),
-            prefix_tokens=str(len(prefix_tokens)),
+            prefix_tokens=str(len(self._prefix_tokens)),
         )
         if self.mode == "persistent" and self._try_load(fp):
             return
@@ -169,6 +193,11 @@ class PrefixKVCache:
             trim_prompt_cache(cache, extra)
 
     def nbytes(self) -> int:
-        if self._cache is None:
-            return 0
-        return int(sum(c.nbytes for c in self._cache if hasattr(c, "nbytes")))
+        return int(
+            sum(
+                c.nbytes
+                for cache, _ in self._entries.values()
+                for c in cache
+                if hasattr(c, "nbytes")
+            )
+        )

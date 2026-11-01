@@ -212,7 +212,12 @@ class MlxBackend(ModelBackend):
                     ttft = (time.perf_counter() - t0) * 1000
                 last = resp
                 text += resp.text
-                if self.stop_at_json and "}" in resp.text and _json_complete(prefill + text):
+                if (
+                    self.stop_at_json
+                    and prefill.startswith("{")
+                    and "}" in resp.text
+                    and _json_complete(prefill + text)
+                ):
                     break
         finally:
             self.kv.release(cache)

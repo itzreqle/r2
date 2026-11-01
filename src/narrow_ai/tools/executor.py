@@ -5,12 +5,14 @@ from __future__ import annotations
 import difflib
 import logging
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from pydantic import ValidationError
 
 from narrow_ai.intents.registry import IntentRegistry
 from narrow_ai.intents.schemas import (
+    AnswerQuestionParams,
     IntentDecision,
     IntentName,
     OpenAppParams,
@@ -65,12 +67,15 @@ class ToolExecutor:
         preferences: PreferenceStore | None = None,
         *,
         confirmed: bool = False,
+        answerer: Callable[[str], str] | None = None,
     ) -> None:
         self.settings = settings
         self.registry = registry
         self.gate = PermissionGate(settings, registry)
         self.preferences = preferences
         self.confirmed = confirmed
+        # Text-only Q&A via the local model. Output is displayed/spoken, never executed.
+        self.answerer = answerer
 
     def describe(self, decision: IntentDecision) -> str:
         """Human confirmation prompt for a privileged action."""
@@ -119,8 +124,9 @@ class ToolExecutor:
                     intent,
                     self.registry.help_text(),
                     speech=(
-                        "I can check git status and diffs, find and read files, open apps, "
-                        "and remember your preferences."
+                        "I can check your git status and diff, find and read files, open apps, "
+                        "remember preferences, and answer developer questions. Try: "
+                        "what's my git status, find the Swift files, or how do I undo a commit."
                     ),
                 )
 
@@ -212,6 +218,16 @@ class ToolExecutor:
                     f"{key} = {value}",
                     speech=f"Your {key.replace('_', ' ')} is {value}.",
                 )
+
+            if intent == IntentName.ANSWER_QUESTION:
+                params = AnswerQuestionParams.model_validate(decision.parameters)
+                if self.answerer is None:
+                    return ToolResult(False, intent, "Question answering is unavailable.")
+                answer = self.answerer(params.question).strip()
+                if not answer:
+                    return ToolResult(False, intent, "I don't have an answer for that.",
+                                      speech="I don't have an answer for that.")
+                return ToolResult(True, intent, answer, speech=answer)
 
             if intent == IntentName.CLARIFY_REQUEST:
                 q = str(decision.parameters.get("question", "Could you clarify?"))

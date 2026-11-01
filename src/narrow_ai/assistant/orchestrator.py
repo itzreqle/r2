@@ -16,6 +16,7 @@ from narrow_ai.memory.store import ConversationStore
 from narrow_ai.models.base import GenerationResult, ModelBackend
 from narrow_ai.models.output_parser import parse_model_output
 from narrow_ai.models.prompt_templates import (
+    ANSWER_SYSTEM,
     INTENT_PREFILL,
     build_system_prompt,
     implemented_intent_names,
@@ -116,10 +117,28 @@ class AssistantOrchestrator:
     def system_prompt(self) -> str:
         return self.engine.system_prompt
 
+    def answer(self, question: str) -> str:
+        """Short spoken-style answer from the local model (no tools, no execution)."""
+        if self.backend.name == "fake":
+            return "The offline fake backend can't answer questions; start R2 with the MLX model."
+        gen = self.backend.generate(
+            [{"role": "system", "content": ANSWER_SYSTEM}, {"role": "user", "content": question}],
+            max_tokens=180,
+            temperature=0.0,
+        )
+        text = gen.text.replace("<think>", "").replace("</think>", "").strip()
+        text = text.replace("**", "").replace("`", "")
+        if len(text) > 700:  # keep it speakable; cut at a sentence boundary
+            cut = text[:700].rfind(". ")
+            text = text[: cut + 1] if cut > 200 else text[:700] + "…"
+        return text
+
     def warmup(self) -> None:
         """Precompute the KV prefix cache and compile the decode path (incl. the
         intent constraint's vocabulary index) so the first real request is fast."""
         self.backend.warmup(self.engine.system_prompt)
+        if self.backend.name == "mlx":
+            self.backend.warmup(ANSWER_SYSTEM)  # second cached prefix for Q&A
         self.engine.decide("what can you do")  # not recorded in history
         if self.backend.name == "mlx":
             st = self.backend.cache_stats()
@@ -180,6 +199,7 @@ class AssistantOrchestrator:
             self.registry,
             self.preferences,
             confirmed=confirmed,
+            answerer=self.answer,
         )
         result = executor.execute(decision)
         self.audit.record(decision.intent.value, result.ok, result.message)

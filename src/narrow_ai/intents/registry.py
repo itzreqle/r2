@@ -89,6 +89,12 @@ def default_registry() -> IntentRegistry:
             implemented=True,
         ),
         IntentSpec(
+            name=IntentName.ANSWER_QUESTION,
+            description="Answer a developer / programming question (text only, no actions)",
+            permission=PermissionLevel.NONE,
+            implemented=True,
+        ),
+        IntentSpec(
             name=IntentName.CLARIFY_REQUEST,
             description="Ask a follow-up when ambiguous",
             permission=PermissionLevel.NONE,

@@ -19,6 +19,7 @@ class IntentName(StrEnum):
     OPEN_APP = "open_app"
     REMEMBER_PREFERENCE = "remember_preference"
     RECALL_PREFERENCE = "recall_preference"
+    ANSWER_QUESTION = "answer_question"
     CLARIFY_REQUEST = "clarify_request"
     UNSUPPORTED = "unsupported"
 
@@ -86,6 +87,12 @@ class RecallPreferenceParams(BaseModel):
     key: str = Field(..., min_length=1, max_length=64)
 
 
+class AnswerQuestionParams(BaseModel):
+    model_config = {"extra": "forbid"}
+
+    question: str = Field(..., min_length=1, max_length=1000)
+
+
 class ClarifyRequestParams(BaseModel):
     model_config = {"extra": "forbid"}
 
@@ -115,6 +122,7 @@ PARAMS_BY_INTENT: dict[IntentName, type[BaseModel]] = {
     IntentName.OPEN_APP: OpenAppParams,
     IntentName.REMEMBER_PREFERENCE: RememberPreferenceParams,
     IntentName.RECALL_PREFERENCE: RecallPreferenceParams,
+    IntentName.ANSWER_QUESTION: AnswerQuestionParams,
     IntentName.CLARIFY_REQUEST: ClarifyRequestParams,
     IntentName.UNSUPPORTED: UnsupportedParams,
 }
