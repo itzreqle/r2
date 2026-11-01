@@ -96,6 +96,18 @@ class SecuritySettings(BaseModel):
     confirmation_ttl_sec: int = 120
 
 
+class AgentSettings(BaseModel):
+    """Bounded multi-step runs (docs/AGENT_RUNTIME.md)."""
+
+    enabled: bool = True
+    planner: str = "clauses"  # clauses (split + per-clause intent engine) | model (one shot)
+    max_steps: int = Field(default=5, ge=1, le=5)
+    max_wall_sec: float = 60.0  # active execution time per run (not time awaiting a person)
+    persist_runs: bool = True  # run/step *metadata* only, never tool output
+    runs_db_path: str = ""  # empty = next to the preference DB (runs.db)
+    max_runs_in_memory: int = 50
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="NARROW_AI_",
@@ -111,6 +123,7 @@ class Settings(BaseSettings):
     speech: SpeechSettings = Field(default_factory=SpeechSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     security: SecuritySettings = Field(default_factory=SecuritySettings)
+    agent: AgentSettings = Field(default_factory=AgentSettings)
 
     def workspace_path(self) -> Path:
         raw = self.workspace.path.strip() or os.getcwd()
@@ -120,6 +133,12 @@ class Settings(BaseSettings):
         if self.memory.db_path.strip():
             return Path(self.memory.db_path).expanduser().resolve()
         return Path.home() / ".local" / "share" / "narrow-ai" / "preferences.db"
+
+    def runs_db_path(self) -> Path:
+        raw = self.agent.runs_db_path.strip()
+        if raw:
+            return Path(raw).expanduser().resolve()
+        return self.db_path().with_name("runs.db")
 
     def api_token_path(self) -> Path:
         raw = self.security.api_token_path.strip()

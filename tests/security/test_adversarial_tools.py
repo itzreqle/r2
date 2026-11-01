@@ -150,7 +150,7 @@ def test_control_characters_in_filenames_cannot_fake_output(layout):
 def test_app_names_outside_allowlist_are_refused(tmp_path, name, monkeypatch):
     calls: list[str] = []
     monkeypatch.setattr(
-        "narrow_ai.tools.executor.open_approved_app",
+        "narrow_ai.tools.handlers.open_approved_app",
         lambda app, approved: calls.append(app) or f"Opened {app}",
     )
     settings = Settings()
@@ -166,7 +166,7 @@ def test_app_names_outside_allowlist_are_refused(tmp_path, name, monkeypatch):
 def test_app_name_case_and_whitespace_map_to_canonical(tmp_path, monkeypatch):
     calls: list[str] = []
     monkeypatch.setattr(
-        "narrow_ai.tools.executor.open_approved_app",
+        "narrow_ai.tools.handlers.open_approved_app",
         lambda app, approved: calls.append(app) or f"Opened {app}",
     )
     settings = Settings()

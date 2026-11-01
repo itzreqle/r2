@@ -259,3 +259,55 @@ def test_status_does_not_leak_confirmation_id(api):
     code, st = api.get("/status")
     assert st["pending"]["intent"] == "remember_preference"
     assert out["confirmation_id"] not in json.dumps(st)
+
+
+# --------------------------------------------------------------------- multi-step runs
+@pytest.fixture()
+def run_api(api, tmp_path):
+    api.r2.settings.agent.runs_db_path = str(tmp_path / "runs.db")
+    return api
+
+
+def test_run_endpoints_require_auth(run_api):
+    assert run_api.post("/run", {"text": "what can you do"}, auth=None)[0] == 401
+    assert run_api.get("/runs/abc", auth=None)[0] == 401
+    assert run_api.post("/runs/abc/confirm", {}, auth=None)[0] == 401
+
+
+def test_run_completes_and_can_be_polled(run_api):
+    code, run = run_api.post("/run", {"text": "find python files and then what can you do"})
+    assert code == 200 and run["status"] == "completed"
+    assert [s["intent"] for s in run["steps"]] == ["search_files", "general_help"]
+    assert "demo.py" in run["steps"][0]["message"]
+    code, polled = run_api.get(f"/runs/{run['id']}")
+    assert code == 200 and polled["status"] == "completed"
+    assert polled["events"][-1]["type"] == "run_finished"
+
+
+def test_run_confirmation_is_bound_to_its_id(run_api):
+    code, run = run_api.post("/run", {"text": "find python files then remember editor=Cursor"})
+    assert run["status"] == "awaiting_confirmation" and run["confirmation_id"]
+    cid = run["confirmation_id"]
+    code, polled = run_api.get(f"/runs/{run['id']}")
+    assert cid not in json.dumps(polled)  # polling never leaks the id
+    # The single-request /confirm endpoint can't approve a run's step.
+    assert run_api.post("/confirm", {"confirmation_id": cid})[1]["text"] == "Nothing to confirm."
+    code, done = run_api.post(f"/runs/{run['id']}/confirm", {"confirmation_id": cid})
+    assert done["status"] == "completed"
+    assert run_api.r2.orch.preferences.get("editor") == "Cursor"
+
+
+def test_run_wrong_id_cancels(run_api):
+    code, run = run_api.post("/run", {"text": "remember editor=Cursor"})
+    code, out = run_api.post(f"/runs/{run['id']}/confirm", {"confirmation_id": "nope"})
+    assert out["status"] == "cancelled" and run_api.r2.orch.preferences.get("editor") is None
+
+
+@pytest.mark.parametrize("path", ["/runs/does-not-exist", "/runs/../status", "/runs/a%2Fb"])
+def test_unknown_or_malformed_run_ids_are_404(run_api, path):
+    assert run_api.get(path)[0] == 404
+
+
+def test_rejected_plan_runs_nothing(run_api):
+    code, run = run_api.post("/run", {"text": "find python files then tell me a joke"})
+    assert code == 200 and run["status"] == "rejected" and run["steps"] == []

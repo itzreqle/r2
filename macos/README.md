@@ -45,6 +45,9 @@ The README screenshots were taken this way, with `screencapture -l <window id>`.
 | POST | `/cancel`, `/reset` | drop the pending action, clear history |
 | POST | `/ask_audio?confirmation_id=…` (raw WAV) | Whisper → R2 |
 | POST | `/tts` `{"text","voice","speed"}` | Kokoro speech as WAV |
+| POST | `/run` `{"text"}` | bounded multi-step run ([docs/AGENT_RUNTIME.md](../docs/AGENT_RUNTIME.md)) |
+| GET | `/runs/<id>` | poll a run: status, steps, events |
+| POST | `/runs/<id>/confirm` `{"confirmation_id"}`, `/runs/<id>/cancel` | approve or cancel its paused step |
 
 Security (see [docs/SECURITY.md](../docs/SECURITY.md#local-http-api)):
 

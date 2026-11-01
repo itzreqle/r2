@@ -48,6 +48,8 @@ class R2:
         self._recorder: Any = None
         self._lock = threading.RLock()
         self.last_transcript = ""
+        self._agent: Any = None
+        self._planner: Any = None
 
     # ----------------------------------------------------------------- info
     @property
@@ -121,6 +123,61 @@ class R2:
         if speak:
             self.speak(resp.spoken_text())
         return resp
+
+    # ----------------------------------------------------------------- multi-step runs
+    @property
+    def agent(self) -> Any:
+        """Bounded multi-step runtime (lazy; every step uses the same ToolExecutor path)."""
+        if self._agent is None:
+            from narrow_ai.agent.events import RunStore
+            from narrow_ai.agent.planner import ClausePlanner, ModelPlanner
+            from narrow_ai.agent.runner import AgentRunner
+
+            if not self.settings.agent.enabled:
+                raise PermissionError("agent runtime disabled (agent.enabled = false)")
+            store = None
+            if self.settings.agent.persist_runs:
+                store = RunStore(self.settings.runs_db_path())
+            self._agent = AgentRunner(
+                self.settings,
+                self.orch.registry,
+                preferences=self.orch.preferences,
+                answerer=self.orch.answer,
+                store=store,
+                audit=self.orch.audit,
+                clock=lambda: self.orch.clock(),
+            )
+            if self.settings.agent.planner == "model" and self.backend.name != "fake":
+                self._planner = ModelPlanner(self.settings, self.backend, self.orch.registry)
+            else:  # with the fake backend the engine is the deterministic heuristic
+                self._planner = ClausePlanner(self.orch.engine, self.settings.agent.max_steps)
+        return self._agent
+
+    def run(self, text: str) -> dict[str, Any]:
+        """Plan and start a multi-step run; includes the confirmation id if it paused."""
+        with self._lock:
+            agent = self.agent
+            run = agent.start(text, self._planner)
+            return {**run.to_dict(include_confirmation=True), "events": agent.events(run.id)}
+
+    def get_run(self, run_id: str) -> dict[str, Any] | None:
+        with self._lock:
+            run = self.agent.get(run_id)
+            if run is None:
+                return None
+            return {**run.to_dict(), "events": self.agent.events(run_id)}
+
+    def confirm_run(self, run_id: str, confirmation_id: str | None) -> dict[str, Any] | None:
+        with self._lock:
+            run = self.agent.confirm(run_id, confirmation_id)
+            if run is None:
+                return None
+            return {**run.to_dict(include_confirmation=True), "events": self.agent.events(run_id)}
+
+    def cancel_run(self, run_id: str) -> dict[str, Any] | None:
+        with self._lock:
+            run = self.agent.cancel(run_id)
+            return None if run is None else {**run.to_dict(), "events": self.agent.events(run_id)}
 
     def cancel(self) -> AssistantResponse:
         with self._lock:

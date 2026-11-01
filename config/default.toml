@@ -65,3 +65,12 @@ json = false
 require_confirmation_for_writes = true
 block_path_escape = true
 redact_secrets_in_logs = true
+
+[agent]
+# Bounded multi-step runs ("check git status and then find the swift files").
+# Every step goes through the same permission gate, validation and confirmation.
+enabled = true
+planner = "clauses"   # clauses (split on "and then"/"then"/";", route each clause) | model
+max_steps = 5
+max_wall_sec = 60
+persist_runs = true   # metadata only (intents, status), never tool output

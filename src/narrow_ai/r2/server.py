@@ -27,6 +27,10 @@ POST /listen/stop {"speak": bool, "confirmation_id": "..."} -> transcript + resp
 POST /ask_audio?speak=0&confirmation_id=...  (raw audio/wav body recorded by the client)
 POST /tts      {"text": "...", "voice": "af_heart", "speed": 1.0} -> audio/wav (neural voice)
 GET  /voices            -> available neural voices
+POST /run      {"text": "..."}          -> bounded multi-step run (docs/AGENT_RUNTIME.md)
+GET  /runs/<id>                         -> run status, steps, events
+POST /runs/<id>/confirm {"confirmation_id": "..."}
+POST /runs/<id>/cancel
 """
 
 from __future__ import annotations
@@ -34,6 +38,7 @@ from __future__ import annotations
 import ipaddress
 import json
 import logging
+import re
 import signal
 import socket
 import threading
@@ -49,6 +54,7 @@ logger = logging.getLogger(__name__)
 MAX_BODY = 64 * 1024
 MAX_AUDIO = 16 * 1024 * 1024
 PUBLIC_PATHS = {"/health"}
+RUN_PATH = re.compile(r"^/runs/([A-Za-z0-9_-]{1,32})(?:/(confirm|cancel))?$")
 WAV_TYPES = {"audio/wav", "audio/x-wav", "audio/wave"}
 BROWSER_SITES = {"cross-site", "same-site"}
 
@@ -171,7 +177,23 @@ def make_handler(
                 from narrow_ai.speech.neural_tts import VOICES
 
                 return self._send(200, {"voices": VOICES})
+            m = RUN_PATH.match(self.route)
+            if m and m.group(2) is None:
+                return self._run_call(lambda: r2.get_run(m.group(1)))
             return self._send(404, {"error": "not found"})
+
+        def _run_call(self, fn: Any) -> None:
+            try:
+                with lock:
+                    out = fn()
+            except PermissionError as exc:
+                return self._send(403, {"error": str(exc)})
+            except Exception as exc:  # noqa: BLE001
+                logger.exception("run request failed")
+                return self._send(500, {"error": str(exc)})
+            if out is None:
+                return self._send(404, {"error": "no such run"})
+            return self._send(200, out)
 
         def _ask_audio(self) -> None:
             import tempfile
@@ -243,6 +265,16 @@ def make_handler(
                 return self._send(400, {"error": str(exc)})
             want_speech = bool(body.get("speak", speak_default))
             cid = self._cid(body.get("confirmation_id"))
+            if route == "/run":
+                text = str(body.get("text", "")).strip()[:2000]
+                if not text:
+                    return self._send(400, {"error": "text required"})
+                return self._run_call(lambda: r2.run(text))
+            m = RUN_PATH.match(route)
+            if m and m.group(2) == "confirm":
+                return self._run_call(lambda: r2.confirm_run(m.group(1), cid))
+            if m and m.group(2) == "cancel":
+                return self._run_call(lambda: r2.cancel_run(m.group(1)))
             try:
                 with lock:
                     if route == "/ask":

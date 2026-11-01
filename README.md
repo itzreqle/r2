@@ -322,6 +322,11 @@ Run `uv run jupyter lab` and pick the kernel *Python (narrow-ai)*. In VSCodium, 
 - LoRA fine-tuning compared with few-shot prompting.
 - A comparison with other small models.
 
+Multi-step requests ("check git status and then find the Swift files") go through a bounded
+runtime. Each step is an ordinary intent that passes the same permission gate and
+confirmation, so no new way to execute anything is added. See
+[docs/AGENT_RUNTIME.md](docs/AGENT_RUNTIME.md).
+
 The open items are tracked in [docs/R2_PLAN.md](docs/R2_PLAN.md).
 
 **Limitations:**

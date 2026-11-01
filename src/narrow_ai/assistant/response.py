@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from narrow_ai.intents.schemas import IntentDecision
-from narrow_ai.tools.executor import ToolResult
+from narrow_ai.tools.result import ToolResult
 
 
 @dataclass

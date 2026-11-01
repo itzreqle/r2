@@ -81,4 +81,6 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] M1 file tools: `O_NOFOLLOW` + fd real-path check (TOCTOU), no symlinked-dir search, filename sanitising; adversarial tests in `tests/security/`
 - [x] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
 - [x] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance), default `constraint = "json"` after a 3×2 ablation
-- [ ] M4 agent runtime foundation: tool registry, bounded plan → gate → execute loop
+- [x] M4 agent runtime foundation: tool registry (+ prechecks before confirmation), bounded plan → gate → execute loop, `/run` API, metadata-only run store ([AGENT_RUNTIME.md](AGENT_RUNTIME.md))
+- [ ] SwiftUI view for multi-step runs
+- [ ] Larger multi-step evaluation set (planner accuracy is anecdotal: 6 requests)

@@ -16,6 +16,9 @@
 | Replayed or swapped confirmation | Single-use, 120 s `confirmation_id` bound to a digest of the exact decision; wrong/missing id cancels |
 | Symlink escape / check-then-open race | `O_NOFOLLOW` open + re-check of the opened fd's real path; search never follows symlinked dirs |
 | Fake output lines via crafted filenames | Control characters in listed names are replaced |
+| Multi-step run bypassing checks | Every step goes through the same `ToolExecutor` path; plans validated all-or-nothing; stop on first failure; ≤5 steps + time budget |
+| Prompt injection steering later steps | Plans are made once, before any tool runs; tool output is never fed back into planning |
+| Asking to confirm something that will be refused | Tool prechecks (e.g. app allowlist) run before the confirmation prompt |
 
 ## Fail closed
 
@@ -26,6 +29,11 @@ If JSON parse, permission check, or path validation fails → do not execute.
 - Preferences: local SQLite only, with explicit remember confirmation.
 - Audio: temp WAV for transcription; not retained by default.
 - Conversation: in-process bounded history only unless you add persistence later.
+- Multi-step runs (`agent.persist_runs`, default on): `runs.db` next to the preference DB
+  keeps the request text, run/step status, step intents and parameters, and each step's
+  short spoken summary. Tool output (file contents, diffs, full answers) is never written to
+  disk. It exists only in memory and in the API response. Set `agent.persist_runs = false`
+  to keep nothing.
 
 ## Local HTTP API
 
