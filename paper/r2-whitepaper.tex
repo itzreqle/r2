@@ -67,7 +67,7 @@ Prefix KV Caching and Constrained Intent Decoding}
   Full-stack engineering & Research and machine learning
   \end{tabular}\\[0.5em]
   Department of Computer Engineering, Islamic Azad University, North Tehran Branch, Tehran, Iran\\[0.2em]
-  \small Whitepaper, November 2026 \quad$\cdot$\quad Code: \texttt{narrow-ai-with-kv} (MIT License)
+  \small Whitepaper, November 2026 (revision 2) \quad$\cdot$\quad Code: \texttt{narrow-ai-with-kv} (MIT License)
 }
 \date{}
 
@@ -80,8 +80,8 @@ General-purpose assistants pay for their generality with large models, cloud rou
 control over what they execute. We study the opposite design point: a \emph{narrow} assistant that
 maps spoken or typed developer requests to one of eleven validated actions and runs entirely on a
 laptop. R2 combines a 4-bit Qwen3-1.7B model on Apple MLX, a \emph{persistent prefix key--value
-(KV) cache} for its fixed 1{,}118-token instruction prompt, response prefill with intent-name
-constrained decoding, and a fail-closed execution layer in which model output is never
+(KV) cache} for its fixed 1{,}118-token instruction prompt, decoding constrained to the JSON schema
+of a decision, and a fail-closed execution layer in which model output is never
 authorization. We derive the exactness of prefix reuse for causal decoders, closed-form KV memory
 and a roofline-style cost model, and verify them on an Apple M4. Prefix caching reduces end-to-end
 time to first token (TTFT) from 1{,}460\,ms to 71\,ms (20.5$\times$) with greedy outputs identical
@@ -89,8 +89,9 @@ in 20/20 requests; loading the cache from disk costs 89\,ms instead of a 1.5\,s 
 context-length sweep shows the forward-pass speed-up growing from 4.4$\times$ at 128 tokens to
 77.9$\times$ at 4{,}096 tokens, matching a fitted cost model ($R^2=0.993$). On a fresh test set
 written before any prompt tuning, R2 selects the correct intent for 95.8\% of requests (95\% CI
-79.8--99.3) with 0\% malformed output; an ablation shows few-shot examples, not constrained
-decoding, drive accuracy. With Whisper and Kokoro on device, the full voice loop answers in well
+79.8--99.3) with 0\% malformed output. An ablation shows that few-shot examples drive accuracy;
+constraining only the intent name changes nothing, while a schema grammar recovers the 4--5
+points that strict parameter validation would otherwise cost. With Whisper and Kokoro on device, the full voice loop answers in well
 under a second. We release the system, a SwiftUI client, benchmarks and notebooks.
 \end{abstract}
 
@@ -127,8 +128,9 @@ assistant is ready in tens of milliseconds.
 \item A formal treatment of prefix KV reuse: an exactness proposition for causal decoders, KV memory
   under grouped-query attention, and a cost model that predicts the speed-up bound
   (\cref{sec:theory}).
-\item A persistent, fingerprinted prefix cache for MLX and an intent-name constrained decoder with a
-  soundness guarantee (\cref{sec:impl}).
+\item A persistent prefix cache for MLX whose reuse is keyed on the \emph{content} of the weights,
+  tokenizer and adapter and validated layer by layer, and constrained decoders for the intent name
+  and for the full decision schema, both failing closed (\cref{sec:impl}).
 \item Measurements on an Apple M4: end-to-end cache modes, a context-length sweep, memory, decode,
   disk I/O, accuracy with confidence intervals, an ablation, error analysis and voice latency
   (\cref{sec:results}).
@@ -166,7 +168,8 @@ loaded from storage or the network. llama.cpp~\cite{gerganov2023llamacpp} can sa
 prompt state to files, and commercial APIs now expose prompt caching with time-limited server-side
 caches~\cite{anthropic2024promptcaching}. R2 occupies a simple point in this space: a
 \emph{single, fixed} prefix on a \emph{single-user} device, kept in RAM and on disk, with a
-fingerprint that makes stale reuse impossible.
+content-derived fingerprint and a per-layer shape check that turn any stale or damaged file into a
+rebuild rather than a wrong answer.
 
 \paragraph{Shrinking or evicting the cache.}
 For long contexts the cache itself becomes the bottleneck. StreamingLLM~\cite{xiao2024streamingllm}
@@ -180,9 +183,9 @@ Constrained decoding masks tokens that would violate a grammar. Outlines~\cite{w
 compiles regular expressions and JSON schemas into finite-state machines over the vocabulary;
 grammar-constrained decoding~\cite{geng2023grammar} applies context-free grammars to structured NLP
 tasks; XGrammar~\cite{dong2025xgrammar} makes context-free constraints fast enough for serving; and
-LMQL~\cite{beurer2023lmql} treats prompting as constrained programming. R2 uses the lightest form
-that gives a useful guarantee: it constrains only the intent name and validates parameters
-afterwards (\cref{sec:constrained}).
+LMQL~\cite{beurer2023lmql} treats prompting as constrained programming. R2 first used the lightest
+form, a mask over the intent name only; it now compiles the whole decision schema to a grammar with
+llguidance~\cite{llguidance2025} and still validates the result afterwards (\cref{sec:constrained}).
 
 \paragraph{Tool use and assistants.}
 Toolformer~\cite{schick2023toolformer}, ReAct~\cite{yao2023react} and
@@ -217,7 +220,7 @@ CacheBlend~\cite{yao2025cacheblend} & any chunk + recompute & GPU/storage & \che
 CacheGen~\cite{liu2024cachegen} & compressed KV stream & network/disk & \checkmark \\
 llama.cpp~\cite{gerganov2023llamacpp} & whole prompt state & file & \checkmark \\
 Provider APIs~\cite{anthropic2024promptcaching} & marked prefixes & server, TTL & -- \\
-\textbf{R2 (ours)} & \textbf{fixed prefix, LRU of 4} & \textbf{RAM + disk} & \checkmark \\
+\textbf{R2 (ours)} & \textbf{fixed prefix, LRU} & \textbf{RAM (4) + disk (8)} & \checkmark \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -243,8 +246,9 @@ We optimise three objectives in priority order:
   intent name is fully determined within the first few generated tokens.
 \end{enumerate}
 
-The language model $p_\phi$ defines $d$ through its output string $y$; R2 forces $y$ to begin with
-the prefill $\pi=$\,\texttt{\{"intent": "} and restricts the intent name to $\mathcal{I}$.
+The language model $p_\phi$ defines $d$ through its output string $y$. R2 restricts $y$ either to
+start with the prefill $\pi=$\,\texttt{\{"intent": "} followed by a name in $\mathcal{I}$
+(\emph{intent} mode) or, by default, to the language of the decision schema (\emph{json} mode).
 
 % ================================================================ 4 Theory
 \section{Theoretical Analysis}\label{sec:theory}
@@ -396,13 +400,41 @@ With greedy decoding, the choice becomes $\arg\max_{v\in A}z_v$, so masking can 
 output when the unconstrained argmax would have left $\mathcal{I}$. The mask is computed once per
 distinct prefix and memoised; candidate tokens are pre-filtered to those whose characters all occur
 in some target, so each step costs $O(|\mathcal{V}'|)$ with $|\mathcal{V}'|\ll|\mathcal{V}|$.
+If $A(y_{<t})=\emptyset$ the precondition fails, so the decoder then allows only end-of-sequence
+tokens: the output fails to parse and takes the closed path of \cref{sec:safety}, instead of
+continuing unconstrained.
+
+\paragraph{Schema-constrained decisions.}
+The intent mask says nothing about the parameters, which is where every malformed output in our
+evaluation occurred (\cref{sec:ablation}). In \emph{json} mode the target language is
+$\mathcal{L}(G)$ for the grammar $G$ compiled from the decision schema
+\begin{equation}
+S=\textstyle\bigvee_{i\in\mathcal{I}_{\text{impl}}}\big(\texttt{intent}=i\;\wedge\;\texttt{parameters}\in\Theta_i\big),
+\end{equation}
+an \texttt{anyOf} over implemented intents in which every object has
+\texttt{additionalProperties:\,false}. A matcher tracks the generated \emph{bytes} and, at each step,
+yields the set $A_G(y_{<t})$ of tokens that keep $y$ a prefix of some string in $\mathcal{L}(G)$.
+The matcher first consumes the prefill $\pi$; because matching is byte-level, any tokenisation
+of $\pi$ is accepted.
+\begin{proposition}[Schema soundness]
+If $A_G(y_{<t})\neq\emptyset$ at every step and generation ends when the matcher accepts, then
+$y\in\mathcal{L}(G)$; in particular $y$ names an implemented intent and contains no parameter
+outside $\Theta_i$.
+\end{proposition}
+\noindent The argument is the one above with $\mathcal{W}$ replaced by $\mathcal{L}(G)$; an empty
+set or a matcher error again leaves only end-of-sequence. $S$ deliberately constrains
+\emph{structure}, not allow-listed \emph{values}: an earlier version made \texttt{app\_name} an
+enum of approved apps, and ``open calculator'' was decoded as \texttt{Terminal}, the closest legal
+string. A grammar always picks \emph{some} legal value, so values that policy must refuse stay
+unconstrained and are rejected by the permission gate instead.
 
 % ================================================================ 5 Architecture
 \section{System Architecture}\label{sec:arch}
 
 \Cref{fig:arch} shows R2's components. A Python core holds all intelligence and policy; clients
 are thin. The core is reachable in-process (terminal app, notebooks) or over a local HTTP API bound
-to \texttt{127.0.0.1:8765} (SwiftUI app).
+to \texttt{127.0.0.1:8765} (SwiftUI app). The API refuses non-loopback binds and requires a bearer
+token on every route except \texttt{/health} (\cref{sec:api}).
 
 \begin{figure*}[t]
 \centering
@@ -421,16 +453,16 @@ to \texttt{127.0.0.1:8765} (SwiftUI app).
   \node[io, below=3mm of cli] (nb) {Jupyter notebooks};
   % speech
   \node[model, right=10mm of cli] (stt) {Whisper small\\(MLX) STT};
-  \node[io, above=3mm of stt] (http) {HTTP API\\127.0.0.1:8765};
+  \node[io, above=3mm of stt] (http) {HTTP API, 127.0.0.1\\bearer token, Host check};
   % engine
-  \node[box, right=8mm of stt] (orch) {Orchestrator\\history, pending\\confirmation};
+  \node[box, right=8mm of stt] (orch) {Orchestrator\\history, pending\\action (id, TTL)};
   \node[model, right=8mm of orch] (engine) {Intent engine\\prompt $=$ prefix $\Vert$ history $\Vert$ $u$ $\Vert$ $\pi$};
   \node[model, above=4mm of engine] (kv) {Prefix KV cache\\RAM (LRU 4) + disk};
-  \node[model, below=4mm of engine] (llm) {Qwen3-1.7B 4-bit\\+ intent-name mask};
+  \node[model, below=4mm of engine] (llm) {Qwen3-1.7B 4-bit\\+ JSON-schema grammar};
   % policy
-  \node[guard, right=8mm of engine] (val) {Validate\\Pydantic, normalise};
+  \node[guard, right=8mm of engine] (val) {Validate\\strict Pydantic};
   \node[guard, right=6mm of val] (gate) {Permission gate\\allowlists, path guard};
-  \node[guard, below=4mm of gate] (conf) {User confirms?\\(privileged only)};
+  \node[guard, below=4mm of gate] (conf) {User confirms?\\(privileged, by id)};
   \node[box, above=4mm of gate] (tools) {Tools: git, files,\\apps, prefs, answer};
   \node[model, above=4mm of val] (tts) {Kokoro-82M\\TTS};
   % arrows
@@ -474,19 +506,25 @@ prompt short and stable.
 \small
 \begin{algorithmic}[1]
 \Require utterance $u$ (typed, or Whisper transcript), history $h$
-\If{a confirmation is pending}
-  \State \textbf{if} $u\in\textsc{Yes}$ \textbf{then} execute pending action; \textbf{else} drop it
-  \State \Return reply
+\Require confirmation id $c$ (empty unless the client is answering a prompt)
+\If{a pending action $P$ exists}
+  \If{$u\in\textsc{Yes}$} \State $P\gets$ \textsc{Take}$(P)$ \Comment{single use}
+    \State \textbf{if} $P.\textsc{Check}(c)$ \textbf{then} \Return \textsc{Execute}$(P.d)$ via the gate
+    \State \textbf{else} \Return ``Cancelled.'' \Comment{missing, wrong, expired, altered}
+  \ElsIf{$u\in\textsc{No}$} \State drop $P$; \Return ``Cancelled.''
+  \Else\ drop $P$ and handle $u$ as a new request
+  \EndIf
 \EndIf
 \State $x \gets \mathrm{tokens}(\text{prefix}\,\Vert\,h\,\Vert\,u\,\Vert\,\pi)$
 \State $(C, x_{\text{new}}) \gets \textsc{KV.acquire}(x)$ \Comment{reuse cached prefix}
-\State $y \gets \textsc{Generate}(x_{\text{new}}, C, \text{mask}=A(\cdot), \text{greedy})$
+\State $y \gets \textsc{Generate}(x_{\text{new}}, C, \text{mask}=A_G(\cdot), \text{greedy})$
 \State \textsc{KV.release}$(C)$ \Comment{trim back to the prefix}
-\State $d \gets \textsc{ParseJSON}(\pi\Vert y)$; $d\gets\textsc{Normalise}(d)$
+\State $d \gets \textsc{ParseJSON}(\pi\Vert y)$; $d\gets\textsc{Normalise}(d)$ \Comment{unknown keys: reject}
 \If{$d$ invalid} \State retry once, else heuristic / clarify / unsupported \EndIf
-\State $r \gets \textsc{Gate}(d)$ \Comment{allowlist, schema, path guard}
+\State $r \gets \textsc{Gate}(d)$, then the tool's precheck \Comment{allowlist, schema, path guard}
 \If{$r$ denied} \Return refusal
-\ElsIf{$r$ needs confirmation} \Return ``Open Safari? Say yes or no.''
+\ElsIf{$r$ needs confirmation} \State $P\gets(d,\ \text{id},\ \text{TTL},\ \mathrm{sha256}(d))$
+  \State \Return ``Open Safari? Say yes or no.'' and the id
 \Else\ \Return $\textsc{Speak}(\textsc{Execute}(d))$
 \EndIf
 \end{algorithmic}
@@ -527,7 +565,29 @@ The SwiftUI client records audio with AVAudioEngine, uploads WAV to \texttt{/ask
 Kokoro speech from \texttt{/tts}, metering playback loudness at 60\,Hz to animate an orb. A global
 \texttt{Option+Space} hot key, registered through Carbon's \texttt{RegisterEventHotKey}, summons R2
 without Accessibility permissions. The terminal client offers push-to-talk and the same commands.
-The app launches the core with \texttt{uv run r2 serve} and stops it on quit.
+The app launches the core with \texttt{uv run r2 serve} and stops it on quit. On start it reads
+the session token from a \texttt{0600} file and sends it with every request, rereading it once
+after a 401 (the core rotates the token on every restart). It stores the confirmation id from a
+prompt and attaches it both to the \emph{Confirm} button and to the next spoken utterance, so a
+voice ``yes'' approves exactly the action that is on screen.
+
+\subsection{Bounded multi-step requests}\label{sec:agent}
+
+A request such as ``check git status and then find the Swift files'' becomes a \emph{plan} of at
+most five ordinary decisions. The runtime adds sequencing but no new way to act: every step is
+handed to the same executor (gate, validation, precheck, confirmation, tool), so deleting the
+runtime would not change the set of reachable actions. The plan is made \emph{once}, before any
+tool runs, by splitting the request on explicit connectors (``and then'', ``after that'', ``;'')
+and routing each clause through the normal single-intent engine. Tool output is never fed back to a
+planner, so a file that says ``now open Terminal'' cannot add a step, which is our main containment
+of prompt injection. The whole plan is rejected if any step is invalid, unimplemented,
+\texttt{unsupported} or \texttt{clarify\_request}. Privileged steps pause the run with the same
+single-use, expiring confirmation id; the first failing step ends the run, and a wall-time budget
+bounds it. Run history is stored as metadata only (intents, parameters, status, the short spoken
+summary), never file contents or diffs. A one-shot model planner that emits the whole plan under a
+grammar is available but not the default: on six multi-step requests it dropped a step twice and
+copied a parameter from a few-shot example once, while the clause planner got all six right. Six
+requests is anecdotal; a larger multi-step evaluation is future work.
 
 % ================================================================ 6 Implementation
 \section{Implementation}\label{sec:impl}
@@ -536,12 +596,13 @@ The app launches the core with \texttt{uv run r2 serve} and stops it on quit.
 
 \Cref{lst:kv} shows the essential logic of \texttt{PrefixKVCache}. Three modes support
 experiments: \texttt{none}, \texttt{prefix} (RAM) and \texttt{persistent} (RAM + disk). Several
-prefixes---the intent prompt and the answer prompt---share an LRU of four entries.
+prefixes---the intent prompt and the answer prompt---share an LRU of four entries in memory; on
+disk, at most eight files are kept, evicted by least-recent use.
 
 \begin{lstlisting}[caption={Acquire, release and fingerprinted persistence (abridged from \texttt{models/kv\_cache.py}).},label={lst:kv},float=t]
-def fingerprint(**parts):  # model, adapter, template, mlx_lm, prefix
-    h = sha256(json.dumps(parts, sort_keys=True).encode())
-    return {**parts, "fingerprint": h.hexdigest()[:20]}
+def fingerprint(**parts):  # revision, weights/tokenizer/config/adapter
+    h = sha256(json.dumps(parts, sort_keys=True).encode())  # shas, template,
+    return {**parts, "fingerprint": h.hexdigest()[:20]}     # mlx versions, prefix
 
 def acquire(self, full_tokens):
     n = len(self._prefix_tokens)
@@ -560,13 +621,27 @@ def _try_load(self, fp):
     mx.eval([c.state for c in cache])        # loads are lazy
     if meta.get("fingerprint") != fp["fingerprint"]:
         return False                          # stale: rebuild
-    return cache[0].offset == len(self._prefix_tokens)
+    return validate_layers(cache, self._layer_classes,
+                           len(self._prefix_tokens)) is None
+
+def _save(self, fp):                          # atomic, then evict LRU
+    save_prompt_cache(tmp, self._cache, metadata=fp)
+    os.replace(tmp, path)
 \end{lstlisting}
 
-The fingerprint hashes the model id, adapter, a hash of the chat template, the mlx-lm version and a
-hash of the prefix text. Because \cref{cor:exact} requires an identical prefix at identical
-positions, any change to any of these invalidates the file and triggers a rebuild, which is what
-makes persistence safe. The load is followed by \texttt{mx.eval} because MLX loads arrays lazily;
+Because \cref{cor:exact} requires an identical prefix at identical positions \emph{under identical
+weights}, the fingerprint is derived from content rather than names. In the Hugging Face cache,
+snapshot files are symbolic links to blobs named by the hash of their content (SHA-256 for weight
+files)~\cite{hfcache2025}, so reading the link targets gives the identity of the weights, tokenizer
+and configuration at no I/O cost. Files in a plain directory are hashed with SHA-256 up to 64\,MiB
+and identified by size and modification time above that, which is weaker and documented as such.
+The fingerprint also covers the snapshot revision, the adapter files, a hash of the chat template,
+the mlx and mlx-lm versions and a hash of the prefix text; any change invalidates the file and
+triggers a rebuild, which is what makes persistence safe. A matching fingerprint is not trusted on
+its own: \texttt{validate\_layers} checks the number of layers and each layer's cache class
+against the loaded model, and that \emph{every} layer's offset and key length equal the prefix
+length. A truncated or mismatched file is therefore rebuilt rather than used. Files are written to
+a temporary name and renamed into place, so a crash cannot leave a torn cache. The load is followed by \texttt{mx.eval} because MLX loads arrays lazily;
 without it, load times would be under-reported. The token-level check in \texttt{acquire} also
 guards against tokeniser merges across the prefix boundary: if the rendered prompt does not start
 with exactly the cached tokens, R2 falls back to a full prefill.
@@ -593,23 +668,40 @@ def __call__(self, tokens, logits):
     if any(text.startswith(t) for t in self.targets):
         self.done = True                  # name complete
         return logits
+    allowed = self.allowed_ids(text)
+    if not allowed:                       # fail closed
+        return eos_only(logits, self.eos)
     mask = np.full(logits.shape[-1], -np.inf, np.float32)
-    mask[self.allowed_ids(text)] = 0.0
+    mask[allowed] = 0.0
     return logits + mx.array(mask)
 \end{lstlisting}
+
+\paragraph{Schema grammar.}
+In json mode (the default) the decision schema of \cref{sec:constrained} is generated from the
+Pydantic parameter models of the implemented intents and compiled by
+llguidance~\cite{llguidance2025} with the separators used in the few-shot examples
+(\texttt{", "} and \texttt{": "}) and no free whitespace, so the grammar and the prompt agree on
+one canonical form. The compiled matcher is cached per tokenizer and schema and copied for each
+request. Per step the processor feeds new tokens to the matcher, fills a token bitmask on the CPU
+and applies it to the logits with a Metal kernel; a rejected token, a matcher error or an empty
+mask leaves only end-of-sequence. If json mode is configured but llguidance is missing, R2 refuses
+to start rather than silently falling back to a weaker mode.
 
 \subsection{Validation, normalisation and safety}\label{sec:safety}
 
 Model output passes four deterministic stages before anything executes.
 \begin{enumerate}
 \item \textbf{Parsing:} the first complete JSON object is extracted with a non-greedy decoder.
-\item \textbf{Normalisation:} unknown parameter keys are dropped and search terms are mapped to
-  globs, e.g.\ \texttt{swift}, \texttt{*swift*} or ``swift files'' $\to$ \texttt{*.swift}, while
-  \texttt{config} $\to$ \texttt{*config*}.
+\item \textbf{Normalisation:} unknown parameter keys are \emph{rejected}, which sends the request
+  to the retry and fallback path (an earlier version silently dropped them), and search terms are
+  mapped to globs, e.g.\ \texttt{swift}, \texttt{*swift*} or ``swift files'' $\to$
+  \texttt{*.swift}, while \texttt{config} $\to$ \texttt{*config*}.
 \item \textbf{Validation:} a Pydantic model per intent rejects missing or extra fields and
   over-long values.
 \item \textbf{Authorisation:} the permission gate checks the intent is implemented and enabled,
-  apps are on the allowlist, and paths resolve inside the workspace.
+  apps are on the allowlist, and paths resolve inside the workspace. A tool-specific precheck
+  (for example the app allowlist) runs \emph{before} any confirmation is requested, so the user is
+  never asked to approve an action that would be refused anyway.
 \end{enumerate}
 Formally, a decision $d$ executes only when
 \begin{multline}
@@ -617,16 +709,45 @@ Formally, a decision $d$ executes only when
 \wedge\big(\neg\mathrm{Priv}(d)\vee\mathrm{Confirm}_{\text{user}}(d)\big),
 \end{multline}
 where $\mathrm{Confirm}_{\text{user}}$ can only come from a later user turn, never from model text.
+It is also bound to the prompt the user saw: a pending action carries a random single-use id, a
+time-to-live (120\,s) and a SHA-256 digest of the decision, and a ``yes'' approves it only if the id
+matches, the action has not expired and the digest is unchanged. Any other attempt cancels the
+action, and execution re-runs the gate. In-process clients (terminal, notebooks) show the prompt
+in the same process and do not need the id.
 Every failure path is closed: a parse error triggers one retry and then a heuristic classifier
 whose outputs are themselves validated; reading files refuses secrets (\texttt{.env*},
 \texttt{*.pem}, \texttt{*.key}, \texttt{.netrc}); and \texttt{answer\_question} produces text that
 is displayed and spoken but never executed. There is no shell tool.
 
+\paragraph{File tools.}
+Path checks on names alone are vulnerable to symbolic links and to a change between check and use.
+\texttt{read\_file} opens with \texttt{O\_NOFOLLOW}, refuses anything that is not a regular file
+(so a FIFO cannot block it), and re-checks the real path of the \emph{opened descriptor}
+(\texttt{F\_GETPATH} on macOS) against the workspace and the secret-file rules before reading.
+\texttt{search\_files} walks the tree without following directory links, skips links that leave
+the workspace, and replaces control characters in file names so a crafted name cannot spoof the
+spoken or displayed output. Adversarial tests cover links to outside files, a link named
+\texttt{notes.txt} that points at \texttt{.env}, both race orders, FIFOs and spoofed names.
+
+\paragraph{Local HTTP API.}\label{sec:api}
+A loopback-only server is still reachable by any web page the user visits, and by DNS rebinding.
+Following the guidance for local MCP servers~\cite{mcpsecurity2025}, every request must carry a
+\texttt{Host} of \texttt{127.0.0.1}, \texttt{localhost} or \texttt{[::1]} on the bound port;
+requests with an \texttt{Origin} header or \texttt{Sec-Fetch-Site: cross-site} are refused; bodies
+must be JSON (or WAV for audio), which forces a CORS preflight that the server never grants; and
+every route except \texttt{/health} needs a bearer token. The token is random, rotated on every
+start, written atomically to a \texttt{0600} file and removed on shutdown. Browsers are also
+adding permission prompts for requests to local addresses~\cite{chromelna2025}, but R2 does not
+depend on them. The boundary is deliberately the user account: a process running as the same user
+can read the token, as it can read the preference database and the configuration. The token stops
+browsers, other users and accidental clients, not malware the user is already running.
+
 \subsection{Software}
 
 The core is Python 3.12 (managed by \texttt{uv}) with mlx 0.32.4, mlx-lm 0.32.2, mlx-whisper 0.4.3,
-mlx-audio 0.6.3 and Pydantic 2.14; the client is SwiftUI (Swift 6.3, macOS 14+). 42 unit and
-integration tests run without model downloads, a microphone or network access.
+mlx-audio 0.6.3, llguidance 1.9.1 and Pydantic 2.14; the client is SwiftUI (Swift 6.3,
+macOS 14+). 195 unit, integration and adversarial tests run without model downloads, a
+microphone or network access.
 
 % ================================================================ 7 Setup
 \section{Experimental Setup}\label{sec:setup}
@@ -828,6 +949,10 @@ between \texttt{general\_help}, \texttt{answer\_question}, \texttt{clarify\_requ
 predates the revision, this is evidence of generalisation, although the confidence intervals are
 wide at these sample sizes. Median decision latency is 296\,ms on the dev set (90th percentile
 359\,ms) and 309\,ms on the fresh set (\cref{fig:latency}).
+These runs used the original configuration (intent-name mask, unknown keys dropped). The current
+default (schema grammar, unknown keys rejected) gives exactly the same accuracy on both sets, with
+0\% malformed output and a mean decision latency of 263\,ms (dev) and 262\,ms (fresh); see
+\cref{tab:ablation3}.
 
 \begin{figure}[t]
 \centering
@@ -837,7 +962,7 @@ first request, which includes GPU kernel compilation, is excluded).}
 \label{fig:latency}
 \end{figure}
 
-\subsection{Ablation: few-shot examples vs.\ constrained decoding}
+\subsection{Ablation: few-shot examples vs.\ constrained decoding}\label{sec:ablation}
 
 \begin{figure}[t]
 \centering
@@ -848,7 +973,8 @@ first request, which includes GPU kernel compilation, is excluded).}
 
 \begin{table}[t]
 \centering\small
-\caption{Ablation on the dev set (40 cases).}
+\caption{Ablation on the dev set (40 cases), original configuration: intent-name mask,
+unknown parameter keys dropped.}
 \label{tab:ablation}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}ccrrr@{}}
@@ -870,6 +996,40 @@ examples placed a parameter at the top level of the JSON object, outside the mas
 a guarantee rather than an accuracy gain: no output can name a non-existent action. The cost of the
 examples is prompt length (675 of 1{,}118 tokens), which is exactly what the prefix cache makes
 free: without caching, few-shot prompting would add roughly 0.9\,s to every request (\cref{eq:tpre}).
+
+\begin{table}[t]
+\centering\small
+\caption{Constraint modes under \emph{strict} validation (unknown keys rejected). Intent /
+parameter accuracy in \%; fallback and mean decision latency on dev.}
+\label{tab:ablation3}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}clrrrrr@{}}
+\toprule
+FS & Constraint & \multicolumn{2}{c}{Dev (40)} & \multicolumn{2}{c}{Fresh (24)} & Fallb. / ms \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+ & & Int. & Par. & Int. & Par. & \\
+\midrule
+\checkmark & none & 87.5 & 87.5 & 91.7 & 87.5 & 5.0 / 295 \\
+\checkmark & intent & 87.5 & 87.5 & 91.7 & 87.5 & 5.0 / 287 \\
+\checkmark & \textbf{json} & \textbf{92.5} & \textbf{92.5} & \textbf{95.8} & \textbf{91.7} & \textbf{0.0} / \textbf{263} \\
+ & none & 72.5 & 65.0 & 75.0 & 75.0 & 15.0 / 287 \\
+ & intent & 72.5 & 65.0 & 75.0 & 75.0 & 15.0 / 274 \\
+ & json & 85.0 & 77.5 & 87.5 & 87.5 & 0.0 / 208 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Strict validation and the schema grammar.}
+Dropping unknown parameter keys hides model errors, so the current parser rejects them.
+\Cref{tab:ablation3} shows the cost: the model often adds a stray parameter, such as
+\texttt{git\_status \{"clean": \dots\}}, and rejecting these sends 5\% of dev requests to the
+heuristic fallback, lowering dev accuracy from 92.5\% to 87.5\%. The intent-name mask cannot help,
+because every one of these failures is in the parameters. Constraining decoding to the full
+decision schema makes such outputs impossible to generate. It recovers all of the loss, with zero
+fallbacks on both sets, and is not slower: decode stays at 12.5--13.9\,ms per token in every mode,
+because the mask is computed on the CPU in tens of microseconds. Without examples the grammar adds 12.5 points of intent accuracy on both sets, since it
+removes the malformed outputs that cause most of those errors. These are small sets: one case is
+2.5 points on dev and 4.2 on fresh, so the differences are indicative rather than significant.
 
 \subsection{Error analysis}
 
@@ -919,8 +1079,8 @@ short reply), well under a second, with every stage on device.
 
 \paragraph{Why narrow works.}
 Narrowness turns the hardest parts of an LLM assistant into engineering problems with clean
-answers. A fixed prompt makes prefix caching exact and nearly free; a closed intent set makes
-constrained decoding trivial and sound; and typed decisions make authorisation a deterministic
+answers. A fixed prompt makes prefix caching exact and nearly free; a closed intent set with typed
+parameters makes constrained decoding small and sound; and typed decisions make authorisation a deterministic
 policy rather than a property of model text. The resulting assistant is fast because it reads the
 long part of its prompt once, and safe because the model has no path to execution that the policy
 does not see.
@@ -942,8 +1102,14 @@ possible into a stable prefix, and keep the variable part short.
   sometimes imprecise. They are labelled as answers and never executed.
 \item \textbf{Prefix only.} The cache reuses the system prefix but not the conversation history.
   Multi-turn reuse would require radix-style matching~\cite{zheng2024sglang}.
-\item \textbf{Stale cache files.} Old cache files from earlier prompt versions remain on disk until
-  removed. An on-disk LRU would bound this.
+\item \textbf{Grammars choose values.} A schema grammar always produces \emph{some} legal string,
+  so constraining allow-listed values (app names) turns an unknown request into a wrong one. R2
+  leaves such values free and lets the gate refuse them.
+\item \textbf{Same-user trust boundary.} The API token stops browsers and other accounts, not
+  processes running as the user (\cref{sec:api}).
+\item \textbf{Multi-step planning.} The clause planner only splits on explicit connectors (``find
+  tests and fixtures'' stays one step), and the comparison with a model planner rests on six
+  requests.
 \end{itemize}
 
 \paragraph{Threats to validity.}
@@ -951,11 +1117,17 @@ The dev set influenced prompt design, so its accuracy is optimistic; the fresh s
 does not remove this, since the final revision was guided by general failure categories observed
 on the dev set. Benchmarks ran on a machine with other applications open; we report medians and
 show per-request spread, and a run-time watchdog aborted runs if free memory dropped below 25\%.
+The cache-mode and scaling measurements were taken before the content-derived fingerprint was
+introduced; a re-run with it reproduced the 71\,ms cached TTFT and identical greedy outputs across
+cold build, disk load and no cache, since the new fingerprint reads link targets rather than
+weight files. The constraint-mode comparison (\cref{tab:ablation3}) uses the same single model,
+machine and evaluation sets as the rest of the paper.
 
 \paragraph{Ethics and privacy.}
 All audio, text and preferences stay on the device; no account or network service is required after
 the one-time model download. Preferences are stored only after explicit confirmation, and the
-assistant cannot read common secret files.
+assistant cannot read common secret files. The run history of multi-step requests keeps only
+metadata and never file contents, diffs or answers.
 
 % ================================================================ 10 Future work
 \section{Future Work}
@@ -965,8 +1137,8 @@ assistant cannot read common secret files.
   token-level radix tree~\cite{zheng2024sglang}.
 \item \textbf{KV quantisation:} measure 8- and 4-bit caches~\cite{liu2024kivi,hooper2024kvquant},
   expected to matter only for longer contexts.
-\item \textbf{Parameter grammars:} extend the mask from intent names to full per-intent JSON schemas
-  with an FSM or pushdown engine~\cite{willard2023outlines,dong2025xgrammar}.
+\item \textbf{Multi-step evaluation:} a labelled set of multi-step requests to compare the clause
+  and model planners properly, and a client view for runs.
 \item \textbf{Clarification:} a contrastive set of vague vs.\ destructive requests and LoRA
   fine-tuning~\cite{hu2022lora} on a larger synthetic dataset.
 \item \textbf{Decode speed:} speculative decoding~\cite{leviathan2023speculative} for longer spoken
@@ -982,19 +1154,21 @@ R2 shows that a small local model can feel like a native voice assistant when th
 is designed for a narrow task. A persistent prefix KV cache turns a 1.5\,s prompt into a 71\,ms
 response start with identical outputs. Its behaviour follows from a few lines of theory: prefix
 invariance, the KV memory formula and a linear-plus-quadratic cost model. Few-shot examples deliver
-95.8\% intent accuracy on unseen requests, and a fail-closed policy keeps every action under the
-user's control.
+95.8\% intent accuracy on unseen requests, a schema grammar keeps that accuracy under strict
+validation, and a fail-closed policy keeps every action, including each step of a multi-step
+request, under the user's control.
 
 % ================================================================ back matter
 \section*{Reproducibility}\label{sec:repro}
 All numbers in this paper are produced by scripts in the repository and stored in
 \texttt{artifacts/}:
 \begin{lstlisting}[language=bash,numbers=none,basicstyle=\ttfamily\scriptsize]
-uv sync && uv run pytest                     # 42 tests
+uv sync && uv run python -m pytest          # 195 tests
 uv run python training/bench_kv.py           # Table 3, Fig. 3
 uv run python training/bench_scaling.py      # Table 4, Figs. 4-5
 uv run python training/evaluate.py --backend mlx [--eval data/eval_fresh.jsonl]
 uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain
+uv run python training/ablation.py           # constraint modes, Table 7
 uv run python training/bench_voice.py        # Fig. 11
 uv run python paper/make_figures.py          # all figures
 \end{lstlisting}
@@ -1005,6 +1179,15 @@ HTTP API, SwiftUI macOS client, voice pipeline integration, tooling and testing.
 \textbf{Alireza Panahdoost} (research and machine learning): research questions, KV cache and
 constrained-decoding methodology, theoretical analysis, benchmark and evaluation design, error
 analysis. Both authors wrote and approved the manuscript.
+
+\section*{Revision History}
+\textbf{Revision 2} follows an external review of the code and of revision 1. It adds token, Host
+and Origin checks to the local API and binds confirmations to a single-use, expiring id
+(\cref{sec:safety}); derives the cache fingerprint from content and validates every cache layer,
+with atomic writes and on-disk eviction (\cref{sec:impl}); rejects unknown parameters and adds
+schema-constrained decoding with its ablation (\cref{sec:constrained,sec:ablation}); hardens the
+file tools against links and races; and adds bounded multi-step requests (\cref{sec:agent}).
+Revision 1 numbers are unchanged; new measurements are marked as such.
 
 \section*{Acknowledgements}
 We thank the developers of MLX, mlx-lm, Qwen3, Whisper and Kokoro for releasing their work openly.
@@ -1045,16 +1228,22 @@ Intents (parameters) - when to use:
 
 \section{Local HTTP API}
 
+Every route except \texttt{/health} requires \texttt{Authorization: Bearer <token>}; see
+\cref{sec:api} for the Host, Origin and content-type rules.
+
 \begin{center}\small
 \begin{tabular}{@{}lll@{}}
 \toprule
 Method & Path & Purpose \\
 \midrule
-GET & \texttt{/health}, \texttt{/status}, \texttt{/voices} & liveness; model and KV cache state; voice list \\
-POST & \texttt{/ask} \{\texttt{text}\} & text request $\to$ reply, speech, intent, metrics \\
-POST & \texttt{/confirm}, \texttt{/cancel}, \texttt{/reset} & answer a pending confirmation; clear history \\
+GET & \texttt{/health}, \texttt{/status}, \texttt{/voices} & liveness (no token); model and KV cache state; voice list \\
+POST & \texttt{/ask} \{\texttt{text}, \texttt{confirmation\_id}?\} & text request $\to$ reply, speech, intent, metrics, confirmation id \\
+POST & \texttt{/confirm} \{\texttt{confirmation\_id}\}, \texttt{/cancel}, \texttt{/reset} & approve the pending action by id; cancel; clear history \\
 POST & \texttt{/ask\_audio} (WAV, $\le$16\,MB) & Whisper transcription, then \texttt{/ask} \\
-POST & \texttt{/tts} \{\texttt{text}, \texttt{voice}, \texttt{speed}\} & Kokoro speech as WAV \\
+POST & \texttt{/tts} \{\texttt{text}, \texttt{voice}, \texttt{speed}\} & Kokoro speech as WAV (speed 0.5--2.0) \\
+POST & \texttt{/run} \{\texttt{text}\} & plan and start a multi-step run \\
+GET & \texttt{/runs/<id>} & poll a run (never returns the confirmation id) \\
+POST & \texttt{/runs/<id>/confirm}, \texttt{/cancel} & approve the paused step by id; cancel the run \\
 \bottomrule
 \end{tabular}
 \end{center}

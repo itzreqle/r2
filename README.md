@@ -273,17 +273,20 @@ for coursework, a thesis chapter or a reading group on efficient on-device LLMs.
 **Whitepaper.** [*R2: A Narrow, On-Device Voice Assistant with Persistent Prefix KV Caching
 and Constrained Intent Decoding*](paper/r2-whitepaper.pdf) covers the theory (prefix
 invariance, KV memory, a prefill/decode cost model, the decoding mask), the architecture, and
-every benchmark, including a context-length sweep from 128 to 4,096 tokens. LaTeX source and
-figure scripts are in [`paper/`](paper/).
+every benchmark, including a context-length sweep from 128 to 4,096 tokens. Revision 2 adds the
+API and confirmation hardening, the content-based cache fingerprint, the JSON-schema grammar
+ablation and the multi-step runtime. LaTeX source and figure scripts are in [`paper/`](paper/);
+rebuild the PDF with `paper/build.sh` (TinyTeX).
 
 **Research questions it answers**
 
 1. How much does prefix KV caching cut latency for a narrow assistant with a long, fixed
    prompt? *(20.5× faster first token; output unchanged in all 20 requests)*
 2. Can a cached prompt survive restarts, and what does loading it cost? *(89 ms from disk vs
-   1.5 s to rebuild, guarded by a fingerprint)*
+   1.5 s to rebuild, guarded by a content-based fingerprint and a per-layer check)*
 3. Which matters more for a 1.7B model's structured output: few-shot examples or constrained
-   decoding? *(few-shot: +7.5 points on intent, +15 on parameters)*
+   decoding? *(few-shot: +7.5 points on intent, +15 on parameters; with strict validation, a
+   JSON-schema grammar recovers the 4–5 points that rejecting stray parameters would cost)*
 4. How far does prompt tuning generalise? *(fresh test set written before tuning: 87.5% →
    95.8%)*
 
