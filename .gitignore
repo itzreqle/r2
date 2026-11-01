@@ -58,6 +58,7 @@ huggingface/
 
 # Small JSON experiment reports are kept as evidence (KV caches above stay ignored)
 !artifacts/*.json
+!artifacts/*.csv
 
 # Swift Package Manager
 .build/
