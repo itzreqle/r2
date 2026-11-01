@@ -75,7 +75,26 @@ final class R2Client: ObservableObject {
             guard let self, self.phase == .speaking else { return }
             self.phase = self.awaitingConfirm ? .confirm : .idle
         }
-        boot()
+        if CommandLine.arguments.contains("--demo") { runDemo() } else { boot() }
+    }
+
+    /// `R2 --demo`: cycles every orb phase with a simulated level (visual QA, no core).
+    private func runDemo() {
+        let phases: [Phase] = [.idle, .listening, .thinking, .speaking, .confirm, .offline]
+        Task {
+            var i = 0
+            while true {
+                let p = phases[i % phases.count]
+                phase = p
+                reply = "Demo: \(p.rawValue)"
+                for f in 0..<150 {   // ~2.5 s per phase
+                    level = (p == .listening || p == .speaking) ? Float(0.5 + 0.45 * sin(Double(f) / 5)) : 0
+                    if p == .speaking && f % 9 == 0 { speechTick &+= 1 }
+                    try? await Task.sleep(nanoseconds: 16_000_000)
+                }
+                i += 1
+            }
+        }
     }
 
     /// Repo path baked into Info.plist by build_app.sh, else derived from the binary location.
