@@ -40,10 +40,10 @@ The README screenshots were taken this way, with `screencapture -l <window id>`.
 | --- | --- | --- |
 | GET | `/health` | liveness (the only endpoint without auth) |
 | GET | `/status`, `/voices` | model + KV cache info, voice list |
-| POST | `/ask` `{"text", "confirmation_id"?}` | text request → reply, speech, intent, metrics |
+| POST | `/ask` `{"text", "confirmation_id"?, "allow_runs"?}` | text request → reply, speech, intent, metrics; with `allow_runs: true` a request that plans to 2+ steps starts a run and the reply carries `run` |
 | POST | `/confirm` `{"confirmation_id"}` | approve the pending action shown to the user |
 | POST | `/cancel`, `/reset` | drop the pending action, clear history |
-| POST | `/ask_audio?confirmation_id=…` (raw WAV) | Whisper → R2 |
+| POST | `/ask_audio?confirmation_id=…&allow_runs=1` (raw WAV) | Whisper → R2 |
 | POST | `/tts` `{"text","voice","speed"}` | Kokoro speech as WAV |
 | POST | `/run` `{"text"}` | bounded multi-step run ([docs/AGENT_RUNTIME.md](../docs/AGENT_RUNTIME.md)) |
 | GET | `/runs/<id>` | poll a run: status, steps, events |
@@ -60,3 +60,13 @@ Security (see [docs/SECURITY.md](../docs/SECURITY.md#local-http-api)):
 - A privileged action returns a single-use `confirmation_id` that expires after 120 s.
   Only `/confirm` with that id, or a typed or spoken "yes" sent with it, approves the action.
   A missing or wrong id cancels the action instead.
+- The Confirm button needs **⌘Return**, not plain Return, so a stray Enter after R2 takes
+  focus (⌥Space, launch) can never approve anything.
+
+### Multi-step requests in the app
+
+The app sends `allow_runs`, so "check git status and then find the Swift files" shows a
+step card (✓ done, ? waiting, ✗ failed, – skipped) under the reply and shrinks the orb to make
+room. A step that needs confirmation pauses the run with the normal Confirm bar; Confirm,
+a typed "yes" or a spoken "yes" continue it, "no" or Esc cancel it, and a new request
+replaces it. If any part of the request is refused, nothing runs.

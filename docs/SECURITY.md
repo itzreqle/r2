@@ -18,6 +18,8 @@
 | Fake output lines via crafted filenames | Control characters in listed names are replaced |
 | Multi-step run bypassing checks | Every step goes through the same `ToolExecutor` path; plans validated all-or-nothing; stop on first failure; ≤5 steps + time budget |
 | Prompt injection steering later steps | Plans are made once, before any tool runs; tool output is never fed back into planning |
+| Stray keystroke approving an action | The app's Confirm button needs ⌘Return; plain Return does nothing, Esc cancels |
+| One part of a multi-step request slipping through | `/ask` with `allow_runs` validates the whole plan first; if any part is refused nothing runs |
 | Asking to confirm something that will be refused | Tool prechecks (e.g. app allowlist) run before the confirmation prompt |
 | `run_tests` as a back door to arbitrary commands | Off by default and offered only when `tools.test_commands` is configured; the model picks an **id**, the argv comes from config and runs without a shell; shells, `sudo`, `env`, `xargs`, `osascript`, `python -c` refused as launchers; unknown ids refused before confirmation |
 | Running the project's own (possibly malicious) test code | Always asks for confirmation, even with `require_confirmation_for_writes = false`; the spoken prompt names the id, the screen shows the exact argv |

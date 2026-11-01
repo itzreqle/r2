@@ -82,5 +82,5 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
 - [x] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance), default `constraint = "json"` after a 3×2 ablation
 - [x] M4 agent runtime foundation: tool registry (+ prechecks before confirmation), bounded plan → gate → execute loop, `/run` API, metadata-only run store ([AGENT_RUNTIME.md](AGENT_RUNTIME.md))
-- [ ] SwiftUI view for multi-step runs
+- [x] SwiftUI view for multi-step runs
 - [x] Larger multi-step evaluation set: 61 dev + 30 fresh requests; `split_and` + `question_guard` take the clause planner from 66.7% to 93.3% on the fresh set (reject recall 100%); one-shot model planner 40.0% with 0% reject recall

@@ -119,6 +119,18 @@ such as file contents or diffs, so the data-retention promise in `SECURITY.md` s
 | POST | `/runs/<id>/confirm` `{"confirmation_id"}` | approve the paused step and continue |
 | POST | `/runs/<id>/cancel` | cancel a run |
 
+### Runs from `/ask` (the app)
+
+Clients stay thin: `/ask` with `"allow_runs": true` (or `/ask_audio?allow_runs=1`) plans the
+request, and if it has two or more steps starts a run instead of a single action
+(`r2/runs.py`). The reply is an ordinary response with `intent: "multi_step"` and a `run`
+object (the same shape as `GET /runs/<id>`). A paused run hands out its step's confirmation
+id exactly like a single action, so `/confirm`, a typed "yes" and a spoken "yes" with that id
+continue it; "no", `/cancel` or `/reset` cancel it; and any new request supersedes it. A
+rejected plan with two or more clauses is answered as a refusal ("didn't do any of it")
+rather than falling back to running one of its parts. Without `allow_runs`, `/ask` behaves
+exactly as before.
+
 ## Evaluation
 
 ```bash
@@ -130,5 +142,5 @@ Results: `artifacts/multistep_eval_{dev,fresh}.json` (per-case plans included).
 
 ## Out of scope for v1
 
-Re-planning from results, parallel steps, new tool kinds, a SwiftUI run view, and
-conversation-level KV reuse across steps.
+Re-planning from results, parallel steps, new tool kinds, and conversation-level KV reuse
+across steps.

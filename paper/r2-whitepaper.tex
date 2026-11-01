@@ -590,6 +590,14 @@ bounds it. Run history is stored as metadata only (intents, parameters, status, 
 summary), never file contents or diffs. A one-shot model planner that emits the whole plan under a
 grammar is available but not the default (\cref{sec:multistep}).
 
+The app reaches runs through the ordinary \texttt{/ask} endpoint with an \texttt{allow\_runs}
+flag: a request that plans to two or more steps starts a run, and the reply carries the run so
+the client can draw one row per step. A paused run hands out its confirmation id exactly like a
+single action, so the Confirm button, a typed ``yes'' and a spoken ``yes'' all continue it, and
+a new request supersedes it. If any clause is refused, the reply is a refusal and nothing runs;
+the client never falls back to executing the parts it understood. The Confirm button requires
+Command--Return so that a stray Return can never approve a step.
+
 % ================================================================ 6 Implementation
 \section{Implementation}\label{sec:impl}
 
@@ -1168,8 +1176,8 @@ metadata and never file contents, diffs or answers.
   token-level radix tree~\cite{zheng2024sglang}.
 \item \textbf{KV quantisation:} measure 8- and 4-bit caches~\cite{liu2024kivi,hooper2024kvquant},
   expected to matter only for longer contexts.
-\item \textbf{Multi-step evaluation:} a larger, independently written set of multi-step
-  requests, and a client view for runs.
+\item \textbf{Multi-step evaluation:} a multi-step set written by someone other than the
+  authors, and recorded spoken multi-step requests.
 \item \textbf{Clarification:} a contrastive set of vague vs.\ destructive requests and LoRA
   fine-tuning~\cite{hu2022lora} on a larger synthetic dataset.
 \item \textbf{Decode speed:} speculative decoding~\cite{leviathan2023speculative} for longer spoken
@@ -1218,7 +1226,7 @@ and Origin checks to the local API and binds confirmations to a single-use, expi
 (\cref{sec:safety}); derives the cache fingerprint from content and validates every cache layer,
 with atomic writes and on-disk eviction (\cref{sec:impl}); rejects unknown parameters and adds
 schema-constrained decoding with its ablation (\cref{sec:constrained,sec:ablation}); hardens the
-file tools against links and races; and adds bounded multi-step requests (\cref{sec:agent}).
+file tools against links and races; and adds bounded multi-step requests with a client view (\cref{sec:agent}).
 Revision 1 numbers are unchanged; new measurements are marked as such.
 
 \section*{Acknowledgements}
@@ -1269,7 +1277,7 @@ Every route except \texttt{/health} requires \texttt{Authorization: Bearer <toke
 Method & Path & Purpose \\
 \midrule
 GET & \texttt{/health}, \texttt{/status}, \texttt{/voices} & liveness (no token); model and KV cache state; voice list \\
-POST & \texttt{/ask} \{\texttt{text}, \texttt{confirmation\_id}?\} & text request $\to$ reply, speech, intent, metrics, confirmation id \\
+POST & \texttt{/ask} \{\texttt{text}, \texttt{confirmation\_id}?, \texttt{allow\_runs}?\} & text request $\to$ reply, speech, intent, metrics, confirmation id; may start a run \\
 POST & \texttt{/confirm} \{\texttt{confirmation\_id}\}, \texttt{/cancel}, \texttt{/reset} & approve the pending action by id; cancel; clear history \\
 POST & \texttt{/ask\_audio} (WAV, $\le$16\,MB) & Whisper transcription, then \texttt{/ask} \\
 POST & \texttt{/tts} \{\texttt{text}, \texttt{voice}, \texttt{speed}\} & Kokoro speech as WAV (speed 0.5--2.0) \\

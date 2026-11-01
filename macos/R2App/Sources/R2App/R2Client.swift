@@ -15,6 +15,14 @@ final class R2Client: ObservableObject {
         let reply: String
     }
 
+    /// One step of a multi-step run, as reported by the core (display only).
+    struct RunStep: Identifiable, Equatable {
+        let id: Int
+        let title: String
+        let status: String      // pending · ok · failed · awaiting_confirmation · skipped · cancelled
+        let speech: String
+    }
+
     @Published var phase: Phase = .offline
     @Published var caption = ""                 // what R2 heard / you typed
     @Published var reply = ""                   // R2's short spoken answer
@@ -27,6 +35,8 @@ final class R2Client: ObservableObject {
     @Published var speechTick = 0               // increments per spoken word
     @Published var history: [Exchange] = []
     @Published var lastError = ""
+    @Published var runSteps: [RunStep] = []     // non-empty while showing a multi-step run
+    @Published var runStatus = ""
 
     @Published var speakReplies: Bool { didSet { defaults.set(speakReplies, forKey: "speakReplies") } }
     @Published var playSounds: Bool { didSet { defaults.set(playSounds, forKey: "playSounds") } }
@@ -283,7 +293,8 @@ final class R2Client: ObservableObject {
         guard !t.isEmpty, phase != .offline, phase != .starting else { return }
         speaker.stop()
         caption = t
-        var body: [String: Any] = ["text": t, "speak": false]
+        // allow_runs: the core may turn "X then Y" into a multi-step run (it decides).
+        var body: [String: Any] = ["text": t, "speak": false, "allow_runs": true]
         if let id = pendingConfirmationId { body["confirmation_id"] = id }  // typed "yes"
         send("ask", body: body, user: t)
     }
@@ -303,6 +314,7 @@ final class R2Client: ObservableObject {
         speaker.stop()
         history.removeAll()
         caption = ""; reply = "Hi, I'm R2."; detail = ""; intent = ""; latency = ""
+        runSteps = []; runStatus = ""
         awaitingConfirm = false
         pendingConfirmationId = nil
         if phase != .offline && phase != .starting { phase = .idle }
@@ -370,7 +382,8 @@ final class R2Client: ObservableObject {
         // A spoken "yes" only counts for the prompt on screen: send its id along.
         var comps = URLComponents(url: base.appendingPathComponent("ask_audio"),
                                   resolvingAgainstBaseURL: false)!
-        comps.queryItems = [URLQueryItem(name: "speak", value: "0")]
+        comps.queryItems = [URLQueryItem(name: "speak", value: "0"),
+                            URLQueryItem(name: "allow_runs", value: "1")]
         if let id = pendingConfirmationId {
             comps.queryItems?.append(URLQueryItem(name: "confirmation_id", value: id))
         }
@@ -418,10 +431,25 @@ final class R2Client: ObservableObject {
         let speech = (r["speech"] as? String) ?? (r["text"] as? String) ?? ""
         let text = (r["text"] as? String) ?? ""
         let needsConfirm = (r["needs_confirmation"] as? Bool) ?? false
+        let run = r["run"] as? [String: Any]
         withAnimation(.smooth(duration: 0.35)) {
             reply = speech
-            // A confirmation's text only restates the question; the buttons say the rest.
-            detail = (text == speech || needsConfirm) ? "" : text
+            if let run {
+                runStatus = run["status"] as? String ?? ""
+                runSteps = (run["steps"] as? [[String: Any]] ?? []).map { s in
+                    RunStep(id: s["index"] as? Int ?? 0,
+                            title: (s["intent"] as? String ?? "").replacingOccurrences(of: "_", with: " "),
+                            status: s["status"] as? String ?? "pending",
+                            speech: s["speech"] as? String ?? "")
+                }
+                // The step list replaces the summary lines; keep only the last tool output.
+                let parts = text.components(separatedBy: "\n\n")
+                detail = parts.count > 1 ? parts.dropFirst().joined(separator: "\n\n") : ""
+            } else {
+                runSteps = []; runStatus = ""
+                // A confirmation's text only restates the question; the buttons say the rest.
+                detail = (text == speech || needsConfirm) ? "" : text
+            }
         }
         intent = (r["intent"] as? String ?? "").replacingOccurrences(of: "_", with: " ")
         if let m = r["metrics"] as? [String: Any], let think = m["think_ms"] as? Double {

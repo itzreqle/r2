@@ -210,6 +210,7 @@ def make_handler(
             q = parse_qs(urlparse(self.path).query)
             want = q.get("speak", ["1" if speak_default else "0"])[0] == "1"
             cid = self._cid(q.get("confirmation_id", [""])[0])
+            allow_runs = q.get("allow_runs", ["0"])[0] == "1"
             fd, name = tempfile.mkstemp(suffix=".wav", prefix="r2-client-")
             wav = Path(name)
             try:
@@ -217,7 +218,8 @@ def make_handler(
                     fh.write(data)
                 with lock:
                     transcript, resp = r2.ask_audio(
-                        wav, confirmation_id=cid, require_confirmation_id=True
+                        wav, confirmation_id=cid, require_confirmation_id=True,
+                        allow_runs=allow_runs,
                     )
             except Exception as exc:  # noqa: BLE001
                 logger.exception("audio request failed")
@@ -281,7 +283,8 @@ def make_handler(
                         text = str(body.get("text", "")).strip()[:2000]
                         if not text:
                             return self._send(400, {"error": "text required"})
-                        resp = r2.ask(text, confirmation_id=cid, require_confirmation_id=True)
+                        resp = r2.ask(text, confirmation_id=cid, require_confirmation_id=True,
+                                      allow_runs=body.get("allow_runs") is True)
                     elif route == "/confirm":
                         resp = r2.confirm(cid, require_id=True)
                     elif route == "/cancel":

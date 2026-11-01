@@ -50,6 +50,7 @@ class R2:
         self.last_transcript = ""
         self._agent: Any = None
         self._planner: Any = None
+        self._active_run: str | None = None  # run started from ask(), awaiting or done
 
     # ----------------------------------------------------------------- info
     @property
@@ -97,18 +98,86 @@ class R2:
         speak: bool = False,
         confirmation_id: str | None = None,
         require_confirmation_id: bool = False,
+        allow_runs: bool = False,
     ) -> AssistantResponse:
         """One text turn. A "yes" approves the pending action only if allowed:
-        the HTTP API passes ``require_confirmation_id=True`` plus the client's id."""
+        the HTTP API passes ``require_confirmation_id=True`` plus the client's id.
+
+        ``allow_runs``: a request that plans to two or more steps becomes a bounded
+        multi-step run (same gate and confirmation per step); everything else takes
+        the normal single-step path."""
         with self._lock:
-            resp = self.orch.handle_text(
-                text,
-                confirmation_id=confirmation_id,
-                require_confirmation_id=require_confirmation_id,
-            )
+            resp = self._ask_locked(text, confirmation_id, require_confirmation_id, allow_runs)
         if speak:
             self.speak(resp.spoken_text())
         return resp
+
+    def _awaiting_run(self) -> Any:
+        if self._active_run is None or self._agent is None:
+            return None
+        from narrow_ai.agent.runner import RunStatus
+
+        run = self._agent.get(self._active_run)
+        return run if run is not None and run.status == RunStatus.AWAITING_CONFIRMATION else None
+
+    def _confirm_active_run(self, run: Any, confirmation_id: str | None, require_id: bool):
+        from narrow_ai.r2.runs import run_response
+
+        since = run.cursor
+        cid = confirmation_id if require_id else (run.pending.id if run.pending else None)
+        return run_response(self.agent.confirm(run.id, cid), since=since)
+
+    def _ask_locked(
+        self, text: str, confirmation_id: str | None, require_id: bool, allow_runs: bool
+    ) -> AssistantResponse:
+        from narrow_ai.assistant.orchestrator import NO, YES, _norm
+
+        run = self._awaiting_run()
+        if run is not None:
+            word = _norm(text)
+            if word in YES:
+                return self._confirm_active_run(run, confirmation_id, require_id)
+            self.agent.cancel(run.id)  # "no", or a new request supersedes the paused run
+            if word in NO:
+                return AssistantResponse(text="Okay, cancelled.", speech="Okay, cancelled.")
+        if allow_runs and self.settings.agent.enabled:
+            started = self._maybe_start_run(text)
+            if started is not None:
+                return started
+        return self.orch.handle_text(
+            text, confirmation_id=confirmation_id, require_confirmation_id=require_id
+        )
+
+    def _maybe_start_run(self, text: str) -> AssistantResponse | None:
+        """Plan once; start a run only for two or more steps. A plan with a refused
+        part is refused as a whole (nothing runs)."""
+        from pydantic import ValidationError
+
+        from narrow_ai.agent.plan import PlanRejected, validate_plan
+        from narrow_ai.agent.planner import split_clauses
+        from narrow_ai.intents.classifier import IntentParseError
+        from narrow_ai.r2.runs import FixedPlanner, looks_multistep, run_response
+
+        if not looks_multistep(text):
+            return None
+        agent = self.agent
+        try:
+            plan = validate_plan(
+                self._planner.plan(text), agent.registry, max_steps=self.settings.agent.max_steps
+            )
+        except (PlanRejected, IntentParseError, ValidationError, ValueError) as exc:
+            if len(split_clauses(text)) < 2:
+                return None  # one clause that isn't an action: the normal path answers it
+            run = agent.start(text, FixedPlanner(rejection=exc))  # recorded; nothing runs
+            self._active_run = run.id
+            return run_response(run)
+        if len(plan.steps) < 2:
+            return None
+        if self.orch.pending_action is not None:
+            self.orch.cancel()  # a new request supersedes a pending single-step action
+        run = agent.start(text, FixedPlanner(plan))
+        self._active_run = run.id
+        return run_response(run)
 
     def confirm(
         self,
@@ -117,9 +186,14 @@ class R2:
         require_id: bool = False,
         speak: bool = False,
     ) -> AssistantResponse:
-        """Approve the pending action (``require_id=False`` only for in-process UIs)."""
+        """Approve the pending action (``require_id=False`` only for in-process UIs).
+        If a multi-step run is paused, this approves its current step instead."""
         with self._lock:
-            resp = self.orch.confirm(confirmation_id, require_id=require_id)
+            run = self._awaiting_run()
+            if run is not None:
+                resp = self._confirm_active_run(run, confirmation_id, require_id)
+            else:
+                resp = self.orch.confirm(confirmation_id, require_id=require_id)
         if speak:
             self.speak(resp.spoken_text())
         return resp
@@ -188,11 +262,16 @@ class R2:
 
     def cancel(self) -> AssistantResponse:
         with self._lock:
+            if (run := self._awaiting_run()) is not None:
+                self.agent.cancel(run.id)
             self.orch.cancel()
         return AssistantResponse(text="Okay, cancelled.", speech="Okay, cancelled.")
 
     def reset(self) -> None:
         with self._lock:
+            if (run := self._awaiting_run()) is not None:
+                self.agent.cancel(run.id)
+            self._active_run = None
             self.orch.reset()
 
     # ----------------------------------------------------------------- voice
@@ -260,6 +339,7 @@ class R2:
         speak: bool = False,
         confirmation_id: str | None = None,
         require_confirmation_id: bool = False,
+        allow_runs: bool = False,
     ) -> tuple[str, AssistantResponse | None]:
         if self._recorder is None or not self._recorder.active:
             raise RuntimeError("not listening")
@@ -276,6 +356,7 @@ class R2:
             speak=speak,
             confirmation_id=confirmation_id,
             require_confirmation_id=require_confirmation_id,
+            allow_runs=allow_runs,
         )
 
     def ask_audio(
@@ -285,6 +366,7 @@ class R2:
         speak: bool = False,
         confirmation_id: str | None = None,
         require_confirmation_id: bool = False,
+        allow_runs: bool = False,
     ) -> tuple[str, AssistantResponse | None]:
         transcript = self.transcribe(wav)
         if not transcript.strip():
@@ -294,4 +376,5 @@ class R2:
             speak=speak,
             confirmation_id=confirmation_id,
             require_confirmation_id=require_confirmation_id,
+            allow_runs=allow_runs,
         )

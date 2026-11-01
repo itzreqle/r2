@@ -311,3 +311,62 @@ def test_unknown_or_malformed_run_ids_are_404(run_api, path):
 def test_rejected_plan_runs_nothing(run_api):
     code, run = run_api.post("/run", {"text": "find python files then tell me a joke"})
     assert code == 200 and run["status"] == "rejected" and run["steps"] == []
+
+
+# --------------------------------------------------------------------- /ask with allow_runs
+def test_ask_without_allow_runs_stays_single_step(run_api):
+    code, out = run_api.post("/ask", {"text": "find python files then what can you do"})
+    assert code == 200 and "run" not in out and out["intent"] != "multi_step"
+
+
+def test_ask_starts_a_run_and_spoken_yes_continues_it(run_api):
+    code, out = run_api.post(
+        "/ask", {"text": "find python files then remember editor=Helix", "allow_runs": True}
+    )
+    assert code == 200 and out["intent"] == "multi_step"
+    assert out["run"]["status"] == "awaiting_confirmation" and out["needs_confirmation"]
+    assert "confirmation_id" not in out["run"]  # the id travels only at the top level
+    cid = out["confirmation_id"]
+    assert "Remember editor = Helix" in out["speech"]
+    # A "yes" (typed or spoken via /ask_audio) with the on-screen id approves the step.
+    code, out = run_api.post("/ask", {"text": "yes", "confirmation_id": cid, "allow_runs": True})
+    assert out["run"]["status"] == "completed" and out["intent"] == "multi_step"
+    assert run_api.r2.orch.preferences.get("editor") == "Helix"
+
+
+def test_run_confirm_button_and_wrong_id(run_api):
+    _, out = run_api.post(
+        "/ask", {"text": "what can you do then remember editor=Vim", "allow_runs": True}
+    )
+    _, bad = run_api.post("/confirm", {"confirmation_id": "nope"})
+    assert bad["run"]["status"] == "cancelled" and run_api.r2.orch.preferences.get("editor") is None
+    _, out = run_api.post(
+        "/ask", {"text": "what can you do then remember editor=Vim", "allow_runs": True}
+    )
+    _, ok = run_api.post("/confirm", {"confirmation_id": out["confirmation_id"]})
+    assert ok["run"]["status"] == "completed" and run_api.r2.orch.preferences.get("editor") == "Vim"
+
+
+def test_no_cancel_and_supersede_stop_a_paused_run(run_api):
+    body = {"text": "find python files then remember editor=Emacs", "allow_runs": True}
+    _, out = run_api.post("/ask", body)
+    run_id = out["run"]["id"]
+    _, out = run_api.post("/ask", {"text": "no", "allow_runs": True})
+    assert out["speech"] == "Okay, cancelled."
+    assert run_api.get(f"/runs/{run_id}")[1]["status"] == "cancelled"
+    _, out = run_api.post("/ask", body)
+    run_id = out["run"]["id"]
+    _, out = run_api.post("/ask", {"text": "what's my git status", "allow_runs": True})
+    assert run_api.get(f"/runs/{run_id}")[1]["status"] == "cancelled"  # superseded
+    _, out = run_api.post("/ask", body)
+    run_api.post("/cancel", {})
+    assert run_api.get(f"/runs/{out['run']['id']}")[1]["status"] == "cancelled"
+    assert run_api.r2.orch.preferences.get("editor") is None
+
+
+def test_ask_with_a_refused_part_runs_nothing(run_api):
+    _, out = run_api.post(
+        "/ask", {"text": "find python files then delete them all", "allow_runs": True}
+    )
+    assert out["run"]["status"] == "rejected" and out["run"]["steps"] == []
+    assert "didn't do any of it" in out["speech"]
