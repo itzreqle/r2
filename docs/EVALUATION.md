@@ -56,3 +56,12 @@ What this shows:
 Caveat: n = 40 (dev) and n = 24 (fresh) are small. One case is 2.5 / 4.2 points, so these
 differences are indicative, not significant. A larger evaluation set is still open
 (`docs/R2_PLAN.md`).
+
+## Multi-step planning
+
+`training/eval_multistep.py` on `data/eval_multistep.jsonl` (61, dev) and
+`data/eval_multistep_fresh.jsonl` (30, written before the planner options existed). Plans are
+built and validated, never executed. Fresh-set exact-plan accuracy: original clause planner
+66.7%, clause planner with `split_and` + `question_guard` (default) **93.3%** (95% CI
+78.7–98.2), one-shot model planner 40.0% with 0% reject recall. Details and failure analysis:
+[AGENT_RUNTIME.md](AGENT_RUNTIME.md#planning).

@@ -80,6 +80,8 @@ redact_secrets_in_logs = true
 # Every step goes through the same permission gate, validation and confirmation.
 enabled = true
 planner = "clauses"   # clauses (split on "and then"/"then"/";", route each clause) | model
+split_and = true      # also split "X and Y" / "X, Y" when every part is a tool action
+question_guard = true # "how do I rebase and then push?" is one question, not two steps
 max_steps = 5
 max_wall_sec = 60
 persist_runs = true   # metadata only (intents, status), never tool output

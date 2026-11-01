@@ -47,18 +47,38 @@ request ──► Planner ──► Plan (≤5 IntentDecisions, schema-validated
 - **Default: `ClausePlanner`.** The request is split deterministically on explicit
   connectors ("and then", "then", "after that", "and also", ";"). Each clause is routed by the
   normal single-intent engine, with the same cached prompt, JSON grammar and strict
-  validation as an ordinary request. The trade-off: "find tests and fixtures" stays one step,
-  because a bare "and" is not a connector.
+  validation as an ordinary request. Two options, both on by default:
+  - `split_and`: a clause that routes to a concrete tool action and contains "and" or a
+    comma is split further, but only if *every* part also routes to a tool action. "show me
+    the README and open Cursor" becomes two steps; "find files with config and test in the
+    name" stays one, because "test in the name" isn't an action. Questions are never split.
+  - `question_guard`: if the split plan would be rejected (a clause is unsupported or
+    unclear), the whole request is routed once more. If it is a developer question ("how do
+    I rebase and then push?"), it becomes a single answer step. This can only turn a
+    rejection into a text-only answer; it never adds an action.
 - **Opt-in: `ModelPlanner`** (`agent.planner = "model"`). It makes one call that asks for
   `{"steps": [<decision>, …]}`. With `model.constraint = "json"`, decoding is constrained to an
   array (1–5 items) of the same decision schema (`models/grammar.py`). Its prompt is static,
   so it is one more cached KV prefix next to the router and Q&A prompts.
-- **Why the default is the clause planner.** On six multi-step requests with Qwen3-1.7B,
-  one-shot `ModelPlanner` plans dropped a step twice ("…and then find the markdown files"
-  became just `git_status`). It also copied a parameter from a few-shot example once ("tell
-  me my shell" became `recall test_runner`). `ClausePlanner` got all six right at similar
-  latency (0.2–0.5 s). Six requests is anecdotal, not a benchmark, but every failure mode was
-  the kind a validator can't catch: well-formed, wrong plans.
+- **Why the default is the clause planner.** Measured on `data/eval_multistep.jsonl` (61
+  requests, used while designing the options) and `data/eval_multistep_fresh.jsonl` (30
+  requests, written *before* the options were implemented and never used to tune them), with
+  Qwen3-1.7B, `training/eval_multistep.py` (plans are built and validated, never executed):
+
+  | Planner | Dev plan exact | Fresh plan exact (95% CI) | Fresh reject recall | Fresh p50 |
+  | --- | ---: | ---: | ---: | ---: |
+  | clause (original) | 75.4% | 66.7% (48.8–80.8) | 100% | 488 ms |
+  | **clause + split_and + question_guard** | **93.4%** | **93.3% (78.7–98.2)** | **100%** | 720 ms |
+  | model (one shot, grammar) | 47.5% | 40.0% (24.6–57.7) | **0%** | 310 ms |
+
+  The one-shot model planner fails in a way no validator can catch: well-formed, wrong
+  plans. It drops steps, copies few-shot parameters, and, worst, *silently drops* the part
+  of a request it should refuse ("show me the diff then change it" → just the diff) instead
+  of rejecting the plan: it rejected 2 of 18 must-refuse requests across both sets. The
+  clause planner's remaining errors are single-intent routing mistakes ("print the
+  Dockerfile" → `unsupported`, "commit everything" → `git_status`, `*.yaml` vs `*.yml`),
+  which a larger training set should address. 30 fresh cases is still small; the interval
+  is wide.
 - **All or nothing.** The whole plan is rejected if any step names an unknown or unimplemented
   intent, is `unsupported` or `clarify_request`, fails parameter validation, has more than
   five steps, or depends on a later step. Partial plans are never run.
@@ -98,6 +118,15 @@ such as file contents or diffs, so the data-retention promise in `SECURITY.md` s
 | GET | `/runs/<id>` | poll a run: status, steps, events (never the confirmation id) |
 | POST | `/runs/<id>/confirm` `{"confirmation_id"}` | approve the paused step and continue |
 | POST | `/runs/<id>/cancel` | cancel a run |
+
+## Evaluation
+
+```bash
+uv run python training/eval_multistep.py                     # fake backend, offline
+HF_HUB_OFFLINE=1 uv run python training/eval_multistep.py --backend mlx [--data data/eval_multistep_fresh.jsonl]
+```
+
+Results: `artifacts/multistep_eval_{dev,fresh}.json` (per-case plans included).
 
 ## Out of scope for v1
 

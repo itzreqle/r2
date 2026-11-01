@@ -293,3 +293,91 @@ def test_clause_planner_routes_each_clause_through_the_engine(tmp_path):
         IntentName.SEARCH_FILES, IntentName.GENERAL_HELP]
     with pytest.raises(PlanRejected):
         ClausePlanner(engine, max_steps=2).plan("a then b then c")
+
+
+# --------------------------------------------------------------------- clause planner options
+class ScriptedEngine:
+    """Routes exact strings to fixed decisions (stands in for the model engine)."""
+
+    def __init__(self, table: dict[str, IntentDecision]) -> None:
+        self.table = table
+        self.calls: list[str] = []
+
+    def decide(self, text, history=None):
+        self.calls.append(text)
+        return self.table.get(text, D("unsupported", reason="?")), None, "model"
+
+
+def _clause(engine, **kw):
+    from narrow_ai.agent.planner import ClausePlanner
+
+    return ClausePlanner(engine, **kw)
+
+
+def test_split_and_only_when_every_part_is_a_tool_action():
+    eng = ScriptedEngine({
+        "show me the README and open Cursor": D("read_file", path="README.md"),
+        "show me the README": D("read_file", path="README.md"),
+        "open Cursor": D("open_app", app_name="Cursor"),
+        "find files with config and test in the name": D("search_files", pattern="*config*"),
+        "find files with config": D("search_files", pattern="*config*"),
+        "test in the name": D("clarify_request", question="?"),
+    })
+    plan = _clause(eng, split_and=True).plan("show me the README and open Cursor")
+    assert [s.decision.intent for s in plan.steps] == [IntentName.READ_FILE, IntentName.OPEN_APP]
+    plan = _clause(eng, split_and=True).plan("find files with config and test in the name")
+    assert [s.decision.parameters for s in plan.steps] == [{"pattern": "*config*"}]
+    plan = _clause(eng).plan("show me the README and open Cursor")  # option off
+    assert len(plan.steps) == 1
+
+
+def test_questions_are_never_and_split():
+    eng = ScriptedEngine(
+        {"difference between merge and rebase": D("answer_question", question="q")}
+    )
+    plan = _clause(eng, split_and=True).plan("difference between merge and rebase")
+    assert len(plan.steps) == 1 and eng.calls == ["difference between merge and rebase"]
+
+
+def test_question_guard_turns_only_a_rejection_into_an_answer():
+    q = "how do I rebase and then push my branch?"
+    eng = ScriptedEngine({
+        "how do I rebase": D("answer_question", question="how do I rebase"),
+        "push my branch?": D("unsupported", reason="no pushing"),
+        q: D("answer_question", question=q),
+        "check git status": D("git_status"),
+        "push to main": D("unsupported", reason="no pushing"),
+        "check git status and then push to main": D("unsupported", reason="no pushing"),
+    })
+    plan = _clause(eng, question_guard=True).plan(q)
+    assert [s.decision.intent for s in plan.steps] == [IntentName.ANSWER_QUESTION]
+    # A real refusal stays a refusal: the whole request is not a question.
+    plan = _clause(eng, question_guard=True).plan("check git status and then push to main")
+    with pytest.raises(PlanRejected):
+        from narrow_ai.agent.plan import validate_plan
+
+        validate_plan(plan, default_registry())
+
+
+def test_split_and_respects_the_step_budget():
+    eng = ScriptedEngine({
+        "a, b, c": D("git_status"), "a": D("git_status"), "b": D("git_status"),
+        "c": D("git_status"), "d": D("git_status"),
+    })
+    plan = _clause(eng, split_and=True, max_steps=3).plan("a, b, c then d")
+    assert len(plan.steps) == 2  # splitting "a, b, c" would exceed the budget → kept whole
+
+
+def test_multistep_eval_scoring():
+    from narrow_ai.evaluation.multistep import REJECTED, score, wilson
+
+    exp = [{"intent": "git_status", "parameters": {}},
+           {"intent": "search_files", "parameters": {"pattern": "*.swift"}}]
+    got = [{"intent": "git_status", "parameters": {}},
+           {"intent": "search_files", "parameters": {"pattern": "*.SWIFT", "workspace": "active"}}]
+    assert score(exp, got) == (True, True, True)
+    assert score(exp, got[:1]) == (False, False, False)
+    assert score(REJECTED, REJECTED) == (True, True, True)
+    assert score(REJECTED, got) == (False, False, False)
+    lo, hi = wilson(28, 30)
+    assert 0.78 < lo < 0.79 and 0.98 < hi < 0.99

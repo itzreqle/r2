@@ -1,0 +1,5933 @@
+{
+  "backend": "mlx",
+  "data": "eval_multistep.jsonl",
+  "constraint": "json",
+  "reports": [
+    {
+      "planner": "clause",
+      "n": 61,
+      "plan_accuracy": 0.7540983606557377,
+      "plan_ci95": [
+        0.633,
+        0.845
+      ],
+      "intent_sequence_accuracy": 0.7868852459016393,
+      "step_count_accuracy": 0.7868852459016393,
+      "reject_recall": 0.8333333333333334,
+      "false_reject_rate": 0.061224489795918366,
+      "latency_ms_mean": 478.9983606557377,
+      "latency_ms_p50": 488.8,
+      "by_category": {
+        "bare_and": {
+          "n": 8,
+          "plan_accuracy": 0.0
+        },
+        "connector": {
+          "n": 21,
+          "plan_accuracy": 0.9523809523809523
+        },
+        "long": {
+          "n": 2,
+          "plan_accuracy": 1.0
+        },
+        "plan_ok_tool_refuses": {
+          "n": 1,
+          "plan_accuracy": 0.0
+        },
+        "reject": {
+          "n": 11,
+          "plan_accuracy": 0.8181818181818182
+        },
+        "single": {
+          "n": 9,
+          "plan_accuracy": 0.6666666666666666
+        },
+        "three": {
+          "n": 8,
+          "plan_accuracy": 1.0
+        },
+        "too_many": {
+          "n": 1,
+          "plan_accuracy": 1.0
+        }
+      },
+      "cases": [
+        {
+          "id": "m01",
+          "category": "connector",
+          "utterance": "check my git status and then find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 883.9,
+          "error": ""
+        },
+        {
+          "id": "m02",
+          "category": "connector",
+          "utterance": "show me the README, then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 493.9,
+          "error": ""
+        },
+        {
+          "id": "m03",
+          "category": "connector",
+          "utterance": "how big is my diff and then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 455.3,
+          "error": ""
+        },
+        {
+          "id": "m04",
+          "category": "connector",
+          "utterance": "find the markdown files then read README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 488.8,
+          "error": ""
+        },
+        {
+          "id": "m05",
+          "category": "connector",
+          "utterance": "what branch am I on; how big is the diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 370.6,
+          "error": ""
+        },
+        {
+          "id": "m06",
+          "category": "connector",
+          "utterance": "remember my editor is Zed and then open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "editor",
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 561.9,
+          "error": ""
+        },
+        {
+          "id": "m07",
+          "category": "connector",
+          "utterance": "find the python files and after that show me pyproject.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 499.2,
+          "error": ""
+        },
+        {
+          "id": "m08",
+          "category": "connector",
+          "utterance": "open Safari then tell me my git status",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 434.9,
+          "error": ""
+        },
+        {
+          "id": "m10",
+          "category": "connector",
+          "utterance": "list the json files, then read package.json",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 468.5,
+          "error": ""
+        },
+        {
+          "id": "m11",
+          "category": "connector",
+          "utterance": "any uncommitted changes? then find the test files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 423.3,
+          "error": ""
+        },
+        {
+          "id": "m12",
+          "category": "connector",
+          "utterance": "remember my shell is fish; what's my test runner",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "shell",
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 546.8,
+          "error": ""
+        },
+        {
+          "id": "m13",
+          "category": "connector",
+          "utterance": "read CHANGELOG.md and then summarize my diff",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 444.4,
+          "error": ""
+        },
+        {
+          "id": "m14",
+          "category": "connector",
+          "utterance": "find the typescript files and also open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 499.7,
+          "error": ""
+        },
+        {
+          "id": "m15",
+          "category": "connector",
+          "utterance": "what can you do and then check my repo status",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 363.7,
+          "error": ""
+        },
+        {
+          "id": "m16",
+          "category": "connector",
+          "utterance": "how do I undo my last commit, then show me my diff",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I undo my last commit"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 522.3,
+          "error": ""
+        },
+        {
+          "id": "m17",
+          "category": "connector",
+          "utterance": "find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 494.7,
+          "error": ""
+        },
+        {
+          "id": "m18",
+          "category": "connector",
+          "utterance": "what's my favorite editor and then open Finder",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 468.1,
+          "error": ""
+        },
+        {
+          "id": "m19",
+          "category": "connector",
+          "utterance": "show me the Makefile after that find the shell scripts",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sh"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sh",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 483.8,
+          "error": ""
+        },
+        {
+          "id": "m20",
+          "category": "connector",
+          "utterance": "check git status and also tell me what a rebase is",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a rebase"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 463.2,
+          "error": ""
+        },
+        {
+          "id": "m21",
+          "category": "connector",
+          "utterance": "find the yaml config files then open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yaml"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yml",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 481.7,
+          "error": ""
+        },
+        {
+          "id": "m22",
+          "category": "connector",
+          "utterance": "read docs/SECURITY.md; then find the markdown files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 515.8,
+          "error": ""
+        },
+        {
+          "id": "m23",
+          "category": "three",
+          "utterance": "check git status, then find the swift files, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 663.2,
+          "error": ""
+        },
+        {
+          "id": "m24",
+          "category": "three",
+          "utterance": "show me the README then find the python files and then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 716.9,
+          "error": ""
+        },
+        {
+          "id": "m25",
+          "category": "three",
+          "utterance": "how big is my diff; what branch am I on; open Terminal",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 634.2,
+          "error": ""
+        },
+        {
+          "id": "m26",
+          "category": "three",
+          "utterance": "remember my editor is Cursor, then open Cursor, then check my git status",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "editor",
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 736.6,
+          "error": ""
+        },
+        {
+          "id": "m27",
+          "category": "three",
+          "utterance": "find the json files and then read package.json and then summarize the diff",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 678.5,
+          "error": ""
+        },
+        {
+          "id": "m28",
+          "category": "three",
+          "utterance": "what is a merge conflict then show me my diff then open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a merge conflict"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 742.5,
+          "error": ""
+        },
+        {
+          "id": "m29",
+          "category": "three",
+          "utterance": "what's my test runner; find the test files; open Terminal",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 742.6,
+          "error": ""
+        },
+        {
+          "id": "m30",
+          "category": "three",
+          "utterance": "list the markdown files after that read README.md after that open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 736.9,
+          "error": ""
+        },
+        {
+          "id": "m31",
+          "category": "long",
+          "utterance": "check git status then show the diff then find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 859.0,
+          "error": ""
+        },
+        {
+          "id": "m32",
+          "category": "long",
+          "utterance": "what branch am I on; how big is my diff; find the python files; read README.md; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 1102.5,
+          "error": ""
+        },
+        {
+          "id": "m33",
+          "category": "too_many",
+          "utterance": "git status then diff then find swift files then find python files then read README.md then open Xcode",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "request has 6 steps (max 5)"
+        },
+        {
+          "id": "m34",
+          "category": "bare_and",
+          "utterance": "check my git status and find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 173.6,
+          "error": ""
+        },
+        {
+          "id": "m35",
+          "category": "bare_and",
+          "utterance": "show me the README and open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 242.7,
+          "error": ""
+        },
+        {
+          "id": "m36",
+          "category": "bare_and",
+          "utterance": "find the python files and open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 228.9,
+          "error": ""
+        },
+        {
+          "id": "m37",
+          "category": "bare_and",
+          "utterance": "open Xcode and show me my diff",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 260.6,
+          "error": ""
+        },
+        {
+          "id": "m38",
+          "category": "bare_and",
+          "utterance": "remember my shell is zsh and open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "zsh"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "shell",
+                "value": "zsh"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 333.5,
+          "error": ""
+        },
+        {
+          "id": "m39",
+          "category": "bare_and",
+          "utterance": "what branch am I on and how big is my diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 178.6,
+          "error": ""
+        },
+        {
+          "id": "m40",
+          "category": "bare_and",
+          "utterance": "read package.json, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 269.4,
+          "error": ""
+        },
+        {
+          "id": "m41",
+          "category": "bare_and",
+          "utterance": "find the markdown files, show me README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*README.md*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 242.1,
+          "error": ""
+        },
+        {
+          "id": "m42",
+          "category": "single",
+          "utterance": "how do I rebase and then push my branch?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 580.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m43",
+          "category": "single",
+          "utterance": "what's the difference between merge and rebase",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what's the difference between merge and rebase"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 338.4,
+          "error": ""
+        },
+        {
+          "id": "m44",
+          "category": "single",
+          "utterance": "explain what happens when I commit and then amend",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 596.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m45",
+          "category": "single",
+          "utterance": "find the files with test and fixture in the name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*, *fixture*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 281.1,
+          "error": ""
+        },
+        {
+          "id": "m46",
+          "category": "single",
+          "utterance": "what's my git status",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 178.4,
+          "error": ""
+        },
+        {
+          "id": "m47",
+          "category": "single",
+          "utterance": "open Cursor",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 253.7,
+          "error": ""
+        },
+        {
+          "id": "m49",
+          "category": "single",
+          "utterance": "find the swift files",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 237.6,
+          "error": ""
+        },
+        {
+          "id": "m50",
+          "category": "single",
+          "utterance": "show me the README",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 243.5,
+          "error": ""
+        },
+        {
+          "id": "m51",
+          "category": "single",
+          "utterance": "why does git say detached head and then refuse to push?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 635.1,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m52",
+          "category": "reject",
+          "utterance": "find the log files then delete them",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 531.7,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m53",
+          "category": "reject",
+          "utterance": "check git status and then push to main",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 568.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m54",
+          "category": "reject",
+          "utterance": "open Terminal then rm -rf the build folder",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 534.5,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m55",
+          "category": "reject",
+          "utterance": "show me my diff then commit everything",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 371.4,
+          "error": ""
+        },
+        {
+          "id": "m56",
+          "category": "reject",
+          "utterance": "find the python files then email them to my boss",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 524.1,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m57",
+          "category": "reject",
+          "utterance": "read README.md and then do the thing",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 538.5,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m58",
+          "category": "reject",
+          "utterance": "what's the weather then open Safari",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 538.5,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m60",
+          "category": "reject",
+          "utterance": "check git status then reset hard to origin",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 358.0,
+          "error": ""
+        },
+        {
+          "id": "m61",
+          "category": "plan_ok_tool_refuses",
+          "utterance": "find the env files then read .env",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*env*"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.env",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 474.9,
+          "error": ""
+        },
+        {
+          "id": "m62",
+          "category": "reject",
+          "utterance": "show me the diff then change it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 499.3,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m63",
+          "category": "reject",
+          "utterance": "tell me a joke and then check git status",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 485.7,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m64",
+          "category": "reject",
+          "utterance": "open Finder then delete my downloads",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 543.7,
+          "error": "step 1: unsupported can't be part of a plan"
+        }
+      ]
+    },
+    {
+      "planner": "clause+",
+      "n": 61,
+      "plan_accuracy": 0.9344262295081968,
+      "plan_ci95": [
+        0.843,
+        0.974
+      ],
+      "intent_sequence_accuracy": 0.9672131147540983,
+      "step_count_accuracy": 0.9672131147540983,
+      "reject_recall": 0.8333333333333334,
+      "false_reject_rate": 0.0,
+      "latency_ms_mean": 595.9295081967213,
+      "latency_ms_p50": 572.8,
+      "by_category": {
+        "bare_and": {
+          "n": 8,
+          "plan_accuracy": 1.0
+        },
+        "connector": {
+          "n": 21,
+          "plan_accuracy": 0.9523809523809523
+        },
+        "long": {
+          "n": 2,
+          "plan_accuracy": 1.0
+        },
+        "plan_ok_tool_refuses": {
+          "n": 1,
+          "plan_accuracy": 0.0
+        },
+        "reject": {
+          "n": 11,
+          "plan_accuracy": 0.8181818181818182
+        },
+        "single": {
+          "n": 9,
+          "plan_accuracy": 1.0
+        },
+        "three": {
+          "n": 8,
+          "plan_accuracy": 1.0
+        },
+        "too_many": {
+          "n": 1,
+          "plan_accuracy": 1.0
+        }
+      },
+      "cases": [
+        {
+          "id": "m01",
+          "category": "connector",
+          "utterance": "check my git status and then find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 405.8,
+          "error": ""
+        },
+        {
+          "id": "m02",
+          "category": "connector",
+          "utterance": "show me the README, then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 492.5,
+          "error": ""
+        },
+        {
+          "id": "m03",
+          "category": "connector",
+          "utterance": "how big is my diff and then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 451.2,
+          "error": ""
+        },
+        {
+          "id": "m04",
+          "category": "connector",
+          "utterance": "find the markdown files then read README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 482.2,
+          "error": ""
+        },
+        {
+          "id": "m05",
+          "category": "connector",
+          "utterance": "what branch am I on; how big is the diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 363.5,
+          "error": ""
+        },
+        {
+          "id": "m06",
+          "category": "connector",
+          "utterance": "remember my editor is Zed and then open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "editor",
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 572.8,
+          "error": ""
+        },
+        {
+          "id": "m07",
+          "category": "connector",
+          "utterance": "find the python files and after that show me pyproject.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 507.1,
+          "error": ""
+        },
+        {
+          "id": "m08",
+          "category": "connector",
+          "utterance": "open Safari then tell me my git status",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 451.3,
+          "error": ""
+        },
+        {
+          "id": "m10",
+          "category": "connector",
+          "utterance": "list the json files, then read package.json",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 480.5,
+          "error": ""
+        },
+        {
+          "id": "m11",
+          "category": "connector",
+          "utterance": "any uncommitted changes? then find the test files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 430.4,
+          "error": ""
+        },
+        {
+          "id": "m12",
+          "category": "connector",
+          "utterance": "remember my shell is fish; what's my test runner",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "shell",
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 554.1,
+          "error": ""
+        },
+        {
+          "id": "m13",
+          "category": "connector",
+          "utterance": "read CHANGELOG.md and then summarize my diff",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 446.2,
+          "error": ""
+        },
+        {
+          "id": "m14",
+          "category": "connector",
+          "utterance": "find the typescript files and also open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 493.9,
+          "error": ""
+        },
+        {
+          "id": "m15",
+          "category": "connector",
+          "utterance": "what can you do and then check my repo status",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 351.5,
+          "error": ""
+        },
+        {
+          "id": "m16",
+          "category": "connector",
+          "utterance": "how do I undo my last commit, then show me my diff",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I undo my last commit"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 499.5,
+          "error": ""
+        },
+        {
+          "id": "m17",
+          "category": "connector",
+          "utterance": "find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 484.1,
+          "error": ""
+        },
+        {
+          "id": "m18",
+          "category": "connector",
+          "utterance": "what's my favorite editor and then open Finder",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 470.2,
+          "error": ""
+        },
+        {
+          "id": "m19",
+          "category": "connector",
+          "utterance": "show me the Makefile after that find the shell scripts",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sh"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sh",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 467.8,
+          "error": ""
+        },
+        {
+          "id": "m20",
+          "category": "connector",
+          "utterance": "check git status and also tell me what a rebase is",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a rebase"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 481.1,
+          "error": ""
+        },
+        {
+          "id": "m21",
+          "category": "connector",
+          "utterance": "find the yaml config files then open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yaml"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yml",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 497.4,
+          "error": ""
+        },
+        {
+          "id": "m22",
+          "category": "connector",
+          "utterance": "read docs/SECURITY.md; then find the markdown files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 518.4,
+          "error": ""
+        },
+        {
+          "id": "m23",
+          "category": "three",
+          "utterance": "check git status, then find the swift files, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 656.0,
+          "error": ""
+        },
+        {
+          "id": "m24",
+          "category": "three",
+          "utterance": "show me the README then find the python files and then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 718.4,
+          "error": ""
+        },
+        {
+          "id": "m25",
+          "category": "three",
+          "utterance": "how big is my diff; what branch am I on; open Terminal",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 605.0,
+          "error": ""
+        },
+        {
+          "id": "m26",
+          "category": "three",
+          "utterance": "remember my editor is Cursor, then open Cursor, then check my git status",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "editor",
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 725.1,
+          "error": ""
+        },
+        {
+          "id": "m27",
+          "category": "three",
+          "utterance": "find the json files and then read package.json and then summarize the diff",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 674.6,
+          "error": ""
+        },
+        {
+          "id": "m28",
+          "category": "three",
+          "utterance": "what is a merge conflict then show me my diff then open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a merge conflict"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 761.9,
+          "error": ""
+        },
+        {
+          "id": "m29",
+          "category": "three",
+          "utterance": "what's my test runner; find the test files; open Terminal",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 732.5,
+          "error": ""
+        },
+        {
+          "id": "m30",
+          "category": "three",
+          "utterance": "list the markdown files after that read README.md after that open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 723.5,
+          "error": ""
+        },
+        {
+          "id": "m31",
+          "category": "long",
+          "utterance": "check git status then show the diff then find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 856.8,
+          "error": ""
+        },
+        {
+          "id": "m32",
+          "category": "long",
+          "utterance": "what branch am I on; how big is my diff; find the python files; read README.md; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 1071.6,
+          "error": ""
+        },
+        {
+          "id": "m33",
+          "category": "too_many",
+          "utterance": "git status then diff then find swift files then find python files then read README.md then open Xcode",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "request has 6 steps (max 5)"
+        },
+        {
+          "id": "m34",
+          "category": "bare_and",
+          "utterance": "check my git status and find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 581.4,
+          "error": ""
+        },
+        {
+          "id": "m35",
+          "category": "bare_and",
+          "utterance": "show me the README and open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 736.3,
+          "error": ""
+        },
+        {
+          "id": "m36",
+          "category": "bare_and",
+          "utterance": "find the python files and open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 727.2,
+          "error": ""
+        },
+        {
+          "id": "m37",
+          "category": "bare_and",
+          "utterance": "open Xcode and show me my diff",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 706.6,
+          "error": ""
+        },
+        {
+          "id": "m38",
+          "category": "bare_and",
+          "utterance": "remember my shell is zsh and open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "zsh"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "shell",
+                "value": "zsh"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 902.6,
+          "error": ""
+        },
+        {
+          "id": "m39",
+          "category": "bare_and",
+          "utterance": "what branch am I on and how big is my diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 536.0,
+          "error": ""
+        },
+        {
+          "id": "m40",
+          "category": "bare_and",
+          "utterance": "read package.json, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 775.5,
+          "error": ""
+        },
+        {
+          "id": "m41",
+          "category": "bare_and",
+          "utterance": "find the markdown files, show me README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 722.3,
+          "error": ""
+        },
+        {
+          "id": "m42",
+          "category": "single",
+          "utterance": "how do I rebase and then push my branch?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I rebase and then push my branch?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 949.6,
+          "error": ""
+        },
+        {
+          "id": "m43",
+          "category": "single",
+          "utterance": "what's the difference between merge and rebase",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what's the difference between merge and rebase"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 353.8,
+          "error": ""
+        },
+        {
+          "id": "m44",
+          "category": "single",
+          "utterance": "explain what happens when I commit and then amend",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "explain what happens when I commit and then amend"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 946.4,
+          "error": ""
+        },
+        {
+          "id": "m45",
+          "category": "single",
+          "utterance": "find the files with test and fixture in the name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*, *fixture*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 705.8,
+          "error": ""
+        },
+        {
+          "id": "m46",
+          "category": "single",
+          "utterance": "what's my git status",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 177.8,
+          "error": ""
+        },
+        {
+          "id": "m47",
+          "category": "single",
+          "utterance": "open Cursor",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 241.6,
+          "error": ""
+        },
+        {
+          "id": "m49",
+          "category": "single",
+          "utterance": "find the swift files",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 241.3,
+          "error": ""
+        },
+        {
+          "id": "m50",
+          "category": "single",
+          "utterance": "show me the README",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 239.8,
+          "error": ""
+        },
+        {
+          "id": "m51",
+          "category": "single",
+          "utterance": "why does git say detached head and then refuse to push?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "why does git say detached head and then refuse to push?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 1018.1,
+          "error": ""
+        },
+        {
+          "id": "m52",
+          "category": "reject",
+          "utterance": "find the log files then delete them",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 863.9,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m53",
+          "category": "reject",
+          "utterance": "check git status and then push to main",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 758.4,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m54",
+          "category": "reject",
+          "utterance": "open Terminal then rm -rf the build folder",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 843.5,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m55",
+          "category": "reject",
+          "utterance": "show me my diff then commit everything",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 365.3,
+          "error": ""
+        },
+        {
+          "id": "m56",
+          "category": "reject",
+          "utterance": "find the python files then email them to my boss",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 762.6,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m57",
+          "category": "reject",
+          "utterance": "read README.md and then do the thing",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 778.8,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m58",
+          "category": "reject",
+          "utterance": "what's the weather then open Safari",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 833.5,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m60",
+          "category": "reject",
+          "utterance": "check git status then reset hard to origin",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 356.0,
+          "error": ""
+        },
+        {
+          "id": "m61",
+          "category": "plan_ok_tool_refuses",
+          "utterance": "find the env files then read .env",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*env*"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.env",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 458.5,
+          "error": ""
+        },
+        {
+          "id": "m62",
+          "category": "reject",
+          "utterance": "show me the diff then change it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 694.5,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m63",
+          "category": "reject",
+          "utterance": "tell me a joke and then check git status",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 808.1,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m64",
+          "category": "reject",
+          "utterance": "open Finder then delete my downloads",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 839.6,
+          "error": "step 1: unsupported can't be part of a plan"
+        }
+      ]
+    },
+    {
+      "planner": "model",
+      "n": 61,
+      "plan_accuracy": 0.47540983606557374,
+      "plan_ci95": [
+        0.355,
+        0.598
+      ],
+      "intent_sequence_accuracy": 0.5245901639344263,
+      "step_count_accuracy": 0.5245901639344263,
+      "reject_recall": 0.16666666666666666,
+      "false_reject_rate": 0.0,
+      "latency_ms_mean": 355.4311475409836,
+      "latency_ms_p50": 289.8,
+      "by_category": {
+        "bare_and": {
+          "n": 8,
+          "plan_accuracy": 0.625
+        },
+        "connector": {
+          "n": 21,
+          "plan_accuracy": 0.47619047619047616
+        },
+        "long": {
+          "n": 2,
+          "plan_accuracy": 0.0
+        },
+        "plan_ok_tool_refuses": {
+          "n": 1,
+          "plan_accuracy": 0.0
+        },
+        "reject": {
+          "n": 11,
+          "plan_accuracy": 0.18181818181818182
+        },
+        "single": {
+          "n": 9,
+          "plan_accuracy": 1.0
+        },
+        "three": {
+          "n": 8,
+          "plan_accuracy": 0.375
+        },
+        "too_many": {
+          "n": 1,
+          "plan_accuracy": 0.0
+        }
+      },
+      "cases": [
+        {
+          "id": "m01",
+          "category": "connector",
+          "utterance": "check my git status and then find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 174.2,
+          "error": ""
+        },
+        {
+          "id": "m02",
+          "category": "connector",
+          "utterance": "show me the README, then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 476.2,
+          "error": ""
+        },
+        {
+          "id": "m03",
+          "category": "connector",
+          "utterance": "how big is my diff and then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 210.1,
+          "error": ""
+        },
+        {
+          "id": "m04",
+          "category": "connector",
+          "utterance": "find the markdown files then read README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 466.0,
+          "error": ""
+        },
+        {
+          "id": "m05",
+          "category": "connector",
+          "utterance": "what branch am I on; how big is the diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 182.8,
+          "error": ""
+        },
+        {
+          "id": "m06",
+          "category": "connector",
+          "utterance": "remember my editor is Zed and then open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "editor",
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 564.2,
+          "error": ""
+        },
+        {
+          "id": "m07",
+          "category": "connector",
+          "utterance": "find the python files and after that show me pyproject.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 489.7,
+          "error": ""
+        },
+        {
+          "id": "m08",
+          "category": "connector",
+          "utterance": "open Safari then tell me my git status",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 433.0,
+          "error": ""
+        },
+        {
+          "id": "m10",
+          "category": "connector",
+          "utterance": "list the json files, then read package.json",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 249.7,
+          "error": ""
+        },
+        {
+          "id": "m11",
+          "category": "connector",
+          "utterance": "any uncommitted changes? then find the test files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 187.0,
+          "error": ""
+        },
+        {
+          "id": "m12",
+          "category": "connector",
+          "utterance": "remember my shell is fish; what's my test runner",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "shell",
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 564.5,
+          "error": ""
+        },
+        {
+          "id": "m13",
+          "category": "connector",
+          "utterance": "read CHANGELOG.md and then summarize my diff",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 428.6,
+          "error": ""
+        },
+        {
+          "id": "m14",
+          "category": "connector",
+          "utterance": "find the typescript files and also open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 492.7,
+          "error": ""
+        },
+        {
+          "id": "m15",
+          "category": "connector",
+          "utterance": "what can you do and then check my repo status",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 180.3,
+          "error": ""
+        },
+        {
+          "id": "m16",
+          "category": "connector",
+          "utterance": "how do I undo my last commit, then show me my diff",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I undo my last commit, then show me my diff"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 384.4,
+          "error": ""
+        },
+        {
+          "id": "m17",
+          "category": "connector",
+          "utterance": "find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 467.4,
+          "error": ""
+        },
+        {
+          "id": "m18",
+          "category": "connector",
+          "utterance": "what's my favorite editor and then open Finder",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "favorite_editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 490.1,
+          "error": ""
+        },
+        {
+          "id": "m19",
+          "category": "connector",
+          "utterance": "show me the Makefile after that find the shell scripts",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sh"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*Makefile, shell scripts*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 288.1,
+          "error": ""
+        },
+        {
+          "id": "m20",
+          "category": "connector",
+          "utterance": "check git status and also tell me what a rebase is",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 183.9,
+          "error": ""
+        },
+        {
+          "id": "m21",
+          "category": "connector",
+          "utterance": "find the yaml config files then open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yaml"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yml",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 243.1,
+          "error": ""
+        },
+        {
+          "id": "m22",
+          "category": "connector",
+          "utterance": "read docs/SECURITY.md; then find the markdown files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 508.6,
+          "error": ""
+        },
+        {
+          "id": "m23",
+          "category": "three",
+          "utterance": "check git status, then find the swift files, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 183.5,
+          "error": ""
+        },
+        {
+          "id": "m24",
+          "category": "three",
+          "utterance": "show me the README then find the python files and then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 707.1,
+          "error": ""
+        },
+        {
+          "id": "m25",
+          "category": "three",
+          "utterance": "how big is my diff; what branch am I on; open Terminal",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 203.9,
+          "error": ""
+        },
+        {
+          "id": "m26",
+          "category": "three",
+          "utterance": "remember my editor is Cursor, then open Cursor, then check my git status",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "editor",
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 771.6,
+          "error": ""
+        },
+        {
+          "id": "m27",
+          "category": "three",
+          "utterance": "find the json files and then read package.json and then summarize the diff",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 641.7,
+          "error": ""
+        },
+        {
+          "id": "m28",
+          "category": "three",
+          "utterance": "what is a merge conflict then show me my diff then open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a merge conflict"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 333.3,
+          "error": ""
+        },
+        {
+          "id": "m29",
+          "category": "three",
+          "utterance": "what's my test runner; find the test files; open Terminal",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.test",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 685.6,
+          "error": ""
+        },
+        {
+          "id": "m30",
+          "category": "three",
+          "utterance": "list the markdown files after that read README.md after that open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*README.md*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 255.4,
+          "error": ""
+        },
+        {
+          "id": "m31",
+          "category": "long",
+          "utterance": "check git status then show the diff then find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 228.2,
+          "error": ""
+        },
+        {
+          "id": "m32",
+          "category": "long",
+          "utterance": "what branch am I on; how big is my diff; find the python files; read README.md; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 224.7,
+          "error": ""
+        },
+        {
+          "id": "m33",
+          "category": "too_many",
+          "utterance": "git status then diff then find swift files then find python files then read README.md then open Xcode",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 222.9,
+          "error": ""
+        },
+        {
+          "id": "m34",
+          "category": "bare_and",
+          "utterance": "check my git status and find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 185.6,
+          "error": ""
+        },
+        {
+          "id": "m35",
+          "category": "bare_and",
+          "utterance": "show me the README and open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 475.7,
+          "error": ""
+        },
+        {
+          "id": "m36",
+          "category": "bare_and",
+          "utterance": "find the python files and open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 464.7,
+          "error": ""
+        },
+        {
+          "id": "m37",
+          "category": "bare_and",
+          "utterance": "open Xcode and show me my diff",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 459.4,
+          "error": ""
+        },
+        {
+          "id": "m38",
+          "category": "bare_and",
+          "utterance": "remember my shell is zsh and open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "zsh"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "shell",
+                "value": "zsh"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 580.1,
+          "error": ""
+        },
+        {
+          "id": "m39",
+          "category": "bare_and",
+          "utterance": "what branch am I on and how big is my diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 189.6,
+          "error": ""
+        },
+        {
+          "id": "m40",
+          "category": "bare_and",
+          "utterance": "read package.json, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 499.9,
+          "error": ""
+        },
+        {
+          "id": "m41",
+          "category": "bare_and",
+          "utterance": "find the markdown files, show me README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*README.md*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 251.4,
+          "error": ""
+        },
+        {
+          "id": "m42",
+          "category": "single",
+          "utterance": "how do I rebase and then push my branch?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a rebase"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 285.1,
+          "error": ""
+        },
+        {
+          "id": "m43",
+          "category": "single",
+          "utterance": "what's the difference between merge and rebase",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what's the difference between merge and rebase"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 334.0,
+          "error": ""
+        },
+        {
+          "id": "m44",
+          "category": "single",
+          "utterance": "explain what happens when I commit and then amend",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what happens when I commit and then amend"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 320.1,
+          "error": ""
+        },
+        {
+          "id": "m45",
+          "category": "single",
+          "utterance": "find the files with test and fixture in the name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*, *fixture*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 289.8,
+          "error": ""
+        },
+        {
+          "id": "m46",
+          "category": "single",
+          "utterance": "what's my git status",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 180.1,
+          "error": ""
+        },
+        {
+          "id": "m47",
+          "category": "single",
+          "utterance": "open Cursor",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 246.2,
+          "error": ""
+        },
+        {
+          "id": "m49",
+          "category": "single",
+          "utterance": "find the swift files",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 246.4,
+          "error": ""
+        },
+        {
+          "id": "m50",
+          "category": "single",
+          "utterance": "show me the README",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 247.4,
+          "error": ""
+        },
+        {
+          "id": "m51",
+          "category": "single",
+          "utterance": "why does git say detached head and then refuse to push?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "why does git say detached head and then refuse to push?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 376.0,
+          "error": ""
+        },
+        {
+          "id": "m52",
+          "category": "reject",
+          "utterance": "find the log files then delete them",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.log",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 236.8,
+          "error": ""
+        },
+        {
+          "id": "m53",
+          "category": "reject",
+          "utterance": "check git status and then push to main",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 199.3,
+          "error": ""
+        },
+        {
+          "id": "m54",
+          "category": "reject",
+          "utterance": "open Terminal then rm -rf the build folder",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 248.3,
+          "error": ""
+        },
+        {
+          "id": "m55",
+          "category": "reject",
+          "utterance": "show me my diff then commit everything",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 197.1,
+          "error": ""
+        },
+        {
+          "id": "m56",
+          "category": "reject",
+          "utterance": "find the python files then email them to my boss",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Email Client"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 492.7,
+          "error": ""
+        },
+        {
+          "id": "m57",
+          "category": "reject",
+          "utterance": "read README.md and then do the thing",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 490.4,
+          "error": ""
+        },
+        {
+          "id": "m58",
+          "category": "reject",
+          "utterance": "what's the weather then open Safari",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 286.3,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m60",
+          "category": "reject",
+          "utterance": "check git status then reset hard to origin",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 204.8,
+          "error": ""
+        },
+        {
+          "id": "m61",
+          "category": "plan_ok_tool_refuses",
+          "utterance": "find the env files then read .env",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*env*"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.env",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 446.8,
+          "error": ""
+        },
+        {
+          "id": "m62",
+          "category": "reject",
+          "utterance": "show me the diff then change it",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 196.3,
+          "error": ""
+        },
+        {
+          "id": "m63",
+          "category": "reject",
+          "utterance": "tell me a joke and then check git status",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "Tell me a joke"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 421.5,
+          "error": ""
+        },
+        {
+          "id": "m64",
+          "category": "reject",
+          "utterance": "open Finder then delete my downloads",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 507.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        }
+      ]
+    }
+  ]
+}

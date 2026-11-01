@@ -21,7 +21,7 @@ from narrow_ai.intents.classifier import (
     normalize_decision_data,
 )
 from narrow_ai.intents.registry import IntentRegistry
-from narrow_ai.intents.schemas import IntentDecision
+from narrow_ai.intents.schemas import IntentDecision, IntentName
 from narrow_ai.models.base import ModelBackend
 from narrow_ai.models.grammar import decision_json_schema
 from narrow_ai.models.prompt_templates import _PARAM_HINTS, _WHEN, PERSONA
@@ -31,6 +31,16 @@ _SPLIT = re.compile(
     r"\s*(?:,?\s*\band then\b|,?\s*\bafter that\b|,?\s*\band also\b|,?\s*\bthen\b|;)\s*",
     re.IGNORECASE,
 )
+
+_AND_SPLIT = re.compile(r"\s*,\s*|\s+and\s+", re.IGNORECASE)
+
+# Intents that are concrete tool actions: only these may come out of an "and" split.
+ACTIONABLE = {
+    IntentName.GIT_STATUS, IntentName.GIT_DIFF_SUMMARY, IntentName.SEARCH_FILES,
+    IntentName.READ_FILE, IntentName.OPEN_APP, IntentName.REMEMBER_PREFERENCE,
+    IntentName.RECALL_PREFERENCE, IntentName.RUN_TESTS,
+}
+_REFUSALS = {IntentName.UNSUPPORTED, IntentName.CLARIFY_REQUEST}
 
 PLAN_PREFILL = '{"steps": [{"intent": "'
 
@@ -96,24 +106,74 @@ class HeuristicPlanner:
 
 
 class ClausePlanner:
-    """Default planner: deterministic split, then each clause goes through the regular
-    single-intent engine (same cached prompt, grammar and strict validation as a normal
-    request).
+    """Deterministic split, then each clause goes through the regular single-intent
+    engine (same cached prompt, grammar and strict validation as a normal request).
 
-    On Qwen3-1.7B this beat one-shot ``ModelPlanner`` plans, which dropped steps and
-    copied few-shot parameters (docs/AGENT_RUNTIME.md). The trade-off: only explicit
-    connectors split a request, so "find tests and fixtures" stays one step.
+    On Qwen3-1.7B this beat one-shot ``ModelPlanner`` plans, which dropped steps,
+    copied few-shot parameters and silently dropped refused parts instead of
+    rejecting the plan (docs/AGENT_RUNTIME.md).
+
+    Options (both off = the original planner):
+
+    * ``split_and``: a clause that routes to a concrete tool action and contains
+      "and" or a comma is split further, but only if *every* part also routes to a
+      concrete tool action. "show me the README and open Cursor" → two steps;
+      "find files with config and test in the name" stays one.
+    * ``question_guard``: if the split plan would be rejected (some clause is
+      unsupported/unclear), route the whole request once; if it is a developer
+      question ("how do I rebase and then push?"), answer it as one step. This can
+      only turn a rejection into a text-only answer, never add an action.
     """
 
-    def __init__(self, engine: Any, max_steps: int = MAX_STEPS) -> None:
+    def __init__(
+        self,
+        engine: Any,
+        max_steps: int = MAX_STEPS,
+        *,
+        split_and: bool = False,
+        question_guard: bool = False,
+    ) -> None:
         self.engine = engine  # narrow_ai.assistant.orchestrator.IntentEngine
         self.max_steps = max_steps
+        self.split_and = split_and
+        self.question_guard = question_guard
+
+    def _route(self, text: str) -> IntentDecision:
+        return self.engine.decide(text)[0]
+
+    def _and_parts(
+        self, clause: str, decision: IntentDecision, budget: int
+    ) -> list[IntentDecision]:
+        if decision.intent not in ACTIONABLE:
+            return [decision]
+        parts = [p.strip(" ,.") for p in _AND_SPLIT.split(clause) if p.strip(" ,.")]
+        if len(parts) < 2 or len(parts) > budget:
+            return [decision]
+        routed = [self._route(p) for p in parts]
+        if all(d.intent in ACTIONABLE for d in routed):
+            return routed
+        return [decision]
 
     def plan(self, text: str) -> Plan:
-        steps = [
-            PlanStep(decision=self.engine.decide(c)[0]) for c in _clauses(text, self.max_steps)
-        ]
-        return Plan(goal=text.strip()[:2000], steps=steps)
+        clauses = _clauses(text, self.max_steps)
+        decisions = [self._route(c) for c in clauses]
+        if self.split_and:
+            out: list[IntentDecision] = []
+            for i, (c, d) in enumerate(zip(clauses, decisions, strict=True)):
+                budget = self.max_steps - len(out) - (len(clauses) - i - 1)
+                out.extend(self._and_parts(c, d, budget))
+            decisions = out
+        if (
+            self.question_guard
+            and len(clauses) > 1
+            and any(d.intent in _REFUSALS for d in decisions)
+        ):
+            whole = self._route(text)
+            if whole.intent == IntentName.ANSWER_QUESTION:
+                decisions = [whole]
+        if len(decisions) > self.max_steps:
+            raise PlanRejected(f"request has {len(decisions)} steps (max {self.max_steps})")
+        return Plan(goal=text.strip()[:2000], steps=[PlanStep(decision=d) for d in decisions])
 
 
 def planner_system_prompt(registry: IntentRegistry, approved_apps: list[str]) -> str:

@@ -108,6 +108,9 @@ class AgentSettings(BaseModel):
 
     enabled: bool = True
     planner: str = "clauses"  # clauses (split + per-clause intent engine) | model (one shot)
+    # ClausePlanner options (data/eval_multistep*.jsonl: 66.7% → 93.3% on the fresh set)
+    split_and: bool = True  # split "X and Y" only if every part is a concrete tool action
+    question_guard: bool = True  # "how do I A and then B?" → one answer, not a rejection
     max_steps: int = Field(default=5, ge=1, le=5)
     max_wall_sec: float = 60.0  # active execution time per run (not time awaiting a person)
     persist_runs: bool = True  # run/step *metadata* only, never tool output

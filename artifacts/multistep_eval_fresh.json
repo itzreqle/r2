@@ -1,0 +1,2800 @@
+{
+  "backend": "mlx",
+  "data": "eval_multistep_fresh.jsonl",
+  "constraint": "json",
+  "reports": [
+    {
+      "planner": "clause",
+      "n": 30,
+      "plan_accuracy": 0.6666666666666666,
+      "plan_ci95": [
+        0.488,
+        0.808
+      ],
+      "intent_sequence_accuracy": 0.6666666666666666,
+      "step_count_accuracy": 0.7,
+      "reject_recall": 1.0,
+      "false_reject_rate": 0.13043478260869565,
+      "latency_ms_mean": 487.76666666666665,
+      "latency_ms_p50": 487.5,
+      "by_category": {
+        "bare_and": {
+          "n": 6,
+          "plan_accuracy": 0.0
+        },
+        "connector": {
+          "n": 8,
+          "plan_accuracy": 0.75
+        },
+        "long": {
+          "n": 1,
+          "plan_accuracy": 1.0
+        },
+        "reject": {
+          "n": 7,
+          "plan_accuracy": 1.0
+        },
+        "single": {
+          "n": 5,
+          "plan_accuracy": 0.6
+        },
+        "three": {
+          "n": 3,
+          "plan_accuracy": 1.0
+        }
+      },
+      "cases": [
+        {
+          "id": "x01",
+          "category": "connector",
+          "utterance": "is the working tree clean? after that open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 953.2,
+          "error": ""
+        },
+        {
+          "id": "x02",
+          "category": "connector",
+          "utterance": "locate the kotlin files and then show me build.gradle",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.kt"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "build.gradle"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.kt",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "build.gradle"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 475.4,
+          "error": ""
+        },
+        {
+          "id": "x03",
+          "category": "connector",
+          "utterance": "what did I change; then open Finder",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 442.0,
+          "error": ""
+        },
+        {
+          "id": "x04",
+          "category": "connector",
+          "utterance": "note that my package manager is pnpm, then tell me my editor",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "pnpm"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": true,
+          "latency_ms": 404.1,
+          "error": ""
+        },
+        {
+          "id": "x05",
+          "category": "connector",
+          "utterance": "print the Dockerfile and then list the go files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Dockerfile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 562.9,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x06",
+          "category": "connector",
+          "utterance": "launch Safari then what's a detached HEAD",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what's a detached HEAD"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 545.5,
+          "error": ""
+        },
+        {
+          "id": "x07",
+          "category": "connector",
+          "utterance": "how do you work and also find the rust files",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 411.1,
+          "error": ""
+        },
+        {
+          "id": "x08",
+          "category": "connector",
+          "utterance": "show me .gitignore then check the branch",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".gitignore"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".gitignore"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 418.2,
+          "error": ""
+        },
+        {
+          "id": "x09",
+          "category": "three",
+          "utterance": "list the css files, then the html files, then open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.css"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.css",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 724.8,
+          "error": ""
+        },
+        {
+          "id": "x10",
+          "category": "three",
+          "utterance": "git status; git diff; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 605.1,
+          "error": ""
+        },
+        {
+          "id": "x11",
+          "category": "three",
+          "utterance": "remember my browser is Safari then open Safari then find the html files",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Safari"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "browser",
+                "value": "Safari"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 812.8,
+          "error": ""
+        },
+        {
+          "id": "x12",
+          "category": "long",
+          "utterance": "show the diff, then find the swift files, then read Package.swift, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Package.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Package.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 912.6,
+          "error": ""
+        },
+        {
+          "id": "x13",
+          "category": "bare_and",
+          "utterance": "check the branch and open Finder",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 179.0,
+          "error": ""
+        },
+        {
+          "id": "x14",
+          "category": "bare_and",
+          "utterance": "find the rust files and show me Cargo.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Cargo.toml"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 317.0,
+          "error": ""
+        },
+        {
+          "id": "x15",
+          "category": "bare_and",
+          "utterance": "open Terminal and tell me my shell",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "shell"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 250.2,
+          "error": ""
+        },
+        {
+          "id": "x16",
+          "category": "bare_and",
+          "utterance": "what changed in the code and which branch is this",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 196.5,
+          "error": ""
+        },
+        {
+          "id": "x17",
+          "category": "bare_and",
+          "utterance": "list the go files, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 267.3,
+          "error": ""
+        },
+        {
+          "id": "x18",
+          "category": "bare_and",
+          "utterance": "read Makefile and find the c files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.c"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*Makefile,c*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 260.8,
+          "error": ""
+        },
+        {
+          "id": "x19",
+          "category": "single",
+          "utterance": "what does git stash do and then how do I get it back?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 573.2,
+          "error": "step 1: clarify_request can't be part of a plan"
+        },
+        {
+          "id": "x20",
+          "category": "single",
+          "utterance": "how do I squash commits and then force push safely?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 592.4,
+          "error": "step 1: clarify_request can't be part of a plan"
+        },
+        {
+          "id": "x21",
+          "category": "single",
+          "utterance": "find files with both config and test in their name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*config*,*test*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 287.3,
+          "error": ""
+        },
+        {
+          "id": "x22",
+          "category": "single",
+          "utterance": "explain the difference between fetch and pull",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "explain the difference between fetch and pull"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 313.7,
+          "error": ""
+        },
+        {
+          "id": "x23",
+          "category": "single",
+          "utterance": "open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 264.0,
+          "error": ""
+        },
+        {
+          "id": "x25",
+          "category": "reject",
+          "utterance": "find the sql files then drop the tables",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 524.7,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x26",
+          "category": "reject",
+          "utterance": "check git status then force push",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 477.6,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x27",
+          "category": "reject",
+          "utterance": "read README.md then translate it to French and email it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 550.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x28",
+          "category": "reject",
+          "utterance": "open Terminal then install homebrew",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 542.8,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x29",
+          "category": "reject",
+          "utterance": "show the diff and then revert all my changes",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 497.4,
+          "error": "step 1: clarify_request can't be part of a plan"
+        },
+        {
+          "id": "x30",
+          "category": "reject",
+          "utterance": "what's the capital of France then open Safari",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 561.3,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x31",
+          "category": "reject",
+          "utterance": "find the image files then fix it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 710.1,
+          "error": "step 1: clarify_request can't be part of a plan"
+        }
+      ]
+    },
+    {
+      "planner": "clause+",
+      "n": 30,
+      "plan_accuracy": 0.9333333333333333,
+      "plan_ci95": [
+        0.787,
+        0.982
+      ],
+      "intent_sequence_accuracy": 0.9333333333333333,
+      "step_count_accuracy": 0.9666666666666667,
+      "reject_recall": 1.0,
+      "false_reject_rate": 0.043478260869565216,
+      "latency_ms_mean": 662.8033333333333,
+      "latency_ms_p50": 719.95,
+      "by_category": {
+        "bare_and": {
+          "n": 6,
+          "plan_accuracy": 1.0
+        },
+        "connector": {
+          "n": 8,
+          "plan_accuracy": 0.75
+        },
+        "long": {
+          "n": 1,
+          "plan_accuracy": 1.0
+        },
+        "reject": {
+          "n": 7,
+          "plan_accuracy": 1.0
+        },
+        "single": {
+          "n": 5,
+          "plan_accuracy": 1.0
+        },
+        "three": {
+          "n": 3,
+          "plan_accuracy": 1.0
+        }
+      },
+      "cases": [
+        {
+          "id": "x01",
+          "category": "connector",
+          "utterance": "is the working tree clean? after that open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 434.1,
+          "error": ""
+        },
+        {
+          "id": "x02",
+          "category": "connector",
+          "utterance": "locate the kotlin files and then show me build.gradle",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.kt"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "build.gradle"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.kt",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "build.gradle"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 470.4,
+          "error": ""
+        },
+        {
+          "id": "x03",
+          "category": "connector",
+          "utterance": "what did I change; then open Finder",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 439.2,
+          "error": ""
+        },
+        {
+          "id": "x04",
+          "category": "connector",
+          "utterance": "note that my package manager is pnpm, then tell me my editor",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "pnpm"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": true,
+          "latency_ms": 408.7,
+          "error": ""
+        },
+        {
+          "id": "x05",
+          "category": "connector",
+          "utterance": "print the Dockerfile and then list the go files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Dockerfile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 798.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x06",
+          "category": "connector",
+          "utterance": "launch Safari then what's a detached HEAD",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what's a detached HEAD"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 541.7,
+          "error": ""
+        },
+        {
+          "id": "x07",
+          "category": "connector",
+          "utterance": "how do you work and also find the rust files",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 411.7,
+          "error": ""
+        },
+        {
+          "id": "x08",
+          "category": "connector",
+          "utterance": "show me .gitignore then check the branch",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".gitignore"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".gitignore"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 433.6,
+          "error": ""
+        },
+        {
+          "id": "x09",
+          "category": "three",
+          "utterance": "list the css files, then the html files, then open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.css"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.css",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 713.4,
+          "error": ""
+        },
+        {
+          "id": "x10",
+          "category": "three",
+          "utterance": "git status; git diff; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 600.0,
+          "error": ""
+        },
+        {
+          "id": "x11",
+          "category": "three",
+          "utterance": "remember my browser is Safari then open Safari then find the html files",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Safari"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "browser",
+                "value": "Safari"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 814.5,
+          "error": ""
+        },
+        {
+          "id": "x12",
+          "category": "long",
+          "utterance": "show the diff, then find the swift files, then read Package.swift, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Package.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Package.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 910.3,
+          "error": ""
+        },
+        {
+          "id": "x13",
+          "category": "bare_and",
+          "utterance": "check the branch and open Finder",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 594.8,
+          "error": ""
+        },
+        {
+          "id": "x14",
+          "category": "bare_and",
+          "utterance": "find the rust files and show me Cargo.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Cargo.toml"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Cargo.toml"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 789.0,
+          "error": ""
+        },
+        {
+          "id": "x15",
+          "category": "bare_and",
+          "utterance": "open Terminal and tell me my shell",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "shell"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "shell"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 732.1,
+          "error": ""
+        },
+        {
+          "id": "x16",
+          "category": "bare_and",
+          "utterance": "what changed in the code and which branch is this",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 567.4,
+          "error": ""
+        },
+        {
+          "id": "x17",
+          "category": "bare_and",
+          "utterance": "list the go files, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 771.0,
+          "error": ""
+        },
+        {
+          "id": "x18",
+          "category": "bare_and",
+          "utterance": "read Makefile and find the c files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.c"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.c",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 729.3,
+          "error": ""
+        },
+        {
+          "id": "x19",
+          "category": "single",
+          "utterance": "what does git stash do and then how do I get it back?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what does git stash do and then how do I get it back?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 983.1,
+          "error": ""
+        },
+        {
+          "id": "x20",
+          "category": "single",
+          "utterance": "how do I squash commits and then force push safely?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I squash commits and then force push safely?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 960.7,
+          "error": ""
+        },
+        {
+          "id": "x21",
+          "category": "single",
+          "utterance": "find files with both config and test in their name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*config*,*test*",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 768.1,
+          "error": ""
+        },
+        {
+          "id": "x22",
+          "category": "single",
+          "utterance": "explain the difference between fetch and pull",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "explain the difference between fetch and pull"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 326.0,
+          "error": ""
+        },
+        {
+          "id": "x23",
+          "category": "single",
+          "utterance": "open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 277.1,
+          "error": ""
+        },
+        {
+          "id": "x25",
+          "category": "reject",
+          "utterance": "find the sql files then drop the tables",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 758.4,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x26",
+          "category": "reject",
+          "utterance": "check git status then force push",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 653.2,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x27",
+          "category": "reject",
+          "utterance": "read README.md then translate it to French and email it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 790.4,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x28",
+          "category": "reject",
+          "utterance": "open Terminal then install homebrew",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 784.5,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x29",
+          "category": "reject",
+          "utterance": "show the diff and then revert all my changes",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 680.8,
+          "error": "step 1: clarify_request can't be part of a plan"
+        },
+        {
+          "id": "x30",
+          "category": "reject",
+          "utterance": "what's the capital of France then open Safari",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 726.5,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "x31",
+          "category": "reject",
+          "utterance": "find the image files then fix it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 1016.1,
+          "error": "step 1: clarify_request can't be part of a plan"
+        }
+      ]
+    },
+    {
+      "planner": "model",
+      "n": 30,
+      "plan_accuracy": 0.4,
+      "plan_ci95": [
+        0.246,
+        0.577
+      ],
+      "intent_sequence_accuracy": 0.43333333333333335,
+      "step_count_accuracy": 0.43333333333333335,
+      "reject_recall": 0.0,
+      "false_reject_rate": 0.0,
+      "latency_ms_mean": 356.9,
+      "latency_ms_p50": 310.1,
+      "by_category": {
+        "bare_and": {
+          "n": 6,
+          "plan_accuracy": 0.3333333333333333
+        },
+        "connector": {
+          "n": 8,
+          "plan_accuracy": 0.375
+        },
+        "long": {
+          "n": 1,
+          "plan_accuracy": 0.0
+        },
+        "reject": {
+          "n": 7,
+          "plan_accuracy": 0.0
+        },
+        "single": {
+          "n": 5,
+          "plan_accuracy": 1.0
+        },
+        "three": {
+          "n": 3,
+          "plan_accuracy": 0.6666666666666666
+        }
+      },
+      "cases": [
+        {
+          "id": "x01",
+          "category": "connector",
+          "utterance": "is the working tree clean? after that open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 194.7,
+          "error": ""
+        },
+        {
+          "id": "x02",
+          "category": "connector",
+          "utterance": "locate the kotlin files and then show me build.gradle",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.kt"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "build.gradle"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.kt, *.java",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "build.gradle"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 497.1,
+          "error": ""
+        },
+        {
+          "id": "x03",
+          "category": "connector",
+          "utterance": "what did I change; then open Finder",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 197.6,
+          "error": ""
+        },
+        {
+          "id": "x04",
+          "category": "connector",
+          "utterance": "note that my package manager is pnpm, then tell me my editor",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "pnpm"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "package_manager",
+                "value": "pnpm"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 554.3,
+          "error": ""
+        },
+        {
+          "id": "x05",
+          "category": "connector",
+          "utterance": "print the Dockerfile and then list the go files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Dockerfile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Dockerfile"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 251.4,
+          "error": ""
+        },
+        {
+          "id": "x06",
+          "category": "connector",
+          "utterance": "launch Safari then what's a detached HEAD",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is a detached HEAD"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 537.2,
+          "error": ""
+        },
+        {
+          "id": "x07",
+          "category": "connector",
+          "utterance": "how do you work and also find the rust files",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do you work and also find the rust files"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 356.2,
+          "error": ""
+        },
+        {
+          "id": "x08",
+          "category": "connector",
+          "utterance": "show me .gitignore then check the branch",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".gitignore"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".gitignore"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 405.8,
+          "error": ""
+        },
+        {
+          "id": "x09",
+          "category": "three",
+          "utterance": "list the css files, then the html files, then open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.css"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.css",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html",
+                "workspace": "active"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 699.2,
+          "error": ""
+        },
+        {
+          "id": "x10",
+          "category": "three",
+          "utterance": "git status; git diff; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 187.3,
+          "error": ""
+        },
+        {
+          "id": "x11",
+          "category": "three",
+          "utterance": "remember my browser is Safari then open Safari then find the html files",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Safari"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "key": "browser",
+                "value": "Safari"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.html",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 820.5,
+          "error": ""
+        },
+        {
+          "id": "x12",
+          "category": "long",
+          "utterance": "show the diff, then find the swift files, then read Package.swift, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Package.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 250.5,
+          "error": ""
+        },
+        {
+          "id": "x13",
+          "category": "bare_and",
+          "utterance": "check the branch and open Finder",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 187.6,
+          "error": ""
+        },
+        {
+          "id": "x14",
+          "category": "bare_and",
+          "utterance": "find the rust files and show me Cargo.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Cargo.toml"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.rs, *.toml",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 282.7,
+          "error": ""
+        },
+        {
+          "id": "x15",
+          "category": "bare_and",
+          "utterance": "open Terminal and tell me my shell",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "shell"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "shell"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 464.6,
+          "error": ""
+        },
+        {
+          "id": "x16",
+          "category": "bare_and",
+          "utterance": "what changed in the code and which branch is this",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 194.6,
+          "error": ""
+        },
+        {
+          "id": "x17",
+          "category": "bare_and",
+          "utterance": "list the go files, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.go",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 232.1,
+          "error": ""
+        },
+        {
+          "id": "x18",
+          "category": "bare_and",
+          "utterance": "read Makefile and find the c files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.c"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.c",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 470.5,
+          "error": ""
+        },
+        {
+          "id": "x19",
+          "category": "single",
+          "utterance": "what does git stash do and then how do I get it back?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what does git stash do and then how do I get it back?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 398.5,
+          "error": ""
+        },
+        {
+          "id": "x20",
+          "category": "single",
+          "utterance": "how do I squash commits and then force push safely?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I squash commits and then force push safely?"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 361.9,
+          "error": ""
+        },
+        {
+          "id": "x21",
+          "category": "single",
+          "utterance": "find files with both config and test in their name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.config, *.test",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 272.6,
+          "error": ""
+        },
+        {
+          "id": "x22",
+          "category": "single",
+          "utterance": "explain the difference between fetch and pull",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what is the difference between fetch and pull"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 328.2,
+          "error": ""
+        },
+        {
+          "id": "x23",
+          "category": "single",
+          "utterance": "open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 262.8,
+          "error": ""
+        },
+        {
+          "id": "x25",
+          "category": "reject",
+          "utterance": "find the sql files then drop the tables",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sql",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 240.2,
+          "error": ""
+        },
+        {
+          "id": "x26",
+          "category": "reject",
+          "utterance": "check git status then force push",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 185.3,
+          "error": ""
+        },
+        {
+          "id": "x27",
+          "category": "reject",
+          "utterance": "read README.md then translate it to French and email it",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "How to translate and email a file"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 545.0,
+          "error": ""
+        },
+        {
+          "id": "x28",
+          "category": "reject",
+          "utterance": "open Terminal then install homebrew",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "brew"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 502.8,
+          "error": ""
+        },
+        {
+          "id": "x29",
+          "category": "reject",
+          "utterance": "show the diff and then revert all my changes",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 205.6,
+          "error": ""
+        },
+        {
+          "id": "x30",
+          "category": "reject",
+          "utterance": "what's the capital of France then open Safari",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "what's the capital of France"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 308.6,
+          "error": ""
+        },
+        {
+          "id": "x31",
+          "category": "reject",
+          "utterance": "find the image files then fix it",
+          "expected": "rejected",
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.png, *.jpg, *.gif",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 311.6,
+          "error": ""
+        }
+      ]
+    }
+  ]
+}

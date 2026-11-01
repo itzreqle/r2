@@ -578,16 +578,17 @@ most five ordinary decisions. The runtime adds sequencing but no new way to act:
 handed to the same executor (gate, validation, precheck, confirmation, tool), so deleting the
 runtime would not change the set of reachable actions. The plan is made \emph{once}, before any
 tool runs, by splitting the request on explicit connectors (``and then'', ``after that'', ``;'')
-and routing each clause through the normal single-intent engine. Tool output is never fed back to a
+and routing each clause through the normal single-intent engine. A clause that routes to a tool
+action and contains ``and'' or a comma is split further only if \emph{every} part also routes to a
+tool action, and a request whose split would be rejected is routed once more as a whole, so that
+``how do I rebase and then push?'' is answered as one question. Tool output is never fed back to a
 planner, so a file that says ``now open Terminal'' cannot add a step, which is our main containment
 of prompt injection. The whole plan is rejected if any step is invalid, unimplemented,
 \texttt{unsupported} or \texttt{clarify\_request}. Privileged steps pause the run with the same
 single-use, expiring confirmation id; the first failing step ends the run, and a wall-time budget
 bounds it. Run history is stored as metadata only (intents, parameters, status, the short spoken
 summary), never file contents or diffs. A one-shot model planner that emits the whole plan under a
-grammar is available but not the default: on six multi-step requests it dropped a step twice and
-copied a parameter from a few-shot example once, while the clause planner got all six right. Six
-requests is anecdotal; a larger multi-step evaluation is future work.
+grammar is available but not the default (\cref{sec:multistep}).
 
 % ================================================================ 6 Implementation
 \section{Implementation}\label{sec:impl}
@@ -1031,6 +1032,37 @@ because the mask is computed on the CPU in tens of microseconds. Without example
 removes the malformed outputs that cause most of those errors. These are small sets: one case is
 2.5 points on dev and 4.2 on fresh, so the differences are indicative rather than significant.
 
+\subsection{Multi-step planning}\label{sec:multistep}
+
+\begin{table}[t]
+\centering\small
+\caption{Planners on multi-step requests (plans validated, not executed). Fresh: 30 requests
+written before the and-split and question guard existed. Rej.: share of must-refuse requests
+refused.}
+\label{tab:multistep}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Planner & Dev (61) & Fresh (30) [95\% CI] & Rej. & p50 \\
+\midrule
+Clause & 75.4 & 66.7 [48.8, 80.8] & 100 & 488\,ms \\
+Clause + and-split + guard & \textbf{93.4} & \textbf{93.3} [78.7, 98.2] & 100 & 720\,ms \\
+Model (one shot) & 47.5 & 40.0 [24.6, 57.7] & 0 & 310\,ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\Cref{tab:multistep} compares planners on a dev set of 61 multi-step requests (connectors, a bare
+``and'', three to five steps, single questions that contain ``and then'', and requests with a
+destructive or out-of-scope part that must be refused) and on a fresh set of 30 written before the
+clause planner's options were implemented. The options raise exact-plan accuracy on the fresh set
+from 66.7\% to 93.3\% while still refusing every must-refuse request; the price is about 230\,ms of
+extra routing calls. The one-shot model planner is faster but produces well-formed, wrong plans that
+no validator can catch: it drops steps, copies few-shot parameters, and, most importantly,
+\emph{silently omits} the part of a request it should refuse (``show me the diff then change it''
+becomes just the diff) instead of rejecting the plan. The clause planner's remaining errors are
+single-intent routing mistakes, such as ``commit everything'' routed to \texttt{git\_status}.
+
 \subsection{Error analysis}
 
 \begin{figure}[t]
@@ -1107,9 +1139,8 @@ possible into a stable prefix, and keep the variable part short.
   leaves such values free and lets the gate refuse them.
 \item \textbf{Same-user trust boundary.} The API token stops browsers and other accounts, not
   processes running as the user (\cref{sec:api}).
-\item \textbf{Multi-step planning.} The clause planner only splits on explicit connectors (``find
-  tests and fixtures'' stays one step), and the comparison with a model planner rests on six
-  requests.
+\item \textbf{Multi-step planning.} The planner comparison uses 61 dev and 30 fresh requests, so
+  its intervals are wide, and the clause planner inherits every single-intent routing error.
 \end{itemize}
 
 \paragraph{Threats to validity.}
@@ -1137,8 +1168,8 @@ metadata and never file contents, diffs or answers.
   token-level radix tree~\cite{zheng2024sglang}.
 \item \textbf{KV quantisation:} measure 8- and 4-bit caches~\cite{liu2024kivi,hooper2024kvquant},
   expected to matter only for longer contexts.
-\item \textbf{Multi-step evaluation:} a labelled set of multi-step requests to compare the clause
-  and model planners properly, and a client view for runs.
+\item \textbf{Multi-step evaluation:} a larger, independently written set of multi-step
+  requests, and a client view for runs.
 \item \textbf{Clarification:} a contrastive set of vague vs.\ destructive requests and LoRA
   fine-tuning~\cite{hu2022lora} on a larger synthetic dataset.
 \item \textbf{Decode speed:} speculative decoding~\cite{leviathan2023speculative} for longer spoken
@@ -1169,6 +1200,7 @@ uv run python training/bench_scaling.py      # Table 4, Figs. 4-5
 uv run python training/evaluate.py --backend mlx [--eval data/eval_fresh.jsonl]
 uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain
 uv run python training/ablation.py           # constraint modes, Table 7
+uv run python training/eval_multistep.py --backend mlx [--data data/eval_multistep_fresh.jsonl]
 uv run python training/bench_voice.py        # Fig. 11
 uv run python paper/make_figures.py          # all figures
 \end{lstlisting}

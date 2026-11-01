@@ -152,7 +152,12 @@ class R2:
             if self.settings.agent.planner == "model" and self.backend.name != "fake":
                 self._planner = ModelPlanner(self.settings, self.backend, self.orch.registry)
             else:  # with the fake backend the engine is the deterministic heuristic
-                self._planner = ClausePlanner(self.orch.engine, self.settings.agent.max_steps)
+                self._planner = ClausePlanner(
+                    self.orch.engine,
+                    self.settings.agent.max_steps,
+                    split_and=self.settings.agent.split_and,
+                    question_guard=self.settings.agent.question_guard,
+                )
         return self._agent
 
     def run(self, text: str) -> dict[str, Any]:
