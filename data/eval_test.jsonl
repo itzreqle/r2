@@ -1,0 +1,60 @@
+{"id": "t01", "utterance": "what's the state of the repo right now", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "t02", "utterance": "have I got any unstaged files", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "t03", "utterance": "am I on main or a feature branch", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "t04", "utterance": "show me git status", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "t05", "utterance": "is everything committed", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "t06", "utterance": "which files are modified", "expected_intent": "git_status", "expected_parameters": {}}
+{"id": "t07", "utterance": "what's in my diff", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "t08", "utterance": "give me an overview of my changes", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "t09", "utterance": "how much code did I touch today", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "t10", "utterance": "summarise what I changed", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "t11", "utterance": "diff stats please", "expected_intent": "git_diff_summary", "expected_parameters": {}}
+{"id": "t12", "utterance": "find typescript files", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.ts"}}
+{"id": "t13", "utterance": "list every rust source file", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.rs"}}
+{"id": "t14", "utterance": "where are the yml files", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.yml"}}
+{"id": "t15", "utterance": "show me all the notebooks", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.ipynb"}}
+{"id": "t16", "utterance": "find the shell scripts", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.sh"}}
+{"id": "t17", "utterance": "locate toml files", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.toml"}}
+{"id": "t18", "utterance": "are there any dockerfiles", "expected_intent": "search_files", "expected_parameters": {"pattern": "Dockerfile*"}}
+{"id": "t19", "utterance": "list csv files in this project", "expected_intent": "search_files", "expected_parameters": {"pattern": "*.csv"}}
+{"id": "t20", "utterance": "print the Dockerfile", "expected_intent": "read_file", "expected_parameters": {"path": "Dockerfile"}}
+{"id": "t21", "utterance": "read me the readme", "expected_intent": "read_file", "expected_parameters": {"path": "README.md"}}
+{"id": "t22", "utterance": "show the Makefile", "expected_intent": "read_file", "expected_parameters": {"path": "Makefile"}}
+{"id": "t23", "utterance": "open src/narrow_ai/settings.py", "expected_intent": "read_file", "expected_parameters": {"path": "src/narrow_ai/settings.py"}}
+{"id": "t24", "utterance": "what's in .gitignore", "expected_intent": "read_file", "expected_parameters": {"path": ".gitignore"}}
+{"id": "t25", "utterance": "display docs/SECURITY.md", "expected_intent": "read_file", "expected_parameters": {"path": "docs/SECURITY.md"}}
+{"id": "t26", "utterance": "cat package.json", "expected_intent": "read_file", "expected_parameters": {"path": "package.json"}}
+{"id": "t27", "utterance": "launch cursor", "expected_intent": "open_app", "expected_parameters": {"app_name": "Cursor"}}
+{"id": "t28", "utterance": "bring up xcode", "expected_intent": "open_app", "expected_parameters": {"app_name": "Xcode"}}
+{"id": "t29", "utterance": "open a terminal", "expected_intent": "open_app", "expected_parameters": {"app_name": "Terminal"}}
+{"id": "t30", "utterance": "start safari", "expected_intent": "open_app", "expected_parameters": {"app_name": "Safari"}}
+{"id": "t31", "utterance": "open vs code", "expected_intent": "open_app", "expected_parameters": {"app_name": "Visual Studio Code"}}
+{"id": "t32", "utterance": "remember I indent with tabs", "expected_intent": "remember_preference", "expected_parameters": {"value": "tabs"}}
+{"id": "t33", "utterance": "note that my editor is neovim", "expected_intent": "remember_preference", "expected_parameters": {"value": "neovim"}}
+{"id": "t34", "utterance": "my base branch is develop, remember that", "expected_intent": "remember_preference", "expected_parameters": {"value": "develop"}}
+{"id": "t35", "utterance": "save that I use uv for python packages", "expected_intent": "remember_preference", "expected_parameters": {"value": "uv"}}
+{"id": "t36", "utterance": "keep in mind I like 4 space indentation", "expected_intent": "remember_preference", "expected_parameters": {"value": "4"}}
+{"id": "t37", "utterance": "what editor do I use", "expected_intent": "recall_preference", "expected_parameters": {}}
+{"id": "t38", "utterance": "do you remember my base branch", "expected_intent": "recall_preference", "expected_parameters": {}}
+{"id": "t39", "utterance": "which package manager did I mention", "expected_intent": "recall_preference", "expected_parameters": {}}
+{"id": "t40", "utterance": "what indentation do I prefer", "expected_intent": "recall_preference", "expected_parameters": {}}
+{"id": "t41", "utterance": "what are you able to do", "expected_intent": "general_help", "expected_parameters": {}}
+{"id": "t42", "utterance": "how do I use you", "expected_intent": "general_help", "expected_parameters": {}}
+{"id": "t43", "utterance": "what commands do you understand", "expected_intent": "general_help", "expected_parameters": {}}
+{"id": "t44", "utterance": "what does git rebase do", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "t45", "utterance": "how do I write a list comprehension", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "t46", "utterance": "what's the difference between let and var in swift", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "t47", "utterance": "why would I use a virtualenv", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "t48", "utterance": "what is a merge conflict", "expected_intent": "answer_question", "expected_parameters": {}}
+{"id": "t49", "utterance": "fix that", "expected_intent": "clarify_request", "expected_parameters": {}}
+{"id": "t50", "utterance": "do it again but better", "expected_intent": "clarify_request", "expected_parameters": {}}
+{"id": "t51", "utterance": "clean this up", "expected_intent": "clarify_request", "expected_parameters": {}}
+{"id": "t52", "utterance": "take care of it", "expected_intent": "clarify_request", "expected_parameters": {}}
+{"id": "t53", "utterance": "commit everything", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t54", "utterance": "git reset --hard", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t55", "utterance": "force push to main", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t56", "utterance": "what time is it in Tokyo", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t57", "utterance": "order a pizza", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t58", "utterance": "rm -rf node_modules and reinstall", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t59", "utterance": "who won the world cup", "expected_intent": "unsupported", "expected_parameters": {}}
+{"id": "t60", "utterance": "turn off the wifi", "expected_intent": "unsupported", "expected_parameters": {}}
