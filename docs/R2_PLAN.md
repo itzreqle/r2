@@ -1,4 +1,4 @@
-# R2 — 2-hour delivery plan
+# R2 — delivery plan
 
 R2 is a Siri-style, local-first macOS developer assistant: you speak or type a
 request, a local Qwen3 model running on MLX turns it into a validated intent,
@@ -9,7 +9,7 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 ## Sprint (must ship)
 
 ### 0. Safety net and correctness
-- [x] Back up project (no git repo) before edits
+- [x] Back up project, then put it under git with a clean commit history
 - [x] Fix: `remember` lowercased the value (failing test)
 - [x] Fix: retry call dropped `max_tokens`/temperature; correction message no longer pollutes history
 - [x] Fix: history stores the model's JSON decision, not long tool output (stable, cache-friendly prompt)
@@ -25,8 +25,9 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] **Persistent KV cache on disk** (`artifacts/kv/*.safetensors`) with metadata guard
       (model id, adapter, prompt hash, template hash) — rejects stale caches
 - [x] Cache modes: `none | prefix | persistent` (config + CLI flag) for experiments
-- [x] Equivalence check: cached vs uncached greedy output must match
-- [x] Benchmark script `training/bench_kv.py` → `artifacts/kv_bench.json`
+- [x] Equivalence check: cached vs uncached greedy output must match (20/20 identical)
+- [x] Multi-prefix LRU (intent prompt + answer prompt both stay cached)
+- [x] Benchmark script `training/bench_kv.py` → `artifacts/kv_bench.json` (TTFT 1251 → 70 ms, 17.9×)
 - [ ] Multi-turn conversation cache via `LRUPromptCache` (token-prefix matching)
 - [ ] Quantized KV (`kv_bits=4/8`) ablation — expected ~no gain at <2k tokens
 - [ ] Rotating-window (`max_kv_size`) study for long sessions
@@ -42,18 +43,23 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] remember / recall preferences (SQLite, confirmation required)
 - [x] open approved app (confirmation required)
 - [x] help, clarify, unsupported (refuses out-of-domain / destructive)
+- [x] answer_question: short spoken answers to developer questions (text only, never executed)
 - [ ] run allow-listed tests, explain test output (second LLM call)
 
 ### 5. R2 app (main app)
 - [x] `r2` command: Siri-style terminal UI (orb/status, transcript, spoken replies)
-- [x] Text mode and push-to-talk voice mode (MLX Whisper STT + macOS `say` TTS)
+- [x] Text mode and push-to-talk voice mode (MLX Whisper STT + Kokoro neural TTS, `say` fallback)
 - [x] `r2 serve` — persistent local HTTP API (model + KV cache stay warm, confirmations work)
-- [x] SwiftUI menu-bar client talking to `r2 serve` (Swift Package, `swift build`)
+- [x] Native SwiftUI app talking to `r2 serve`: animated orb, menus and shortcuts, Settings,
+      menu-bar panel, auto-starts the core (`macos/R2App`)
+- [x] `.app` bundle with microphone usage description, icon and ad-hoc signature (`build_app.sh`)
+- [x] ⌥Space global hotkey (summon + listen) and open at login
 - [ ] Wake word ("Hey R2") — only after push-to-talk is solid
-- [ ] Global hotkey, signed .app bundle with mic entitlement
+- [ ] Developer ID signing + notarization for sharing the app
 
 ### 6. Evaluation
-- [x] Held-out eval set (no overlap with training data), intent + parameter accuracy
+- [x] Held-out dev set (40) + fresh test set (24, written before tuning): 92.5% / 95.8% intent accuracy
+- [x] Ablation: few-shot × constrained decoding (`artifacts/ablation.csv`)
 - [x] Real MLX baseline numbers recorded in `artifacts/`
 - [ ] Larger synthetic dataset (300–1000 examples) + LoRA training and comparison
 - [ ] Model comparison (newer small models vs Qwen3-1.7B)
@@ -65,4 +71,5 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] `03_structured_output` — constrained vs free decoding, token masking
 - [x] `04_eval` — held-out evaluation, confusion matrix
 - [x] `05_voice_loop` — synthesize → transcribe → R2 → speak
+- [x] Kernel `Python (narrow-ai)` + VSCodium fix (`scripts/fix_vscodium_pet.sh`)
 - [ ] LoRA training notebook (kept as old `06_lora_train_smoke` stub)

@@ -1,22 +1,45 @@
-# macOS SwiftUI shell
+# R2 for macOS
 
-Minimal menu-bar client that talks to the Python core via a local subprocess (`uv run narrow-ai text --once`).
+`R2App/` is a SwiftUI app (Swift Package, macOS 14+). It is a thin client: speech
+recognition, intent decisions, permissions and the KV cache all live in the Python core,
+which the app starts and talks to over `http://127.0.0.1:8765`.
 
-## Open in Xcode
-
-1. Create a new macOS App (SwiftUI) named `NarrowAI`, or open the sources under `NarrowAI/`.
-2. Set deployment target to macOS 14+.
-3. Enable App Sandbox carefully: for MVP development, run without sandbox or allow outbound/network none + subprocess. Prefer **non-sandboxed developer builds** first so `uv`/`python` can run.
-4. Grant Microphone if you wire voice later.
-
-## Protocol
-
-The UI runs:
+## Build and run
 
 ```bash
-uv run narrow-ai text --workspace <path> --once "<utterance>"
+cd macos/R2App
+./build_app.sh --open        # release build → build/R2.app, then launch
+./build_app.sh --install     # also copy to ~/Applications/R2.app
+swift run                    # unbundled dev run
 ```
 
-and displays stdout. Confirmation flows use a second invocation after the user taps Confirm.
+`build_app.sh` builds the binary, makes the icon, writes `Info.plist` (microphone usage text
+and the repo path the app uses to start the core), and ad-hoc signs the bundle.
 
-This keeps the Python core independently testable; the Swift app is a thin shell.
+## What's inside
+
+| File | Role |
+| --- | --- |
+| `R2App.swift` | window, menus and shortcuts, Settings, menu-bar extra |
+| `R2Client.swift` | state machine (offline → idle → listening → thinking → speaking / confirm) and HTTP calls |
+| `OrbView.swift` | the animated orb (Canvas + TimelineView, eased physics, per-phase palettes) |
+| `ContentView.swift` | main window, compact menu-bar panel, Settings form |
+| `AudioCapture.swift` | microphone via AVAudioEngine, live level, WAV encoding |
+| `Speaker.swift` | Kokoro voice from the core (`POST /tts`), metered for the orb; system voice fallback |
+| `GlobalHotKey.swift` | ⌥Space summon shortcut (Carbon, no Accessibility permission), open at login |
+| `CoreLauncher.swift` | starts `uv run r2 --mute serve`, logs to `~/Library/Logs/R2/core.log` |
+| `OrbSnapshot.swift` | `R2 --render-orb <dir>` writes orb PNGs for the docs |
+
+`R2 --demo` cycles through every orb state without the core (useful for screenshots).
+
+## HTTP API (served by `uv run r2 serve`)
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/health`, `/status`, `/voices` | liveness, model + KV cache info, voice list |
+| POST | `/ask` `{"text"}` | text request → reply, speech, intent, metrics |
+| POST | `/confirm`, `/cancel`, `/reset` | answer a pending confirmation, clear history |
+| POST | `/ask_audio` (raw WAV) | Whisper → R2 |
+| POST | `/tts` `{"text","voice","speed"}` | Kokoro speech as WAV |
+
+The server binds to 127.0.0.1 only.

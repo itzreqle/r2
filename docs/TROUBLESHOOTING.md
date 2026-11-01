@@ -11,6 +11,33 @@
 | Git tool errors | Ensure `--workspace` is a git repo |
 | Tests want network | Default suite must not; remove `@pytest.mark.mlx` runs from CI |
 
+## VSCodium: no Python environments / kernel not selectable
+
+Open VSX publishes `ms-python.python` only as a "universal" VSIX, which leaves out the native
+`pet` environment finder. The *Python Environments* log then shows
+`spawn …/python-env-tools/bin/pet ENOENT`, and the Jupyter extension hides kernels whose
+interpreter it cannot match (e.g. "Python (narrow-ai)").
+
+1. Run `scripts/fix_vscodium_pet.sh` (builds pet from Microsoft's source with cargo and copies
+   it into the extension). Re-run it after the Python extension updates.
+2. *Developer: Reload Window*. If an old interpreter is still selected, run
+   *Python: Clear Workspace Interpreter Setting*.
+3. In a notebook: *Select Kernel → Jupyter Kernel… → Python (narrow-ai)*, or pick `.venv`.
+
+Without pet, a fallback also works: in VSCodium user settings set `"python.locator": "js"`,
+`"python.useEnvironmentsExtension": false` and, if you open the parent folder,
+`"python.venvFolders": ["Projects/articles/narrow-ai-with-kv"]`. The repo's
+`.vscode/settings.json` already points Python and Jupyter at `.venv`.
+
+## R2 app
+
+| Symptom | Fix |
+| ------- | --- |
+| Orb says "Offline" | Assistant → Show Core Log; check `uv` is on your login shell `PATH`; Restart Core (⌘⇧R) |
+| ⌥Space does nothing | Another app (e.g. ChatGPT, Raycast) owns it; Settings shows a warning — change theirs or turn ours off |
+| Robotic voice | Settings → Voice → turn on Natural voice; the core must have the `tts` group installed |
+| "R2 can't be opened" | Ad-hoc signed build: right-click R2.app → Open once |
+
 ## Reset preferences
 
 Delete `~/.local/share/narrow-ai/preferences.db` or set `NARROW_AI_DB_PATH` to a temp file.
