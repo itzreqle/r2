@@ -130,5 +130,6 @@ select = ["E", "F", "I", "UP", "B"]
 "src/narrow_ai/r2/app.py" = ["B008"]
 # SVG templates read better on one line.
 "scripts/make_readme_charts.py" = ["E501"]
+"paper/make_figures.py" = ["E501"]
 # Notebooks are compact, cell-by-cell demos (sys.path setup, one-liners); archive is frozen.
 "notebooks/**" = ["E401", "E402", "E501", "E702", "I001", "B905"]

@@ -1,0 +1,108 @@
+{
+  "whisper_model": "mlx-community/whisper-small-mlx",
+  "tts_model": "mlx-community/Kokoro-82M-bf16",
+  "voice": "af_heart",
+  "stt": [
+    {
+      "phrase": "What's my git status?",
+      "heard": "What's my Git status?",
+      "ms": 271.42470900435,
+      "audio_s": 1.4986875,
+      "rtf": 0.18110827574417618,
+      "wer": 0.0
+    },
+    {
+      "phrase": "Find all the Swift files.",
+      "heard": "Find all the Swift files.",
+      "ms": 276.21616599935805,
+      "audio_s": 1.5573125,
+      "rtf": 0.17736720536138895,
+      "wer": 0.0
+    },
+    {
+      "phrase": "Show me the README file.",
+      "heard": "Show me the README file.",
+      "ms": 308.68741599988425,
+      "audio_s": 1.4720625,
+      "rtf": 0.2096972214154523,
+      "wer": 0.0
+    },
+    {
+      "phrase": "Open Visual Studio Code.",
+      "heard": "Open Visual Studio Code.",
+      "ms": 262.2805419960059,
+      "audio_s": 1.6586875,
+      "rtf": 0.1581253503122233,
+      "wer": 0.0
+    },
+    {
+      "phrase": "Remember that my shell is zsh.",
+      "heard": "Remember that my shell is ZSH.",
+      "ms": 296.58924999966985,
+      "audio_s": 2.624,
+      "rtf": 0.11302943978645955,
+      "wer": 0.0
+    },
+    {
+      "phrase": "How do I undo my last commit?",
+      "heard": "How do I undo my last commit?",
+      "ms": 292.30291699786903,
+      "audio_s": 1.8826875,
+      "rtf": 0.1552583299128873,
+      "wer": 0.0
+    },
+    {
+      "phrase": "How big is my diff right now?",
+      "heard": "How big is my diff right now?",
+      "ms": 282.89174999372335,
+      "audio_s": 1.856,
+      "rtf": 0.15242012391903198,
+      "wer": 0.0
+    },
+    {
+      "phrase": "What can you do?",
+      "heard": "What can you do?",
+      "ms": 278.6332500036224,
+      "audio_s": 1.0506875,
+      "rtf": 0.2651913628016155,
+      "wer": 0.0
+    }
+  ],
+  "tts": [
+    {
+      "text": "You're on main and the working tree is clean.",
+      "chars": 45,
+      "ms": 236.24258400377585,
+      "audio_s": 2.825,
+      "rtf": 0.083625693452664
+    },
+    {
+      "text": "I found eleven files matching star dot swift.",
+      "chars": 45,
+      "ms": 365.595041999768,
+      "audio_s": 3.2,
+      "rtf": 0.1142484506249275
+    },
+    {
+      "text": "Open Safari? Say yes or no.",
+      "chars": 27,
+      "ms": 232.433500001207,
+      "audio_s": 2.725,
+      "rtf": 0.08529669724814935
+    },
+    {
+      "text": "Git merge and rebase both combine changes from different branches, but rebase moves your commits so the history stays linear.",
+      "chars": 125,
+      "ms": 657.8137499964214,
+      "audio_s": 8.075,
+      "rtf": 0.08146300309553207
+    }
+  ],
+  "summary": {
+    "stt_ms_median": 280.76249999867287,
+    "stt_rtf_median": 0.16774627783680612,
+    "stt_wer_mean": 0.0,
+    "tts_ms_median": 300.9188130017719,
+    "tts_rtf_median": 0.08446119535040668
+  }
+}
