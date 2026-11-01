@@ -119,3 +119,11 @@ src = ["src", "scripts", "training", "notebooks", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# Data tables (few-shot examples / seed dataset) read better unwrapped.
+"src/narrow_ai/models/prompt_templates.py" = ["E501"]
+"training/prepare_data.py" = ["E501"]
+# Typer's documented idiom: typer.Option(...) in argument defaults.
+"src/narrow_ai/cli.py" = ["B008", "E501"]
+"src/narrow_ai/r2/app.py" = ["B008"]

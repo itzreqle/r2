@@ -25,7 +25,9 @@ def vocab_strings(tokenizer: Any) -> list[str]:
     """Decoded string of every token id (cached per tokenizer)."""
     key = id(tokenizer)
     if key not in _VOCAB_CACHE:
-        size = len(tokenizer.get_vocab()) if hasattr(tokenizer, "get_vocab") else tokenizer.vocab_size
+        size = (
+            len(tokenizer.get_vocab()) if hasattr(tokenizer, "get_vocab") else tokenizer.vocab_size
+        )
         ids = [[i] for i in range(size)]
         _VOCAB_CACHE[key] = list(tokenizer.batch_decode(ids))
     return _VOCAB_CACHE[key]

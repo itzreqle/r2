@@ -1,9 +1,9 @@
 """`r2` — Siri-style terminal app.
 
-    r2                 chat (type, or press Enter on an empty line to talk)
-    r2 ask "..."       one request, then exit
-    r2 serve           local HTTP API for the SwiftUI menu-bar client
-    r2 status          model + KV cache info
+r2                 chat (type, or press Enter on an empty line to talk)
+r2 ask "..."       one request, then exit
+r2 serve           local HTTP API for the SwiftUI menu-bar client
+r2 status          model + KV cache info
 """
 
 from __future__ import annotations
@@ -12,7 +12,6 @@ import json
 import os
 import subprocess
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console, Group
@@ -44,7 +43,7 @@ HELP = """[bold]Talk to R2[/bold]
   /status  /reset  /mute  /unmute  /help  /quit"""
 
 
-def _build(backend: Optional[str], workspace: Optional[Path], cache_mode: Optional[str]):
+def _build(backend: str | None, workspace: Path | None, cache_mode: str | None):
     from narrow_ai.r2.core import R2
     from narrow_ai.settings import load_settings
 
@@ -60,8 +59,10 @@ def _banner(r2) -> Panel:
     if kv["mode"] == "none":
         kv_line = "KV cache: off"
     else:
-        how = f"loaded from disk in {kv['load_ms']:.0f} ms" if kv["source"] == "disk" else (
-            f"built in {kv['build_ms']:.0f} ms"
+        how = (
+            f"loaded from disk in {kv['load_ms']:.0f} ms"
+            if kv["source"] == "disk"
+            else (f"built in {kv['build_ms']:.0f} ms")
         )
         kv_line = f"KV cache: {kv['mode']} · {kv['prefix_tokens']} prompt tokens {how}"
     body = Text.assemble(
@@ -90,8 +91,10 @@ def _metrics_line(resp) -> str:
 
 
 def _show(resp, *, heard: str | None = None) -> None:
-    state = "awaiting_confirmation" if resp.needs_confirmation else (
-        "idle" if (resp.tool_result is None or resp.tool_result.ok) else "error"
+    state = (
+        "awaiting_confirmation"
+        if resp.needs_confirmation
+        else ("idle" if (resp.tool_result is None or resp.tool_result.ok) else "error")
     )
     icon, color = ORB.get(state, ORB["idle"])
     items = []
@@ -166,9 +169,9 @@ def _listen(r2) -> str:
 @app.callback()
 def main(
     ctx: typer.Context,
-    backend: Optional[str] = typer.Option(None, "--backend", "-b", help="mlx | fake"),
-    workspace: Optional[Path] = typer.Option(None, "--workspace", "-w", help="Project folder"),
-    cache_mode: Optional[str] = typer.Option(None, "--cache", help="none | prefix | persistent"),
+    backend: str | None = typer.Option(None, "--backend", "-b", help="mlx | fake"),
+    workspace: Path | None = typer.Option(None, "--workspace", "-w", help="Project folder"),
+    cache_mode: str | None = typer.Option(None, "--cache", help="none | prefix | persistent"),
     mute: bool = typer.Option(False, "--mute", help="Do not speak replies"),
 ) -> None:
     """Start the interactive R2 chat when no sub-command is given."""
@@ -224,7 +227,7 @@ def chat(backend, workspace, cache_mode, mute) -> None:
 @app.command()
 def ask(
     ctx: typer.Context,
-    text: str = typer.Argument(..., help="Request, e.g. \"what's my git status\""),
+    text: str = typer.Argument(..., help='Request, e.g. "what\'s my git status"'),
     speak: bool = typer.Option(False, "--speak", help="Speak the reply"),
     as_json: bool = typer.Option(False, "--json", help="Print JSON"),
     yes: bool = typer.Option(False, "--yes", help="Auto-confirm privileged actions"),
@@ -285,7 +288,9 @@ def serve(
     r2 = _build(o.get("backend"), o.get("workspace"), o.get("cache_mode"))
     with console.status("[magenta]Warming up the neural voice…[/magenta]"):
         voice_ok = r2.warmup_tts()
-    console.print(f"[dim]neural voice: {'Kokoro ready' if voice_ok else 'unavailable (system voice)'}[/dim]")
+    console.print(
+        f"[dim]neural voice: {'Kokoro ready' if voice_ok else 'unavailable (system voice)'}[/dim]"
+    )
     console.print(_banner(r2))
     console.print(f"[cyan]R2 API listening on http://{host}:{port}[/cyan]  (Ctrl+C to stop)")
     serve_forever(r2, host=host, port=port, speak=not o.get("mute"))

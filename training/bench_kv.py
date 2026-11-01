@@ -41,8 +41,18 @@ def main() -> int:
     report = run_kv_benchmark(backend, settings, utts, repeats=args.repeats)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2), encoding="utf-8")
-    cols = ["mode", "setup_source", "setup_ms", "prefix_tokens", "cache_mb", "ttft_ms_mean",
-            "total_ms_mean", "prefilled_tokens_mean", "ttft_speedup_vs_none", "output_match_vs_none"]
+    cols = [
+        "mode",
+        "setup_source",
+        "setup_ms",
+        "prefix_tokens",
+        "cache_mb",
+        "ttft_ms_mean",
+        "total_ms_mean",
+        "prefilled_tokens_mean",
+        "ttft_speedup_vs_none",
+        "output_match_vs_none",
+    ]
     print(" | ".join(cols))
     for row in report["modes"].values():
         print(" | ".join(str(row.get(c, "-")) for c in cols))

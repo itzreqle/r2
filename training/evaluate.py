@@ -47,7 +47,10 @@ def main() -> int:
     m = report.metrics
     for c in report.cases:
         if not c.intent_ok or not c.params_ok:
-            print(f"  MISS {c.id}: {c.utterance!r} expected={c.expected} got={c.predicted} {c.parameters}")
+            print(
+                f"  MISS {c.id}: {c.utterance!r} "
+                f"expected={c.expected} got={c.predicted} {c.parameters}"
+            )
     print(
         f"intent_acc={m.accuracy:.3f} param_acc={report.param_accuracy:.3f} n={m.n} "
         f"malformed={m.malformed_rate:.3f} fallback={report.fallback_rate:.3f} "

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -18,7 +17,7 @@ app = typer.Typer(name="narrow-ai", help="Local narrow macOS developer assistant
 console = Console()
 
 
-def _build(workspace: Optional[Path], backend_name: Optional[str], load_mlx: bool) -> AssistantOrchestrator:
+def _build(workspace: Path | None, backend_name: str | None, load_mlx: bool) -> AssistantOrchestrator:
     settings = load_settings()
     if workspace is not None:
         settings.workspace.path = str(workspace.resolve())
@@ -31,9 +30,9 @@ def _build(workspace: Optional[Path], backend_name: Optional[str], load_mlx: boo
 
 @app.command("text")
 def text_mode(
-    workspace: Optional[Path] = typer.Option(None, "--workspace", "-w", help="Project directory"),
-    backend: Optional[str] = typer.Option(None, "--backend", "-b", help="fake|mlx"),
-    once: Optional[str] = typer.Option(None, "--once", "-c", help="Single command then exit"),
+    workspace: Path | None = typer.Option(None, "--workspace", "-w", help="Project directory"),
+    backend: str | None = typer.Option(None, "--backend", "-b", help="fake|mlx"),
+    once: str | None = typer.Option(None, "--once", "-c", help="Single command then exit"),
 ) -> None:
     """Interactive text assistant (no microphone)."""
     orch = _build(workspace, backend, load_mlx=(backend == "mlx"))
@@ -75,8 +74,8 @@ def text_mode(
 
 @app.command("voice")
 def voice_mode(
-    workspace: Optional[Path] = typer.Option(None, "--workspace", "-w"),
-    backend: Optional[str] = typer.Option("fake", "--backend", "-b"),
+    workspace: Path | None = typer.Option(None, "--workspace", "-w"),
+    backend: str | None = typer.Option("fake", "--backend", "-b"),
 ) -> None:
     """Push-to-talk voice loop (requires speech extras)."""
     from narrow_ai.speech.input import record_push_to_talk

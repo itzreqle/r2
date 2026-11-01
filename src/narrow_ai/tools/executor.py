@@ -202,7 +202,9 @@ class ToolExecutor:
                 key = normalize_key(params.key)
                 value = self.preferences.get(key)
                 if value is None:
-                    close = difflib.get_close_matches(key, self.preferences.list_keys(), n=1, cutoff=0.5)
+                    close = difflib.get_close_matches(
+                        key, self.preferences.list_keys(), n=1, cutoff=0.5
+                    )
                     if close:
                         key, value = close[0], self.preferences.get(close[0])
                 if value is None:
@@ -225,8 +227,12 @@ class ToolExecutor:
                     return ToolResult(False, intent, "Question answering is unavailable.")
                 answer = self.answerer(params.question).strip()
                 if not answer:
-                    return ToolResult(False, intent, "I don't have an answer for that.",
-                                      speech="I don't have an answer for that.")
+                    return ToolResult(
+                        False,
+                        intent,
+                        "I don't have an answer for that.",
+                        speech="I don't have an answer for that.",
+                    )
                 return ToolResult(True, intent, answer, speech=answer)
 
             if intent == IntentName.CLARIFY_REQUEST:
@@ -245,8 +251,10 @@ class ToolExecutor:
             return ToolResult(False, intent, f"No executor registered for {intent}")
         except (GitToolError, PathEscapeError, AppToolError, FileNotFoundError) as exc:
             msg = str(exc)
-            speech = "That folder isn't a Git repository." if "not a git repository" in msg else (
-                "I couldn't do that."
+            speech = (
+                "That folder isn't a Git repository."
+                if "not a git repository" in msg
+                else ("I couldn't do that.")
             )
             if isinstance(exc, FileNotFoundError):
                 msg, speech = f"File not found: {exc}", "I couldn't find that file."

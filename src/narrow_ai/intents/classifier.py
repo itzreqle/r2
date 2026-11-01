@@ -11,11 +11,32 @@ from pydantic import ValidationError
 from narrow_ai.intents.schemas import PARAMS_BY_INTENT, IntentDecision, IntentName
 
 _EXT_WORDS = {
-    "python": "py", "py": "py", "typescript": "ts", "ts": "ts", "javascript": "js", "js": "js",
-    "markdown": "md", "md": "md", "json": "json", "yaml": "yaml", "yml": "yml", "toml": "toml",
-    "swift": "swift", "rust": "rs", "go": "go", "java": "java", "html": "html", "css": "css",
-    "shell": "sh", "sh": "sh", "notebook": "ipynb", "notebooks": "ipynb", "ipynb": "ipynb",
-    "csv": "csv", "txt": "txt", "text": "txt",
+    "python": "py",
+    "py": "py",
+    "typescript": "ts",
+    "ts": "ts",
+    "javascript": "js",
+    "js": "js",
+    "markdown": "md",
+    "md": "md",
+    "json": "json",
+    "yaml": "yaml",
+    "yml": "yml",
+    "toml": "toml",
+    "swift": "swift",
+    "rust": "rs",
+    "go": "go",
+    "java": "java",
+    "html": "html",
+    "css": "css",
+    "shell": "sh",
+    "sh": "sh",
+    "notebook": "ipynb",
+    "notebooks": "ipynb",
+    "ipynb": "ipynb",
+    "csv": "csv",
+    "txt": "txt",
+    "text": "txt",
 }
 
 
@@ -43,6 +64,7 @@ def normalize_decision_data(data: dict[str, Any]) -> dict[str, Any]:
         params.setdefault("workspace", "active")
     data["parameters"] = params
     return data
+
 
 _DECODER = json.JSONDecoder()
 
@@ -133,7 +155,9 @@ def heuristic_intent(user_text: str) -> IntentDecision:
             parameters={"key": key[:64]},
         )
     if t.startswith(("how do i", "how to", "what is", "what's the difference", "why ", "explain ")):
-        return IntentDecision(intent=IntentName.ANSWER_QUESTION, parameters={"question": raw[:1000]})
+        return IntentDecision(
+            intent=IntentName.ANSWER_QUESTION, parameters={"question": raw[:1000]}
+        )
     if len(t.split()) < 2:
         return IntentDecision(
             intent=IntentName.CLARIFY_REQUEST,

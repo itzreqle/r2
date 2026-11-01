@@ -22,7 +22,9 @@ def main() -> int:
     parser.add_argument("--max-seq-length", type=int, default=1024)
     parser.add_argument("--adapter-path", type=Path, default=None)
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--yes", action="store_true", help="Confirm real training (may download model)")
+    parser.add_argument(
+        "--yes", action="store_true", help="Confirm real training (may download model)"
+    )
     args = parser.parse_args()
 
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")

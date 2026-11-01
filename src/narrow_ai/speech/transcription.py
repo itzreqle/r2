@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 # Biases Whisper toward R2's vocabulary (wake name, git terms, app names).
 VOCAB_PROMPT = (
     "Hey R2. Git status, git diff, branch, commit, README, pyproject.toml, Python, Swift, "
