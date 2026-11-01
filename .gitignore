@@ -23,7 +23,8 @@ build/
 # OS / IDE
 .DS_Store
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 
 # Models / adapters / run artifacts (keep .gitkeep)
 artifacts/*
