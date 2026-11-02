@@ -253,6 +253,19 @@ shows each step of a run as it happens. See [docs/AGENT_RUNTIME.md](docs/AGENT_R
 
 ### LoRA fine-tuning
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/lora-dark.svg">
+  <img src="docs/images/charts/lora-light.svg" width="760" alt="Exact accuracy, base free decoding / base JSON grammar / LoRA adapter: dev 87.5, 92.5, 100%; fresh 87.5, 91.7, 100%; test 80.0, 85.0, 93.3%; all 124 requests 83.9, 88.7, 96.8%">
+</picture>
+
+Why LoRA: it fixes the base model's systematic errors without lengthening the cached prompt
+(each extra few-shot token costs ~1.46 ms of prefill and 112 KiB of KV). Full fine-tuning of
+1.7B parameters with Adam needs ~27 GB, more than the 16 GB Mac. Adapter layers add latency at
+batch size 1, and prefix-tuning competes with R2's own cached prefix. LoRA learns
+`W = W0 + (α/r)·B·A` with rank r = 8 on all seven projections of the last 8 layers:
+8 · 8 · 38,912 = 2,490,368 parameters, 0.15% of the model
+([Hu et al., 2021](https://arxiv.org/abs/2106.09685); whitepaper §9.11).
+
 A LoRA adapter on the last 8 layers (2.5M parameters, 0.15% of the model, 10 MB) was trained
 for 700 steps on 700 synthetic, decontaminated examples (`training/synth_data.py`), with the
 loss on the decision only. It took 78 minutes on the M4, using only the cached base model.

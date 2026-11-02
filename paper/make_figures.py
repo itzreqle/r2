@@ -441,6 +441,38 @@ def fig_f1() -> None:
     save(fig, "f1")
 
 
+def fig_lora() -> None:
+    """(a) LoRA loss curve, (b) exact accuracy base vs adapter per set."""
+    if not (ART / "lora_compare.json").exists() or not (ART / "lora_train.json").exists():
+        return
+    t, r = load("lora_train.json"), load("lora_compare.json")["results"]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDE, 3.0), gridspec_kw={"width_ratios": [1, 1.25]})
+    tr, va = np.array(t["train_loss"]), np.array(t["val_loss"])
+    a.plot(tr[:, 0], tr[:, 1], color=MUTED, lw=1, label="Train loss (every 10 steps)")
+    a.plot(va[:, 0], va[:, 1], color=BLUE, lw=2, ls="-", marker="o", ms=4, mec="white", mew=0.6,
+           label="Validation loss (70 held-out)")
+    a.set_yscale("log")
+    a.set_xlabel("Training step")
+    a.set_ylabel("Masked cross-entropy (log)")
+    a.set_title("(a) LoRA training, r = 8, last 8 layers", loc="left")
+    a.legend(loc="upper right")
+    sets = [("dev", "Dev (40)"), ("fresh", "Fresh (24)"), ("test", "Test (60)")]
+
+    def pooled(key):
+        ok = sum(sum(r[key][s]["ok"]) for s, _ in sets)
+        return ok / sum(r[key][s]["n"] for s, _ in sets)
+
+    groups = [(name, r["base/none"][s]["exact"], r["base/json"][s]["exact"],
+               r["adapter/json"][s]["exact"]) for s, name in sets]
+    groups.append(("All (124)", pooled("base/none"), pooled("base/json"), pooled("adapter/json")))
+    grouped_hbar(b, groups, labels=("Base, free decoding", "Base, JSON grammar", "LoRA adapter"))
+    b.set_xlabel("Exact accuracy (intent and parameters)")
+    b.set_title("(b) Base model vs. LoRA adapter", loc="left")
+    b.legend(loc="lower center", bbox_to_anchor=(0.45, 1.08), ncol=3, handlelength=1)
+    fig.tight_layout(w_pad=2.5)
+    save(fig, "lora")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     fig_kv_modes()
@@ -455,6 +487,7 @@ def main() -> None:
     fig_f1()
     fig_kv_variants()
     fig_conversation()
+    fig_lora()
     (OUT / "fits.json").write_text(json.dumps(f, indent=2))
     print(json.dumps(f, indent=2))
 

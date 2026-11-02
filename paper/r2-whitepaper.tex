@@ -8,6 +8,7 @@
 \usepackage[letterpaper,margin=0.75in,columnsep=0.3in]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{multirow}
 \usepackage{xcolor}
 \usepackage{listings}
@@ -71,6 +72,7 @@ Prefix KV Caching and Constrained Intent Decoding}
 }
 \date{}
 
+\raggedbottom
 \begin{document}
 \maketitle
 
@@ -138,6 +140,9 @@ assistant is ready in tens of milliseconds.
 \item Measurements on an Apple M4: end-to-end cache modes, a context-length sweep, memory, decode,
   disk I/O, accuracy with confidence intervals, an ablation, error analysis and voice latency
   (\cref{sec:results}).
+\item A parameter-efficient fine-tuning study: a QLoRA adapter with 0.15\% of the parameters,
+  trained on decontaminated synthetic data, compared with the base model under paired tests
+  (\cref{sec:lora}).
 \item An open implementation with a native macOS client, a terminal interface, reproducible
   benchmark scripts and teaching notebooks (\cref{sec:repro}).
 \end{enumerate}
@@ -195,8 +200,16 @@ llguidance~\cite{llguidance2025} and still validates the result afterwards (\cre
 Toolformer~\cite{schick2023toolformer}, ReAct~\cite{yao2023react} and
 Gorilla~\cite{patil2024gorilla} teach LLMs to call tools or APIs. These systems maximise breadth;
 R2 deliberately minimises it, so that a 1.7B model reaches high accuracy through few-shot
-prompting~\cite{brown2020language} without fine-tuning, and every call passes a deterministic
-policy check.
+prompting~\cite{brown2020language} alone, an optional LoRA adapter~\cite{hu2022lora} adds the
+rest (\cref{sec:lora}), and every call passes a deterministic policy check.
+
+\paragraph{Parameter-efficient fine-tuning.}
+Adapter layers~\cite{houlsby2019adapters} insert small trainable modules between frozen layers;
+prefix-tuning~\cite{li2021prefix} learns continuous vectors prepended to every layer's keys and
+values; LoRA~\cite{hu2022lora} learns a low-rank update to frozen weight matrices, motivated by
+the observation that fine-tuning has a low intrinsic dimension~\cite{aghajanyan2021intrinsic};
+QLoRA~\cite{dettmers2023qlora} trains LoRA on top of a 4-bit base model. \Cref{sec:lora} explains
+why LoRA is the variant that fits R2.
 
 \paragraph{On-device models.}
 Post-training quantisation such as GPTQ~\cite{frantar2023gptq} and AWQ~\cite{lin2024awq} makes
@@ -208,28 +221,87 @@ family~\cite{li2023styletts2}, for synthesis.
 
 \Cref{tab:related} summarises how R2's cache compares with these systems.
 
+\begin{table*}[t]
+\centering\small
+\caption{Prefix and KV reuse in related systems. ``Restart'' = the reused state survives a restart
+of the serving process. Entries describe each system's published design, not every configuration.}
+\label{tab:related}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{2.4cm}c>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+System & Reuse unit & Where stored & Restart & Reuse condition / validity check & Target setting \\
+\midrule
+PagedAttention / vLLM~\cite{kwon2023pagedattention} & fixed-size KV blocks & GPU memory & -- & hash of the block's token prefix & multi-tenant serving \\
+SGLang RadixAttention~\cite{zheng2024sglang} & longest cached token prefix & GPU / host memory & -- & radix-tree prefix match, LRU & multi-tenant serving \\
+Prompt Cache~\cite{gim2024promptcache} & reusable prompt modules & GPU / CPU memory & -- & module schema fixes positions & serving, research \\
+CacheBlend~\cite{yao2025cacheblend} & any text chunk & GPU / CPU / storage & \checkmark & selective recompute of a few tokens & retrieval-augmented generation \\
+CacheGen~\cite{liu2024cachegen} & compressed KV bitstream & network / disk & \checkmark & lossy encoding, quality-controlled & context loading over networks \\
+llama.cpp~\cite{gerganov2023llamacpp} & whole prompt / session state & file & \checkmark & saved tokens must match the prompt & local, single user \\
+Provider APIs~\cite{anthropic2024promptcaching} & marked prompt prefixes & provider servers, TTL & -- & exact prefix match & cloud APIs \\
+\textbf{R2 (ours)} & \textbf{fixed system prefix; conversation prefix (opt.)} & \textbf{RAM (LRU 4) + disk (LRU 8)} & \checkmark & \textbf{content hash of weights, tokenizer, template, adapter; per-layer shape check} & \textbf{single-user laptop} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% ================================================================ 3 Why not existing solutions
+\section{Aren't Existing Solutions Good Enough?}\label{sec:why}
+
+A developer who wants to ask their laptop ``what's my git status?'' by voice has four kinds of
+existing tools. Each meets some of the requirements below, none meets all of them, and the gaps
+are measurable on our own hardware.
+
 \begin{table}[t]
 \centering\small
-\caption{Prefix and KV reuse in related systems. ``Persist'' = survives a process restart.}
-\label{tab:related}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lllc@{}}
+\caption{Requirements met by typical configurations of each approach (\checkmark{} yes,
+$\circ$ partly or depends on configuration, -- no). Q1 on-device and private; Q2 first token
+${<}100$\,ms on a laptop; Q3 typed, validated decisions; Q4 model output never authorises an
+action; Q5 developer-workspace actions; Q6 fast again after a restart.}
+\label{tab:why}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-System & Reuse unit & Where & Persist \\
+Approach & Q1 & Q2 & Q3 & Q4 & Q5 & Q6 \\
 \midrule
-PagedAttention / vLLM~\cite{kwon2023pagedattention} & KV blocks & GPU memory & -- \\
-SGLang~\cite{zheng2024sglang} & radix-tree prefixes & GPU/host & -- \\
-Prompt Cache~\cite{gim2024promptcache} & prompt modules & GPU/CPU & -- \\
-CacheBlend~\cite{yao2025cacheblend} & any chunk + recompute & GPU/storage & \checkmark \\
-CacheGen~\cite{liu2024cachegen} & compressed KV stream & network/disk & \checkmark \\
-llama.cpp~\cite{gerganov2023llamacpp} & whole prompt state & file & \checkmark \\
-Provider APIs~\cite{anthropic2024promptcaching} & marked prefixes & server, TTL & -- \\
-\textbf{R2 (ours)} & \textbf{fixed prefix, LRU} & \textbf{RAM (4) + disk (8)} & \checkmark \\
+OS voice assistant & $\circ$ & \checkmark & \checkmark & \checkmark & -- & \checkmark \\
+Cloud LLM agent & -- & $\circ$ & $\circ$ & $\circ$ & \checkmark & $\circ$ \\
+Local chat runtime & \checkmark & -- & $\circ$ & -- & -- & $\circ$ \\
+Serving engine & $\circ$ & \checkmark & $\circ$ & -- & -- & -- \\
+\textbf{R2} & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-% ================================================================ 3 Problem formulation
+\paragraph{OS voice assistants} are fast and constrained to typed intents, which is why their
+actions are safe. But their intent catalogue is fixed by the vendor and knows nothing about a
+developer's repository, files or tools, and part of the processing may happen on servers.
+
+\paragraph{Cloud LLM assistants and coding agents} are capable and know developer workflows, but
+every request crosses the network and sends workspace content off the device. Many give the model
+broad tools, sometimes a shell, so that text read from a file or web page can steer an action
+(indirect prompt injection~\cite{greshake2023injection}); whether that is prevented depends on the
+harness, not the model. Their prompt caches live on the provider's servers with a time limit.
+
+\paragraph{Local chat runtimes} (built, for example, on llama.cpp~\cite{gerganov2023llamacpp}) keep
+data on the device, but they are general chat front ends: they have no notion of a validated action,
+and a narrow assistant built naively on them re-reads its long instruction prompt on every request.
+With R2's own model and prompt that costs 1{,}459\,ms before the first token
+(\cref{tab:kvmodes}), and free decoding of the 1.7B model produces stray parameters that strict
+validation must reject in 6.7--20\% of test requests (\cref{tab:ablation3}).
+
+\paragraph{Serving engines} with prefix caching (vLLM, SGLang; \cref{tab:related}) solve the
+latency problem for many users on a server GPU. They keep the cache in memory of a long-running
+process and have no execution policy; on a laptop, where the assistant is started and stopped
+with the user's session, the cache would be rebuilt after every restart.
+
+\paragraph{What R2 changes.} R2 combines the parts each approach gets right and closes the gaps
+with mechanisms we can measure: a persistent, fingerprinted prefix cache (72\,ms to the first
+token, 82\,ms to load after a restart; \cref{sec:results}), decoding constrained to the decision
+schema plus strict validation (0\% malformed output, 0\% fallbacks), an optional LoRA adapter that
+raises exact accuracy to 96.8\% (\cref{sec:lora}), and an executor in which the model only
+\emph{proposes} actions while allow-lists, workspace guards and user confirmation decide
+(\cref{sec:safety}). The price is breadth: R2 knows eleven intents and declines everything else.
+
+% ================================================================ 4 Problem formulation
 \section{Problem Formulation}\label{sec:problem}
 
 Let $\mathcal{I}$ be a finite set of intents, here $|\mathcal{I}|=11$: \texttt{git\_status},
@@ -1232,10 +1304,19 @@ for fine-tuning (\cref{sec:lora}).
 
 \subsection{LoRA fine-tuning}\label{sec:lora}
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/lora.pdf}
+\caption{(a) Loss on the decision tokens only, for training (every 10 steps) and the 70-example
+validation split. (b) Exact accuracy of the base model with and without the JSON grammar and of
+the LoRA adapter (grammar on; without it the adapter's numbers are identical).}
+\label{fig:lora}
+\end{figure*}
+
 \begin{table}[t]
 \centering\small
 \caption{Base model vs.\ LoRA adapter, exact accuracy (\%) with the R2 prompt. Pooled: all 124
-requests, Wilson 95\% interval. $p$: exact two-sided McNemar test on paired outcomes
+requests, Wilson 95\% interval. $p$: exact two-sided McNemar test~\cite{mcnemar1947note} on paired outcomes
 (adapter vs.\ base, same constraint, pooled).}
 \label{tab:lora}
 \setlength{\tabcolsep}{3pt}
@@ -1251,20 +1332,73 @@ LoRA & none & \textbf{100} & \textbf{100} & \textbf{93.3} & \textbf{96.8} [92.0,
 \end{tabular}
 \end{table}
 
-\paragraph{Method.} LoRA~\cite{hu2022lora} freezes a weight matrix $W_0\in\mathbb{R}^{d\times k}$
-and learns a low-rank update,
-\begin{equation}
-W=W_0+\tfrac{\alpha}{r}BA,\qquad B\in\mathbb{R}^{d\times r},\ A\in\mathbb{R}^{r\times k},\ r\ll\min(d,k),
+\paragraph{Why fine-tune, and why LoRA.}
+The base model's remaining errors are systematic (dotfiles, Dockerfiles, vague requests,
+\cref{sec:errors}). Fixing them with more few-shot examples would lengthen the prefix: every
+added token costs about 1.46\,ms of prefill when uncached (\cref{sec:cost}), 112\,KiB of KV
+memory (\cref{eq:mem}) and attention work on every request. Fine-tuning moves this knowledge into
+the weights and leaves the prompt unchanged. Among fine-tuning methods, R2's constraints decide:
+\begin{itemize}[leftmargin=*,nosep]
+\item \emph{Full fine-tuning} does not fit. Training all $P=1.72$B parameters with Adam needs about
+  16 bytes per parameter (weights, gradients, two moments, master copy), roughly 27\,GB, more than
+  the M4's 16\,GB of unified memory, and every task would store a full model copy.
+\item \emph{Adapter layers}~\cite{houlsby2019adapters} add sequential layers that cannot be merged
+  away; Hu et al.\ show that they add noticeable latency at batch size one~\cite{hu2022lora},
+  which is exactly R2's regime.
+\item \emph{Prefix-tuning}~\cite{li2021prefix} learns extra key/value vectors in front of the
+  sequence. It shortens the usable context and competes with R2's cached prefix, which is
+  itself a fixed key/value prefix.
+\item \emph{LoRA}~\cite{hu2022lora} trains a few million parameters, can be merged so that inference
+  costs nothing extra, and, as QLoRA~\cite{dettmers2023qlora}, trains directly on top of the
+  4-bit weights R2 already uses.
+\end{itemize}
+
+\paragraph{Method.}
+LoRA rests on the hypothesis that the weight change needed to adapt a pretrained model has a low
+\emph{intrinsic rank}~\cite{aghajanyan2021intrinsic,hu2022lora}. For a frozen matrix
+$W_0\in\mathbb{R}^{d\times k}$ it learns
+\begin{equation}\label{eq:lora}
+h=W_0x+\Delta W x=W_0x+\frac{\alpha}{r}\,BAx,
 \end{equation}
-here with $r=8$ and $\alpha/r=20$ on all seven attention and MLP projections of the last 8 of 28
-layers, with the base kept in 4-bit
-(QLoRA): 2.49M trainable parameters, 0.145\% of the model, a 10\,MB adapter. Each training
-example is the full R2 chat prompt (system prompt, few-shot examples, request) followed by the gold
-decision $y$, and the loss is masked to the decision,
-$\mathcal{L}=-\sum_{t\in y}\log p_\theta(y_t\mid x,y_{<t})$, so the 1.1k identical prompt tokens
-contribute no gradient. We train 700 steps (batch 1, learning rate $10^{-4}$, Adam, gradient
-checkpointing, sequence length 1{,}536) on the M4 in 78 minutes, 24 of them spent on validation;
-validation loss falls from 2.47 to 0.007.
+with $B\in\mathbb{R}^{d\times r}$, $A\in\mathbb{R}^{r\times k}$ and rank $r\ll\min(d,k)$.
+$A$ is initialised randomly and $B=0$, so $\Delta W=0$ and training starts exactly at the base
+model; $\alpha/r$ scales the update so that the learning rate need not be retuned when $r$
+changes. Adapting a set $\mathcal{M}$ of matrices in each of $L_a$ layers trains
+\begin{equation}\label{eq:loraparams}
+|\theta_{\text{LoRA}}|=L_a\,r\sum_{m\in\mathcal{M}}(d_m+k_m)
+\end{equation}
+parameters instead of $L_a\sum_m d_mk_m$. R2 uses mlx-lm's defaults, $r=8$ and $\alpha/r=20$,
+on all seven projections of the last $L_a=8$ of 28 layers. With hidden size 2{,}048, 1{,}024-wide
+key/value projections (GQA) and an MLP width of 6{,}144, $\sum_m(d_m+k_m)=38{,}912$, so
+\cref{eq:loraparams} gives $8\cdot8\cdot38{,}912=2{,}490{,}368$ parameters, exactly the 2.490M that
+the trainer reports: 0.62\% of the adapted matrices and 0.145\% of the model, a 10\,MB file. The
+Adam state for them is about 40\,MB instead of tens of gigabytes.
+
+\paragraph{Cost at inference.}
+Because $\Delta W$ has the same shape as $W_0$, it can be merged ($W=W_0+\tfrac{\alpha}{r}BA$) and
+adds no latency~\cite{hu2022lora}. R2 keeps the adapter unmerged so the base stays 4-bit and
+adapters remain swappable; the extra work is $2|\theta_{\text{LoRA}}|\approx5$\,MFLOP per token,
+0.15\% of the base model's $2P\approx3.4$\,GFLOP. The measured median TTFT is unchanged
+(100\,ms with the adapter, 107\,ms without, in the same run).
+
+\paragraph{Interaction with the prefix cache.}
+The cached keys and values are functions of the weights (\cref{prop:prefix}), so a cache built
+for one set of weights is not valid for another. R2 therefore includes the adapter's content hash
+in the fingerprint (\cref{sec:impl}), and switching adapters rebuilds the prefix once (1.5\,s). A
+finer observation follows from causality across layers: an adapter on layers 21--28 leaves the
+inputs and hence the keys and values of layers 1--20 unchanged, so 20 of 28 layers of a cached
+prefix could in principle be shared between adapters. R2 does not exploit this.
+
+\paragraph{Training.}
+Each training example is the full R2 chat prompt $x$ (system prompt, few-shot examples, request)
+followed by the gold decision $y$, and the loss is masked to the decision,
+\begin{equation}\label{eq:maskedloss}
+\mathcal{L}(\theta)=-\frac{1}{|y|}\sum_{t=1}^{|y|}\log p_{W_0+\Delta W_\theta}(y_t\mid x,y_{<t}),
+\end{equation}
+so the 1.1k prompt tokens, identical in every example, contribute no gradient. We train 700 steps
+(batch 1, Adam, learning rate $10^{-4}$, gradient checkpointing, sequence length 1{,}536) on the M4
+in 78 minutes, 24 of them spent on validation. \Cref{fig:lora}a shows the validation loss falling
+from 2.47 to 0.14 within 100 steps and to 0.007 at the end.
 
 \paragraph{Data.} \texttt{synth\_data.py} generates 700 training and 70 validation examples over the
 11 intents from grammar-aware templates (commands, questions and statements with optional politeness
@@ -1272,7 +1406,7 @@ and a wake phrase), with parameters filled from the same vocabularies the tools 
 utterance whose word-set Jaccard similarity to an evaluation request or a few-shot example is at
 least 0.6 is discarded, and the 60-request test set was written before any training data.
 
-\paragraph{Results.} \Cref{tab:lora} shows that the adapter is right on every dev and fresh request
+\paragraph{Results.} \Cref{tab:lora,fig:lora} show that the adapter is right on every dev and fresh request
 and on 56/60 test requests. Over all 124 requests it fixes 12 cases and breaks 2 with the grammar
 ($p=0.013$) and fixes 18 and breaks 2 without it ($p=0.0004$); per set, only the test set without
 the grammar is significant on its own ($p=0.039$). The adapter makes the grammar redundant:
@@ -1426,7 +1560,9 @@ with atomic writes and on-disk eviction (\cref{sec:impl}); rejects unknown param
 schema-constrained decoding with its ablation (\cref{sec:constrained,sec:ablation}); hardens the
 file tools against links and races; adds bounded multi-step requests with a client view (\cref{sec:agent}); measures
 conversation-level KV reuse (\cref{sec:convreuse}), quantised KV and rotating windows
-(\cref{sec:kvvariants}); adds a 60-request test set and a LoRA comparison (\cref{sec:lora}).
+(\cref{sec:kvvariants}); adds a 60-request test set and a LoRA comparison with its rationale and parameter
+count (\cref{sec:lora}); and states why existing assistants do not meet R2's requirements
+(\cref{sec:why}).
 All measurements were repeated with the final code.
 
 \section*{Acknowledgements}

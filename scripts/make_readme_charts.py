@@ -294,11 +294,37 @@ def datasets_chart(theme: str) -> str:
     )
 
 
+def lora_chart(theme: str) -> str:
+    r = json.load(open(ART / "lora_compare.json"))["results"]
+    sets = [("dev", "Dev (40)"), ("fresh", "Fresh (24)"), ("test", "Test (60)")]
+
+    def pooled(key):
+        return (sum(sum(r[key][s]["ok"]) for s, _ in sets)
+                / sum(r[key][s]["n"] for s, _ in sets))
+
+    rows = [(name, [r[k][s]["exact"] for k in ("base/none", "base/json", "adapter/json")])
+            for s, name in sets]
+    rows.append(("All 124", [pooled(k) for k in ("base/none", "base/json", "adapter/json")]))
+    groups = [Group(name, [Bar(v, key, pct(v)) for v, key in zip(vals, ("s1", "s2", "s3"),
+                                                                    strict=True)])
+              for name, vals in rows]
+    return hbar_chart(
+        title="LoRA adapter vs base model: exact accuracy",
+        subtitle="0.15% of parameters trained on 700 synthetic examples · paired McNemar p = 0.013",
+        groups=groups, xmax=1.0, ticks=[0, 0.25, 0.5, 0.75, 1.0], tick_fmt=lambda v: f"{v:.0%}",
+        legend=[("Base, free decoding", "s1"), ("Base, JSON grammar", "s2"),
+                ("LoRA adapter", "s3")], label_w=120,
+        desc="; ".join(f"{g.name}: " + ", ".join(b.label for b in g.bars) for g in groups),
+        theme=theme,
+    )
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     charts = [("kv-ttft", kv_chart), ("accuracy", accuracy_chart), ("ablation", ablation_chart),
               ("kv-variants", kv_variants_chart), ("conversation", conversation_chart),
-              ("multistep", multistep_chart), ("datasets", datasets_chart)]
+              ("multistep", multistep_chart), ("datasets", datasets_chart),
+              ("lora", lora_chart)]
     for name, fn in charts:
         for theme in THEMES:
             (OUT / f"{name}-{theme}.svg").write_text(fn(theme), encoding="utf-8")
