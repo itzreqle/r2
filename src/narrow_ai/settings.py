@@ -43,6 +43,10 @@ class ModelSettings(BaseModel):
     # turn (history included). Needs cache_mode prefix|persistent and max_kv_size 0.
     conversation_cache: bool = False
     conversation_cache_entries: int = Field(default=1, ge=1, le=16)  # ~147 MB each
+    # Quantize the KV cache: 0 = off, 8 or 4 bits (group size kv_group_size).
+    # Not combinable with max_kv_size. See docs/EVALUATION.md for the measurements.
+    kv_bits: Literal[0, 4, 8] = 0
+    kv_group_size: Literal[32, 64, 128] = 64
     constrained: bool = True  # legacy switch: True = "intent", False = "none"
     # Decode-time constraint: none | intent (intent name only) | json (whole decision,
     # needs the llguidance `grammar` group). Empty = derived from `constrained`.

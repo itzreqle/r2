@@ -47,6 +47,8 @@ class MlxBackend(ModelBackend):
         stop_at_json: bool = True,
         conversation_cache: bool = False,
         conversation_entries: int = 1,
+        kv_bits: int = 0,
+        kv_group_size: int = 64,
         load: bool = True,
     ) -> None:
         self.model_id = model_id
@@ -60,6 +62,10 @@ class MlxBackend(ModelBackend):
         self.stop_at_json = stop_at_json
         self.conversation_cache = conversation_cache
         self.conversation_entries = conversation_entries
+        if kv_bits and max_kv_size:  # mlx-lm can't quantize a rotating cache: fail early
+            raise ValueError("model.kv_bits and model.max_kv_size can't be combined")
+        self.kv_bits = kv_bits
+        self.kv_group_size = kv_group_size
         self.conv: ConversationCache | None = None
         self._model: Any = None
         self._tokenizer: Any = None
@@ -147,6 +153,8 @@ class MlxBackend(ModelBackend):
             cache_dir=self.cache_dir,
             base_fingerprint=self._fingerprint,
             max_files=self.cache_max_files,
+            kv_bits=self.kv_bits,
+            kv_group_size=self.kv_group_size,
         )
 
     @property
@@ -273,6 +281,9 @@ class MlxBackend(ModelBackend):
             kwargs["prompt_cache"] = cache
         elif self.max_kv_size:
             kwargs["max_kv_size"] = self.max_kv_size
+        elif self.kv_bits:  # no prefix cache: quantize the request's own cache
+            kwargs.update(kv_bits=self.kv_bits, kv_group_size=self.kv_group_size,
+                          quantized_kv_start=0)
 
         mx.reset_peak_memory()
         t0 = time.perf_counter()

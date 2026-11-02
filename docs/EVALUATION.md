@@ -7,55 +7,78 @@
 - Confusion matrix
 - Malformed / invalid JSON rate
 
+## Sets
+
+| Set | File | Cases | Written | Default config (exact) |
+| --- | --- | ---: | --- | ---: |
+| Dev | `data/eval_heldout.jsonl` | 40 | first; guided prompt tuning | 92.5% |
+| Fresh | `data/eval_fresh.jsonl` | 24 | before the final prompt revision | 91.7% (intent 95.8%) |
+| Test | `data/eval_test.jsonl` | 60 | before any LoRA data; targets known weak spots | 85.0% |
+
+All re-measured with the final code (JSON grammar, strict validation), 0% malformed and 0%
+fallback on every set. Exact = right intent and right parameters.
+
 ## Commands
 
 ```bash
-uv run python training/evaluate.py --backend fake --out artifacts/eval_baseline.json
-# After adapter exists + approval to load MLX:
-uv run python training/evaluate.py --backend mlx --load-mlx \
-  --adapter artifacts/runs/latest/adapters \
-  --out artifacts/eval_adapter.json
-uv run python training/compare_models.py
+HF_HUB_OFFLINE=1 uv run python training/evaluate.py --backend mlx                         # dev
+HF_HUB_OFFLINE=1 uv run python training/evaluate.py --backend mlx --eval data/eval_test.jsonl
+HF_HUB_OFFLINE=1 uv run python training/ablation.py            # few-shot x constraint, 3 sets
+HF_HUB_OFFLINE=1 uv run python training/bench_kv_variants.py   # kv_bits and rotating windows
+HF_HUB_OFFLINE=1 uv run python training/bench_conversation.py  # conversation-level reuse
+HF_HUB_OFFLINE=1 uv run python training/compare_lora.py        # base vs LoRA adapter
 ```
 
 Safety cases in `data/eval_cases.jsonl` include unsupported / destructive phrasing that must map to `unsupported`.
 
-## Strict validation × decode-time constraint (M3)
+## Few-shot × decode constraint (strict validation)
 
-`uv run python training/ablation.py` (Qwen3-1.7B-4bit, Apple M4, locally cached model,
-persistent KV cache) → `artifacts/ablation_constraints.csv`, `artifacts/ablation_{dev,fresh}.json`.
-All rows use **strict** parameter validation: unknown keys are rejected, not dropped.
+`training/ablation.py` → `artifacts/ablation_constraints.csv`, `artifacts/ablation_{dev,fresh,test}.json`.
+Every row uses **strict** validation: unknown parameter keys are rejected, not dropped.
 
-| Few-shot | Constraint | Dev intent | Dev params | Fresh intent | Fresh params | Fallback (dev) | Latency (dev) |
-| :---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| ✓ | none | 87.5% | 87.5% | 91.7% | 87.5% | 5.0% | 295 ms |
-| ✓ | intent | 87.5% | 87.5% | 91.7% | 87.5% | 5.0% | 287 ms |
-| ✓ | **json** | **92.5%** | **92.5%** | **95.8%** | **91.7%** | **0%** | **263 ms** |
-| | none | 72.5% | 65.0% | 75.0% | 75.0% | 15.0% | 287 ms |
-| | intent | 72.5% | 65.0% | 75.0% | 75.0% | 15.0% | 274 ms |
-| | json | 85.0% | 77.5% | 87.5% | 87.5% | 0% | 208 ms |
+| Few-shot | Constraint | Dev (40) | Fresh (24) | Test (60) | Fallback (test) | Median latency (test) |
+| :---: | --- | ---: | ---: | ---: | ---: | ---: |
+| | none | 65.0% | 75.0% | 46.7% | 20.0% | 404 ms |
+| | intent | 65.0% | 75.0% | 46.7% | 20.0% | 381 ms |
+| | json | 77.5% | 87.5% | 58.3% | 0% | 240 ms |
+| ✓ | none | 87.5% | 87.5% | 80.0% | 6.7% | 332 ms |
+| ✓ | intent | 87.5% | 87.5% | 80.0% | 6.7% | 344 ms |
+| ✓ | **json (default)** | **92.5%** | **91.7%** | **85.0%** | **0%** | 323 ms |
 
 What this shows:
 
-- **Strict validation alone costs accuracy.** The model often adds stray parameters, such as
-  `git_status {"clean": …}`, `git_diff_summary {"summary": …}` or `{"pattern": …}`. The old
-  parser dropped these silently. Rejecting them sends those cases to the heuristic fallback:
-  92.5% → 87.5% on dev in `intent` mode.
-- **The JSON grammar recovers all of it.** Decoding is constrained to the decision schema,
-  so stray keys can't be generated. The result matches the previous lenient numbers exactly,
-  with zero fallbacks and no latency cost (decode ≈ 12.5–13.9 ms/token in every mode;
-  llguidance's mask is computed on the CPU in tens of microseconds). So `config/default.toml`
-  now uses `constraint = "json"`.
-- **Only the intent name was ever being constrained before.** The `intent` mask changes
-  nothing on these sets, as in the original ablation. Every failure it could prevent was a
-  parameter failure.
-- **Grammars should constrain structure, not allowlisted values.** A first version made
-  `open_app.app_name` an enum of approved apps, and "open calculator" decoded as Terminal.
-  Allowlists now stay in the executor, which can refuse.
+- **Few-shot examples are the largest gain** (dev 65.0 → 87.5%, test 46.7 → 80.0% with free decoding).
+- **Strict validation exposes stray keys.** The model often adds parameters such as
+  `git_status {"clean": …}` or `git_diff_summary {"summary": …}`. Rejected outputs fall back
+  to the heuristic (5–7% of requests with examples, 15–20% without).
+- **The JSON grammar removes them.** Decoding constrained to the decision schema can't produce
+  stray keys: fallbacks drop to 0% on every set and exact accuracy rises 5 points on dev and
+  test, at no latency cost (decode 12.8–13.9 ms/token in every mode).
+- **The intent mask alone changes nothing**: every failure it could prevent is a parameter failure.
+- **Grammars should constrain structure, not allowlisted values.** Making `open_app.app_name`
+  an enum turned "open calculator" into Terminal; allowlists stay in the executor, which can refuse.
 
-Caveat: n = 40 (dev) and n = 24 (fresh) are small. One case is 2.5 / 4.2 points, so these
-differences are indicative, not significant. A larger evaluation set is still open
-(`docs/R2_PLAN.md`).
+Caveat: one case is 2.5 / 4.2 / 1.7 points on dev / fresh / test, so single differences are
+indicative, not significant; the ranking is the same on all three sets.
+
+## Quantized KV and rotating windows
+
+`training/bench_kv_variants.py` → `artifacts/kv_variants.json`.
+
+| Variant | Cached prefix | Exact (dev + fresh, 64) | Same decisions as 16-bit | TTFT |
+| --- | ---: | ---: | ---: | ---: |
+| 16-bit prefix (default) | 146.8 MB | 92.2% | — | 70 ms |
+| 8-bit prefix (`model.kv_bits = 8`) | 78.0 MB | 92.2% | 59 / 64 | 72 ms |
+| 4-bit prefix | 41.3 MB | 6.2% | 1 / 64 | 77 ms |
+| No cache, full window | — | 92.2% | — | 1,868 ms |
+| No cache, `max_kv_size` 1,024 / 512 / 256 | — | 25.0% / 15.6% / 9.4% | — | ≈2.1 s |
+
+At 1.1k–8k tokens, 8-bit KV keeps the last-position logits within 1.1 of 16-bit (argmax and top-5
+unchanged, KL < 1e-8). Its size follows `(bits/8 + 4/64) / 2` of 16-bit exactly. It gives no
+speed-up up to 8k tokens, because decoding is bound by reading the 0.94 GB of weights. 4-bit KV
+breaks Qwen3 even at 1.1k tokens (KL 25.8, argmax changed). A rotating window shorter than the
+1.1k-token prompt drops most of the instructions. Both stay off by default. Of the five changed
+8-bit decisions, three are free-text refusal reasons and two are intent flips, one each way.
 
 ## Multi-step planning
 
@@ -111,4 +134,21 @@ What this shows:
 Decision: `conversation_cache = false` and `history_window = "sliding"` stay the defaults.
 The history policy matters more than the cache. Choosing it needs a multi-turn follow-up set,
 which is listed as open in `docs/R2_PLAN.md`.
+
+## LoRA adapter vs base
+
+`training/compare_lora.py` → `artifacts/lora_compare.json` (run `20261102T070331Z`: 700 steps,
+8 layers, lr 1e-4, seq 1536, masked prompt; val loss 2.47 → 0.007; 78 min on the M4).
+
+| Model | Constraint | Dev (40) | Fresh (24) | Test (60) | All 124 | Fallback |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Base | json | 92.5% | 91.7% | 85.0% | 88.7% | 0% |
+| Base | none | 87.5% | 87.5% | 80.0% | 83.9% | 6.7% (test) |
+| LoRA | json | 100% | 100% | 93.3% | 96.8% | 0% |
+| LoRA | none | 100% | 100% | 93.3% | 96.8% | 0% |
+
+Paired exact McNemar (adapter vs base, all 124): json 12 fixed / 2 broken, p = 0.013;
+none 18 / 2, p = 0.0004. Per set only test/none is significant alone (p = 0.039).
+Remaining adapter misses (test): t14 `*.yaml` for "yml", t18 dockerfiles → recall_preference,
+t36 preference value wording, t53 "commit everything" → git_status.
 

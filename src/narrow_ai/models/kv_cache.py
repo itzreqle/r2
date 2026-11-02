@@ -37,6 +37,7 @@ from narrow_ai.models.base import CacheStats
 logger = logging.getLogger(__name__)
 
 CACHE_MODES = ("none", "prefix", "persistent")
+KV_BITS = (0, 4, 8)  # 0 = full precision (the model's dtype)
 
 
 TMP_SUFFIX = ".tmp.safetensors"
@@ -114,9 +115,15 @@ class PrefixKVCache:
         base_fingerprint: dict[str, str] | None = None,
         max_entries: int = 4,
         max_files: int = 8,
+        kv_bits: int = 0,
+        kv_group_size: int = 64,
     ) -> None:
         if mode not in CACHE_MODES:
             raise ValueError(f"cache mode must be one of {CACHE_MODES}, got {mode!r}")
+        if kv_bits not in KV_BITS:
+            raise ValueError(f"kv_bits must be one of {KV_BITS}, got {kv_bits!r}")
+        self.kv_bits = kv_bits
+        self.kv_group_size = kv_group_size
         self.model = model
         self.mode = mode
         self.cache_dir = cache_dir
@@ -159,8 +166,13 @@ class PrefixKVCache:
             self.stats.extra["entries"] = len(self._entries)
 
     def _load_or_build(self, prefix_text: str) -> None:
+        quant = (
+            {"kv_bits": str(self.kv_bits), "kv_group_size": str(self.kv_group_size)}
+            if self.kv_bits else {}  # full-precision fingerprints stay as they were
+        )
         fp = fingerprint(
             **self.base_fingerprint,
+            **quant,
             prefix_sha=hashlib.sha256(prefix_text.encode()).hexdigest(),
             prefix_tokens=str(len(self._prefix_tokens)),
         )
@@ -180,6 +192,9 @@ class PrefixKVCache:
         step = 2048
         for i in range(0, len(self._prefix_tokens), step):
             self.model(tokens[i : i + step][None], cache=cache)
+            mx.eval([c.state for c in cache])
+        if self.kv_bits:  # quantize once; request tokens are then appended quantized
+            cache = [self._quantize(c) for c in cache]
             mx.eval([c.state for c in cache])
         self._cache = cache
         self.stats.build_ms = (time.perf_counter() - t0) * 1000
@@ -229,11 +244,19 @@ class PrefixKVCache:
         logger.info("KV prefix cache loaded from disk in %.0f ms", self.stats.load_ms)
         return True
 
+    def _quantize(self, layer: Any) -> Any:
+        if not hasattr(layer, "to_quantized"):
+            return layer
+        return layer.to_quantized(group_size=self.kv_group_size, bits=self.kv_bits)
+
     def _model_layer_classes(self) -> list[str]:
         if self._expected_classes is None:
             from mlx_lm.models.cache import make_prompt_cache
 
-            self._expected_classes = [type(c).__name__ for c in make_prompt_cache(self.model)]
+            layers = make_prompt_cache(self.model)
+            if self.kv_bits:
+                layers = [self._quantize(c) for c in layers]
+            self._expected_classes = [type(c).__name__ for c in layers]
         return self._expected_classes
 
     def _save(self, fp: dict[str, str]) -> None:

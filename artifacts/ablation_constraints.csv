@@ -1,7 +1,7 @@
 few_shot,constrained,constraint,intent_acc,param_acc,malformed,fallback,latency_ms
-False,True,intent,0.725,0.65,0.15,0.15,274
-False,True,json,0.85,0.775,0.0,0.0,208
-False,False,none,0.725,0.65,0.15,0.15,287
-True,True,intent,0.875,0.875,0.05,0.05,287
-True,True,json,0.925,0.925,0.0,0.0,263
-True,False,none,0.875,0.875,0.05,0.05,295
+False,True,intent,0.725,0.65,0.15,0.15,342
+False,True,json,0.85,0.775,0.0,0.0,241
+False,False,none,0.725,0.65,0.15,0.15,339
+True,True,intent,0.875,0.875,0.05,0.05,349
+True,True,json,0.925,0.925,0.0,0.0,326
+True,False,none,0.875,0.875,0.05,0.05,305

@@ -7,9 +7,9 @@
     "param_acc": 0.875,
     "malformed": 0.05,
     "fallback": 0.05,
-    "latency_ms": 295,
-    "ttft_ms": 74.4,
-    "decode_ms_per_token": 13.01,
+    "latency_ms": 305,
+    "ttft_ms": 106.6,
+    "decode_ms_per_token": 14.0,
     "n": 40,
     "misses": [
       {
@@ -72,9 +72,9 @@
     "param_acc": 0.875,
     "malformed": 0.05,
     "fallback": 0.05,
-    "latency_ms": 287,
-    "ttft_ms": 82.4,
-    "decode_ms_per_token": 13.83,
+    "latency_ms": 349,
+    "ttft_ms": 122.4,
+    "decode_ms_per_token": 15.29,
     "n": 40,
     "misses": [
       {
@@ -137,9 +137,9 @@
     "param_acc": 0.925,
     "malformed": 0.0,
     "fallback": 0.0,
-    "latency_ms": 263,
-    "ttft_ms": 71.3,
-    "decode_ms_per_token": 13.81,
+    "latency_ms": 326,
+    "ttft_ms": 107.5,
+    "decode_ms_per_token": 15.88,
     "n": 40,
     "misses": [
       {
@@ -182,9 +182,9 @@
     "param_acc": 0.65,
     "malformed": 0.15,
     "fallback": 0.15,
-    "latency_ms": 287,
-    "ttft_ms": 79.8,
-    "decode_ms_per_token": 12.07,
+    "latency_ms": 339,
+    "ttft_ms": 120.0,
+    "decode_ms_per_token": 13.41,
     "n": 40,
     "misses": [
       {
@@ -331,9 +331,9 @@
     "param_acc": 0.65,
     "malformed": 0.15,
     "fallback": 0.15,
-    "latency_ms": 274,
-    "ttft_ms": 77.3,
-    "decode_ms_per_token": 12.41,
+    "latency_ms": 342,
+    "ttft_ms": 117.4,
+    "decode_ms_per_token": 13.7,
     "n": 40,
     "misses": [
       {
@@ -480,9 +480,9 @@
     "param_acc": 0.775,
     "malformed": 0.0,
     "fallback": 0.0,
-    "latency_ms": 208,
-    "ttft_ms": 64.7,
-    "decode_ms_per_token": 12.45,
+    "latency_ms": 241,
+    "ttft_ms": 88.5,
+    "decode_ms_per_token": 13.26,
     "n": 40,
     "misses": [
       {

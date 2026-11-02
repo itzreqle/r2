@@ -200,3 +200,42 @@ def test_eviction_cleans_only_stale_temp_files(tmp_path):
     other = _touch(tmp_path / "notes.txt", age_s=99999)
     evict_cache_files(tmp_path, 8)
     assert not stale.exists() and young.exists() and other.exists()
+
+
+# ---------------------------------------------------------------- quantized KV (kv_bits)
+def _fingerprint_of(tmp_path, **kw):
+    from narrow_ai.models.kv_cache import PrefixKVCache
+
+    kv = PrefixKVCache(object(), mode="persistent", cache_dir=tmp_path,
+                       base_fingerprint={"model_id": "m"}, **kw)
+    seen = []
+    kv._try_load = lambda fp: seen.append(fp) or True  # record instead of touching MLX
+    kv.prepare("system prompt", [1, 2, 3])
+    return seen[0]
+
+
+def test_kv_bits_get_their_own_disk_cache(tmp_path):
+    full = _fingerprint_of(tmp_path)
+    q8 = _fingerprint_of(tmp_path, kv_bits=8)
+    q4 = _fingerprint_of(tmp_path, kv_bits=4)
+    assert len({full["fingerprint"], q8["fingerprint"], q4["fingerprint"]}) == 3
+    assert "kv_bits" not in full  # existing full-precision caches keep their names
+    assert q8["kv_bits"] == "8"
+
+
+def test_invalid_kv_bits_fail_closed():
+    from narrow_ai.models.kv_cache import PrefixKVCache
+    from narrow_ai.settings import ModelSettings
+
+    with pytest.raises(ValueError):
+        PrefixKVCache(object(), kv_bits=3)
+    with pytest.raises(ValueError):
+        ModelSettings(kv_bits=2)
+
+
+def test_kv_bits_with_rotating_window_is_refused():
+    pytest.importorskip("mlx_lm")
+    from narrow_ai.models.mlx_backend import MlxBackend
+
+    with pytest.raises(ValueError, match="kv_bits"):
+        MlxBackend("m", kv_bits=8, max_kv_size=512, load=False)

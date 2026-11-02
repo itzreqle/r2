@@ -67,9 +67,9 @@ request ──► Planner ──► Plan (≤5 IntentDecisions, schema-validated
 
   | Planner | Dev plan exact | Fresh plan exact (95% CI) | Fresh reject recall | Fresh p50 |
   | --- | ---: | ---: | ---: | ---: |
-  | clause (original) | 75.4% | 66.7% (48.8–80.8) | 100% | 488 ms |
-  | **clause + split_and + question_guard** | **93.4%** | **93.3% (78.7–98.2)** | **100%** | 720 ms |
-  | model (one shot, grammar) | 47.5% | 40.0% (24.6–57.7) | **0%** | 310 ms |
+  | clause (original) | 75.4% | 66.7% (48.8–80.8) | 100% | 607 ms |
+  | **clause + split_and + question_guard** | **93.4%** | **93.3% (78.7–98.2)** | **100%** | 910 ms |
+  | model (one shot, grammar) | 47.5% | 40.0% (24.6–57.7) | **0%** | 396 ms |
 
   The one-shot model planner fails in a way no validator can catch: well-formed, wrong
   plans. It drops steps, copies few-shot parameters, and, worst, *silently drops* the part

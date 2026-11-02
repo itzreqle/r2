@@ -1,0 +1,1555 @@
+{
+  "accuracy": 0.85,
+  "param_accuracy": 0.85,
+  "n": 60,
+  "malformed_rate": 0.0,
+  "fallback_rate": 0.0,
+  "latency_ms_mean": 302.5548416165596,
+  "latency_ms_p50": 303.91885449989786,
+  "ttft_ms_mean": 97.57333333333334,
+  "per_intent_f1": {
+    "answer_question": 1.0,
+    "clarify_request": 0.6666666666666666,
+    "general_help": 0.6666666666666666,
+    "git_diff_summary": 0.9090909090909091,
+    "git_status": 0.8333333333333334,
+    "open_app": 0.9090909090909091,
+    "read_file": 0.7272727272727273,
+    "recall_preference": 0.8571428571428571,
+    "remember_preference": 1.0,
+    "search_files": 0.875,
+    "unsupported": 0.823529411764706
+  },
+  "confusion": {
+    "git_status": {
+      "git_status": 5,
+      "git_diff_summary": 1
+    },
+    "git_diff_summary": {
+      "git_diff_summary": 5
+    },
+    "search_files": {
+      "search_files": 7,
+      "general_help": 1
+    },
+    "read_file": {
+      "unsupported": 1,
+      "read_file": 4,
+      "open_app": 1,
+      "search_files": 1
+    },
+    "open_app": {
+      "open_app": 5
+    },
+    "remember_preference": {
+      "remember_preference": 5
+    },
+    "recall_preference": {
+      "recall_preference": 3,
+      "general_help": 1
+    },
+    "general_help": {
+      "general_help": 3
+    },
+    "answer_question": {
+      "answer_question": 5
+    },
+    "clarify_request": {
+      "clarify_request": 2,
+      "general_help": 1,
+      "unsupported": 1
+    },
+    "unsupported": {
+      "git_status": 1,
+      "unsupported": 7
+    }
+  },
+  "config": {
+    "backend": "mlx",
+    "model_id": "mlx-community/Qwen3-1.7B-4bit",
+    "cache_mode": "persistent",
+    "constrained": true,
+    "constraint": "json",
+    "few_shot": true,
+    "adapter": ""
+  },
+  "cases": [
+    {
+      "id": "t01",
+      "utterance": "what's the state of the repo right now",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 711.3595410010021,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 93.7,
+        "total_ms": 191.4,
+        "prompt_tokens": 25,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 279.2,
+        "generation_tps": 89.6,
+        "peak_memory_gb": 1.32,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t02",
+      "utterance": "have I got any unstaged files",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 180.56195799908892,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 70.6,
+        "total_ms": 178.4,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 327.2,
+        "generation_tps": 80.6,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t03",
+      "utterance": "am I on main or a feature branch",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 168.02070799894864,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 68.8,
+        "total_ms": 162.9,
+        "prompt_tokens": 24,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 351.5,
+        "generation_tps": 93.8,
+        "peak_memory_gb": 1.312,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t04",
+      "utterance": "show me git status",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 173.77270799988764,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 68.8,
+        "total_ms": 168.8,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 293.2,
+        "generation_tps": 87.6,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t05",
+      "utterance": "is everything committed",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 175.18125000060536,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 75.2,
+        "total_ms": 170.0,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 255.0,
+        "generation_tps": 92.8,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t06",
+      "utterance": "which files are modified",
+      "expected": "git_status",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 186.73195900009887,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 69.2,
+        "total_ms": 181.7,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 291.4,
+        "generation_tps": 86.7,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t07",
+      "utterance": "what's in my diff",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 185.81470799836097,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 69.4,
+        "total_ms": 181.0,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 304.2,
+        "generation_tps": 87.7,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t08",
+      "utterance": "give me an overview of my changes",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 205.06412500071747,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 76.6,
+        "total_ms": 199.6,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 303.2,
+        "generation_tps": 79.5,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t09",
+      "utterance": "how much code did I touch today",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 201.72599999932572,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 74.0,
+        "total_ms": 196.5,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 313.4,
+        "generation_tps": 79.9,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t10",
+      "utterance": "summarise what I changed",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 194.7781250000844,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 75.8,
+        "total_ms": 189.5,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 292.8,
+        "generation_tps": 85.9,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t11",
+      "utterance": "diff stats please",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 192.39554200066777,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 74.0,
+        "total_ms": 187.4,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 9,
+        "prompt_tps": 259.0,
+        "generation_tps": 86.5,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t12",
+      "utterance": "find typescript files",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.ts",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 229.0699590012082,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.4,
+        "total_ms": 223.8,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 12,
+        "prompt_tps": 278.1,
+        "generation_tps": 84.2,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t13",
+      "utterance": "list every rust source file",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.rs",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 231.1917920014821,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.6,
+        "total_ms": 226.3,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 12,
+        "prompt_tps": 291.5,
+        "generation_tps": 83.1,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t14",
+      "utterance": "where are the yml files",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.yml",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 239.2619169986574,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.2,
+        "total_ms": 234.0,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 307.4,
+        "generation_tps": 84.9,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t15",
+      "utterance": "show me all the notebooks",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.ipynb",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 254.5444999996107,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 79.4,
+        "total_ms": 250.0,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 14,
+        "prompt_tps": 266.7,
+        "generation_tps": 86.7,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t16",
+      "utterance": "find the shell scripts",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.sh",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 229.47887499867647,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 75.5,
+        "total_ms": 224.6,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 12,
+        "prompt_tps": 267.6,
+        "generation_tps": 85.7,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t17",
+      "utterance": "locate toml files",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.toml",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 243.08929099970555,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 72.8,
+        "total_ms": 237.3,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 277.5,
+        "generation_tps": 83.5,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t18",
+      "utterance": "are there any dockerfiles",
+      "expected": "search_files",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 183.6940000011964,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 75.4,
+        "total_ms": 178.2,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 281.3,
+        "generation_tps": 85.5,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t19",
+      "utterance": "list csv files in this project",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.csv",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 241.98954199891887,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 84.9,
+        "total_ms": 236.6,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 12,
+        "prompt_tps": 261.3,
+        "generation_tps": 85.7,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t20",
+      "utterance": "print the Dockerfile",
+      "expected": "read_file",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Dockerfile is not a developer task"
+      },
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 341.55037500022445,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 93.9,
+        "total_ms": 336.6,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 18,
+        "prompt_tps": 214.3,
+        "generation_tps": 77.0,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t21",
+      "utterance": "read me the readme",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "README.md"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 275.02450000065437,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 89.9,
+        "total_ms": 269.7,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 224.0,
+        "generation_tps": 76.3,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t22",
+      "utterance": "show the Makefile",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "Makefile"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 287.2775409996393,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 108.9,
+        "total_ms": 282.8,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 185.0,
+        "generation_tps": 79.3,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t23",
+      "utterance": "open src/narrow_ai/settings.py",
+      "expected": "read_file",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Finder"
+      },
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 302.5152499994874,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 121.1,
+        "total_ms": 297.4,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 191.2,
+        "generation_tps": 78.1,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t24",
+      "utterance": "what's in .gitignore",
+      "expected": "read_file",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.gitignore*",
+        "workspace": "active"
+      },
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 305.3224590003083,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 113.2,
+        "total_ms": 299.6,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 195.8,
+        "generation_tps": 73.7,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t25",
+      "utterance": "display docs/SECURITY.md",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "docs/SECURITY.md"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 362.4853750006878,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 113.3,
+        "total_ms": 356.6,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 16,
+        "prompt_tps": 195.3,
+        "generation_tps": 68.5,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t26",
+      "utterance": "cat package.json",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "package.json"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 318.08608299979824,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 119.1,
+        "total_ms": 312.4,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 160.3,
+        "generation_tps": 71.5,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t27",
+      "utterance": "launch cursor",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Cursor"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 327.0497499997873,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 116.2,
+        "total_ms": 321.0,
+        "prompt_tokens": 18,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 155.9,
+        "generation_tps": 66.8,
+        "peak_memory_gb": 1.263,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t28",
+      "utterance": "bring up xcode",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Xcode"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 388.05745799982105,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 152.7,
+        "total_ms": 380.3,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 14,
+        "prompt_tps": 131.7,
+        "generation_tps": 64.4,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t29",
+      "utterance": "open a terminal",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Terminal"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 315.7407919989055,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 118.0,
+        "total_ms": 309.9,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 163.0,
+        "generation_tps": 71.3,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t30",
+      "utterance": "start safari",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Safari"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 309.724582999479,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 114.6,
+        "total_ms": 304.3,
+        "prompt_tokens": 18,
+        "cached_tokens": 1118,
+        "generated_tokens": 14,
+        "prompt_tps": 159.3,
+        "generation_tps": 77.6,
+        "peak_memory_gb": 1.263,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t31",
+      "utterance": "open vs code",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Visual Studio Code"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 293.275125000946,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 92.7,
+        "total_ms": 288.3,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 15,
+        "prompt_tps": 206.2,
+        "generation_tps": 80.5,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t32",
+      "utterance": "remember I indent with tabs",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "indent_style",
+        "value": "tabs"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 353.82037500130537,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 97.8,
+        "total_ms": 348.3,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 216.2,
+        "generation_tps": 78.9,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t33",
+      "utterance": "note that my editor is neovim",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "editor",
+        "value": "neovim"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 371.92125000001397,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 92.3,
+        "total_ms": 366.5,
+        "prompt_tokens": 24,
+        "cached_tokens": 1118,
+        "generated_tokens": 20,
+        "prompt_tps": 261.8,
+        "generation_tps": 75.4,
+        "peak_memory_gb": 1.312,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t34",
+      "utterance": "my base branch is develop, remember that",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "base_branch",
+        "value": "develop"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 361.15758399864717,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 91.8,
+        "total_ms": 355.6,
+        "prompt_tokens": 24,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 263.1,
+        "generation_tps": 74.7,
+        "peak_memory_gb": 1.312,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t35",
+      "utterance": "save that I use uv for python packages",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "python_tool",
+        "value": "uv"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 345.94354200089583,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 91.5,
+        "total_ms": 340.4,
+        "prompt_tokens": 24,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 264.3,
+        "generation_tps": 79.6,
+        "peak_memory_gb": 1.312,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t36",
+      "utterance": "keep in mind I like 4 space indentation",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "indentation",
+        "value": "4"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 413.0174589990929,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 110.2,
+        "total_ms": 407.8,
+        "prompt_tokens": 25,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 228.0,
+        "generation_tps": 66.0,
+        "peak_memory_gb": 1.32,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t37",
+      "utterance": "what editor do I use",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "editor"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 287.78233299999556,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 107.6,
+        "total_ms": 282.4,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 12,
+        "prompt_tps": 197.0,
+        "generation_tps": 72.9,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t38",
+      "utterance": "do you remember my base branch",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "base_branch"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 311.11554199924285,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 122.1,
+        "total_ms": 306.6,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 181.1,
+        "generation_tps": 74.3,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t39",
+      "utterance": "which package manager did I mention",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "package_manager"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 278.1273750006221,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 100.3,
+        "total_ms": 272.3,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 13,
+        "prompt_tps": 220.9,
+        "generation_tps": 79.8,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t40",
+      "utterance": "what indentation do I prefer",
+      "expected": "recall_preference",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 209.30166700054542,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 100.9,
+        "total_ms": 203.9,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 209.6,
+        "generation_tps": 85.5,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t41",
+      "utterance": "what are you able to do",
+      "expected": "general_help",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 211.95004200126277,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 98.2,
+        "total_ms": 206.4,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 225.6,
+        "generation_tps": 80.9,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t42",
+      "utterance": "how do I use you",
+      "expected": "general_help",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 201.1897920001502,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 95.5,
+        "total_ms": 196.7,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 221.4,
+        "generation_tps": 86.8,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t43",
+      "utterance": "what commands do you understand",
+      "expected": "general_help",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 218.2440830001724,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 94.9,
+        "total_ms": 213.2,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 222.7,
+        "generation_tps": 73.6,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t44",
+      "utterance": "what does git rebase do",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "what does git rebase do"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 429.1207909991499,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 122.2,
+        "total_ms": 423.5,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 181.2,
+        "generation_tps": 59.4,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t45",
+      "utterance": "how do I write a list comprehension",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "how do I write a list comprehension"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 421.8102499999077,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 127.1,
+        "total_ms": 415.6,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 18,
+        "prompt_tps": 182.1,
+        "generation_tps": 64.6,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t46",
+      "utterance": "what's the difference between let and var in swift",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "what's the difference between let and var in swift"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 551.9067919994995,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 138.1,
+        "total_ms": 546.5,
+        "prompt_tokens": 26,
+        "cached_tokens": 1118,
+        "generated_tokens": 21,
+        "prompt_tps": 189.5,
+        "generation_tps": 52.7,
+        "peak_memory_gb": 1.331,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t47",
+      "utterance": "why would I use a virtualenv",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "why would I use a virtualenv"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 412.2867909991328,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 121.6,
+        "total_ms": 406.7,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 18,
+        "prompt_tps": 191.4,
+        "generation_tps": 65.3,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t48",
+      "utterance": "what is a merge conflict",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "what is a merge conflict"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 363.84820799867157,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 109.2,
+        "total_ms": 358.6,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 16,
+        "prompt_tps": 193.5,
+        "generation_tps": 66.6,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t49",
+      "utterance": "fix that",
+      "expected": "clarify_request",
+      "predicted": "clarify_request",
+      "parameters": {
+        "question": "What should I fix?"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 333.28583299953607,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 91.9,
+        "total_ms": 327.6,
+        "prompt_tokens": 18,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 197.4,
+        "generation_tps": 75.0,
+        "peak_memory_gb": 1.263,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t50",
+      "utterance": "do it again but better",
+      "expected": "clarify_request",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 247.37666600049124,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 107.7,
+        "total_ms": 242.4,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 196.0,
+        "generation_tps": 66.1,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t51",
+      "utterance": "clean this up",
+      "expected": "clarify_request",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 402.52958299970487,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 124.8,
+        "total_ms": 396.6,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 153.2,
+        "generation_tps": 64.8,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t52",
+      "utterance": "take care of it",
+      "expected": "clarify_request",
+      "predicted": "clarify_request",
+      "parameters": {
+        "question": "What should I fix?"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 343.36433299904456,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 104.2,
+        "total_ms": 337.6,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 193.3,
+        "generation_tps": 76.0,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t53",
+      "utterance": "commit everything",
+      "expected": "unsupported",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": false,
+      "params_ok": false,
+      "source": "model",
+      "latency_ms": 204.88641600059054,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 94.5,
+        "total_ms": 199.5,
+        "prompt_tokens": 18,
+        "cached_tokens": 1118,
+        "generated_tokens": 8,
+        "prompt_tps": 191.9,
+        "generation_tps": 83.7,
+        "peak_memory_gb": 1.263,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t54",
+      "utterance": "git reset --hard",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 334.6237919995474,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 98.9,
+        "total_ms": 329.6,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 203.5,
+        "generation_tps": 76.8,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t55",
+      "utterance": "force push to main",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 347.0652079995489,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 104.9,
+        "total_ms": 341.5,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 191.9,
+        "generation_tps": 74.8,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t56",
+      "utterance": "what time is it in Tokyo",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Time zone and time are outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 361.62825000064913,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 94.4,
+        "total_ms": 356.3,
+        "prompt_tokens": 22,
+        "cached_tokens": 1118,
+        "generated_tokens": 19,
+        "prompt_tps": 234.5,
+        "generation_tps": 75.2,
+        "peak_memory_gb": 1.296,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t57",
+      "utterance": "order a pizza",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Ordering a pizza is not a software-development task"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 390.17908299865667,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 98.9,
+        "total_ms": 385.1,
+        "prompt_tokens": 19,
+        "cached_tokens": 1118,
+        "generated_tokens": 20,
+        "prompt_tps": 193.3,
+        "generation_tps": 72.3,
+        "peak_memory_gb": 1.271,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t58",
+      "utterance": "rm -rf node_modules and reinstall",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 362.65820799962967,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 97.8,
+        "total_ms": 357.7,
+        "prompt_tokens": 23,
+        "cached_tokens": 1118,
+        "generated_tokens": 17,
+        "prompt_tps": 236.7,
+        "generation_tps": 68.5,
+        "peak_memory_gb": 1.304,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t59",
+      "utterance": "who won the world cup",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Sports events and world cup are outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 458.96600000014587,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 129.5,
+        "total_ms": 453.4,
+        "prompt_tokens": 21,
+        "cached_tokens": 1118,
+        "generated_tokens": 20,
+        "prompt_tps": 163.8,
+        "generation_tps": 63.7,
+        "peak_memory_gb": 1.286,
+        "cache_source": "disk"
+      }
+    },
+    {
+      "id": "t60",
+      "utterance": "turn off the wifi",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Network-related actions are outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 370.3474579997419,
+      "metrics": {
+        "backend": "mlx",
+        "ttft_ms": 110.7,
+        "total_ms": 364.7,
+        "prompt_tokens": 20,
+        "cached_tokens": 1118,
+        "generated_tokens": 18,
+        "prompt_tps": 182.1,
+        "generation_tps": 73.7,
+        "peak_memory_gb": 1.279,
+        "cache_source": "disk"
+      }
+    }
+  ]
+}

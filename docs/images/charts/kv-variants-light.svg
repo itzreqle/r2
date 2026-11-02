@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="408" viewBox="0 0 760 408" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>Smaller KV: 8-bit is free, 4-bit and short windows break routing</title><desc>16-bit KV (R2) (147 MB cached prefix): 92.2%; 8-bit KV (78 MB cached prefix): 92.2%; 4-bit KV (41 MB cached prefix): 6.2%; Window 1,024 (no cache, 2,087 ms TTFT): 25%; Window 512 (no cache, 2,043 ms TTFT): 15.6%; Window 256 (no cache, 2,137 ms TTFT): 9.4%</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">Smaller KV: 8-bit is free, 4-bit and short windows break routing</text>
+<text x="0" y="48" font-size="13" fill="#52514e">Exact decisions on dev + fresh (64) · the prompt is 1.1k tokens long</text>
+<line x1="200.0" y1="66" x2="200.0" y2="378" stroke="#e1e0d9" stroke-width="1"/>
+<text x="200.0" y="396" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
+<line x1="302.5" y1="66" x2="302.5" y2="378" stroke="#e1e0d9" stroke-width="1"/>
+<text x="302.5" y="396" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
+<line x1="405.0" y1="66" x2="405.0" y2="378" stroke="#e1e0d9" stroke-width="1"/>
+<text x="405.0" y="396" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
+<line x1="507.5" y1="66" x2="507.5" y2="378" stroke="#e1e0d9" stroke-width="1"/>
+<text x="507.5" y="396" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
+<line x1="610.0" y1="66" x2="610.0" y2="378" stroke="#e1e0d9" stroke-width="1"/>
+<text x="610.0" y="396" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
+<line x1="200" y1="66" x2="200" y2="378" stroke="#c3c2b7" stroke-width="1"/>
+<text x="188" y="86.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">16-bit KV (R2)</text>
+<text x="188" y="102.0" font-size="11.5" fill="#6f6e69" text-anchor="end">147 MB cached prefix</text>
+<path d="M200.0,80.0 H574.0 A4,4 0 0 1 578.0,84.0 V94.0 A4,4 0 0 1 574.0,98.0 H200.0 Z" fill="#2a78d6"/>
+<text x="586.0" y="93.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.2%</text>
+<text x="188" y="138.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">8-bit KV</text>
+<text x="188" y="154.0" font-size="11.5" fill="#6f6e69" text-anchor="end">78 MB cached prefix</text>
+<path d="M200.0,132.0 H574.0 A4,4 0 0 1 578.0,136.0 V146.0 A4,4 0 0 1 574.0,150.0 H200.0 Z" fill="#2a78d6"/>
+<text x="586.0" y="145.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.2%</text>
+<text x="188" y="190.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">4-bit KV</text>
+<text x="188" y="206.0" font-size="11.5" fill="#6f6e69" text-anchor="end">41 MB cached prefix</text>
+<path d="M200.0,184.0 H221.6 A4,4 0 0 1 225.6,188.0 V198.0 A4,4 0 0 1 221.6,202.0 H200.0 Z" fill="#2a78d6"/>
+<text x="233.6" y="197.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">6.2%</text>
+<text x="188" y="242.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Window 1,024</text>
+<text x="188" y="258.0" font-size="11.5" fill="#6f6e69" text-anchor="end">no cache, 2,087 ms TTFT</text>
+<path d="M200.0,236.0 H298.5 A4,4 0 0 1 302.5,240.0 V250.0 A4,4 0 0 1 298.5,254.0 H200.0 Z" fill="#2a78d6"/>
+<text x="310.5" y="249.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">25%</text>
+<text x="188" y="294.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Window 512</text>
+<text x="188" y="310.0" font-size="11.5" fill="#6f6e69" text-anchor="end">no cache, 2,043 ms TTFT</text>
+<path d="M200.0,288.0 H260.0 A4,4 0 0 1 264.0,292.0 V302.0 A4,4 0 0 1 260.0,306.0 H200.0 Z" fill="#2a78d6"/>
+<text x="272.0" y="301.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">15.6%</text>
+<text x="188" y="346.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Window 256</text>
+<text x="188" y="362.0" font-size="11.5" fill="#6f6e69" text-anchor="end">no cache, 2,137 ms TTFT</text>
+<path d="M200.0,340.0 H234.5 A4,4 0 0 1 238.5,344.0 V354.0 A4,4 0 0 1 234.5,358.0 H200.0 Z" fill="#2a78d6"/>
+<text x="246.5" y="353.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">9.4%</text>
+</svg>

@@ -25,7 +25,11 @@ from narrow_ai.evaluation.runner import EvaluationRunner  # noqa: E402
 from narrow_ai.models.model_registry import create_backend  # noqa: E402
 from narrow_ai.settings import load_settings  # noqa: E402
 
-SPLITS = {"dev": ROOT / "data" / "eval_heldout.jsonl", "fresh": ROOT / "data" / "eval_fresh.jsonl"}
+SPLITS = {
+    "dev": ROOT / "data" / "eval_heldout.jsonl",
+    "fresh": ROOT / "data" / "eval_fresh.jsonl",
+    "test": ROOT / "data" / "eval_test.jsonl",  # written before the LoRA data
+}
 
 
 def main() -> int:

@@ -1,44 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="362" viewBox="0 0 760 362" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
-<title>What helps: few-shot examples vs constrained decoding</title><desc>Plain prompt: intent 85%, parameters 77.5%, 2.5% malformed JSON; Constrained decoding only: intent 85%, parameters 77.5%, 2.5% malformed JSON; Few-shot examples only: intent 92.5%, parameters 92.5%, 0% malformed JSON; Both (R2 default): intent 92.5%, parameters 92.5%, 0% malformed JSON</desc>
-<text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">What helps: few-shot examples vs constrained decoding</text>
-<text x="0" y="48" font-size="13" fill="#52514e">Dev set, 40 cases · each technique switched on and off</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="602" viewBox="0 0 760 602" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>What helps: few-shot examples and a JSON grammar</title><desc>No examples, free: 65%, 75%, 46.7%; No examples, intent mask: 65%, 75%, 46.7%; No examples, JSON grammar: 77.5%, 87.5%, 58.3%; Few-shot, free: 87.5%, 87.5%, 80%; Few-shot, intent mask: 87.5%, 87.5%, 80%; Few-shot + JSON (R2): 92.5%, 91.7%, 85%</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">What helps: few-shot examples and a JSON grammar</text>
+<text x="0" y="48" font-size="13" fill="#52514e">Exact decisions (intent + parameters), strict validation in every row</text>
 <rect x="0" y="66" width="12" height="12" rx="3" fill="#2a78d6"/>
-<text x="18" y="76.5" font-size="13" fill="#52514e">Intent accuracy</text>
-<rect x="153" y="66" width="12" height="12" rx="3" fill="#eb6834"/>
-<text x="171" y="76.5" font-size="13" fill="#52514e">Parameter accuracy</text>
-<line x1="200.0" y1="92" x2="200.0" y2="332" stroke="#e1e0d9" stroke-width="1"/>
-<text x="200.0" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
-<line x1="302.5" y1="92" x2="302.5" y2="332" stroke="#e1e0d9" stroke-width="1"/>
-<text x="302.5" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
-<line x1="405.0" y1="92" x2="405.0" y2="332" stroke="#e1e0d9" stroke-width="1"/>
-<text x="405.0" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
-<line x1="507.5" y1="92" x2="507.5" y2="332" stroke="#e1e0d9" stroke-width="1"/>
-<text x="507.5" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
-<line x1="610.0" y1="92" x2="610.0" y2="332" stroke="#e1e0d9" stroke-width="1"/>
-<text x="610.0" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
-<line x1="200" y1="92" x2="200" y2="332" stroke="#c3c2b7" stroke-width="1"/>
-<text x="188" y="116.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Plain prompt</text>
-<text x="188" y="132.0" font-size="11.5" fill="#6f6e69" text-anchor="end">2.5% malformed JSON</text>
-<path d="M200.0,100.0 H544.5 A4,4 0 0 1 548.5,104.0 V114.0 A4,4 0 0 1 544.5,118.0 H200.0 Z" fill="#2a78d6"/>
-<text x="556.5" y="113.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">85%</text>
-<path d="M200.0,120.0 H513.8 A4,4 0 0 1 517.8,124.0 V134.0 A4,4 0 0 1 513.8,138.0 H200.0 Z" fill="#eb6834"/>
-<text x="525.8" y="133.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">77.5%</text>
-<text x="188" y="176.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Constrained decoding only</text>
-<text x="188" y="192.0" font-size="11.5" fill="#6f6e69" text-anchor="end">2.5% malformed JSON</text>
-<path d="M200.0,160.0 H544.5 A4,4 0 0 1 548.5,164.0 V174.0 A4,4 0 0 1 544.5,178.0 H200.0 Z" fill="#2a78d6"/>
-<text x="556.5" y="173.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">85%</text>
-<path d="M200.0,180.0 H513.8 A4,4 0 0 1 517.8,184.0 V194.0 A4,4 0 0 1 513.8,198.0 H200.0 Z" fill="#eb6834"/>
-<text x="525.8" y="193.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">77.5%</text>
-<text x="188" y="236.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Few-shot examples only</text>
-<text x="188" y="252.0" font-size="11.5" fill="#6f6e69" text-anchor="end">0% malformed JSON</text>
-<path d="M200.0,220.0 H575.2 A4,4 0 0 1 579.2,224.0 V234.0 A4,4 0 0 1 575.2,238.0 H200.0 Z" fill="#2a78d6"/>
-<text x="587.2" y="233.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
-<path d="M200.0,240.0 H575.2 A4,4 0 0 1 579.2,244.0 V254.0 A4,4 0 0 1 575.2,258.0 H200.0 Z" fill="#eb6834"/>
-<text x="587.2" y="253.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
-<text x="188" y="296.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Both (R2 default)</text>
-<text x="188" y="312.0" font-size="11.5" fill="#6f6e69" text-anchor="end">0% malformed JSON</text>
-<path d="M200.0,280.0 H575.2 A4,4 0 0 1 579.2,284.0 V294.0 A4,4 0 0 1 575.2,298.0 H200.0 Z" fill="#2a78d6"/>
-<text x="587.2" y="293.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
-<path d="M200.0,300.0 H575.2 A4,4 0 0 1 579.2,304.0 V314.0 A4,4 0 0 1 575.2,318.0 H200.0 Z" fill="#eb6834"/>
-<text x="587.2" y="313.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
+<text x="18" y="76.5" font-size="13" fill="#52514e">Dev (40)</text>
+<rect x="101" y="66" width="12" height="12" rx="3" fill="#eb6834"/>
+<text x="119" y="76.5" font-size="13" fill="#52514e">Fresh (24)</text>
+<rect x="217" y="66" width="12" height="12" rx="3" fill="#1baf7a"/>
+<text x="235" y="76.5" font-size="13" fill="#52514e">Test (60)</text>
+<line x1="210.0" y1="92" x2="210.0" y2="572" stroke="#e1e0d9" stroke-width="1"/>
+<text x="210.0" y="590" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
+<line x1="310.0" y1="92" x2="310.0" y2="572" stroke="#e1e0d9" stroke-width="1"/>
+<text x="310.0" y="590" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
+<line x1="410.0" y1="92" x2="410.0" y2="572" stroke="#e1e0d9" stroke-width="1"/>
+<text x="410.0" y="590" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
+<line x1="510.0" y1="92" x2="510.0" y2="572" stroke="#e1e0d9" stroke-width="1"/>
+<text x="510.0" y="590" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
+<line x1="610.0" y1="92" x2="610.0" y2="572" stroke="#e1e0d9" stroke-width="1"/>
+<text x="610.0" y="590" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
+<line x1="210" y1="92" x2="210" y2="572" stroke="#c3c2b7" stroke-width="1"/>
+<text x="198" y="126.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">No examples, free</text>
+<text x="198" y="142.0" font-size="11.5" fill="#6f6e69" text-anchor="end">fallback up to 20%</text>
+<path d="M210.0,100.0 H466.0 A4,4 0 0 1 470.0,104.0 V114.0 A4,4 0 0 1 466.0,118.0 H210.0 Z" fill="#2a78d6"/>
+<text x="478.0" y="113.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">65%</text>
+<path d="M210.0,120.0 H506.0 A4,4 0 0 1 510.0,124.0 V134.0 A4,4 0 0 1 506.0,138.0 H210.0 Z" fill="#eb6834"/>
+<text x="518.0" y="133.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">75%</text>
+<path d="M210.0,140.0 H392.8 A4,4 0 0 1 396.8,144.0 V154.0 A4,4 0 0 1 392.8,158.0 H210.0 Z" fill="#1baf7a"/>
+<text x="404.8" y="153.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">46.7%</text>
+<text x="198" y="206.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">No examples, intent mask</text>
+<text x="198" y="222.0" font-size="11.5" fill="#6f6e69" text-anchor="end">fallback up to 20%</text>
+<path d="M210.0,180.0 H466.0 A4,4 0 0 1 470.0,184.0 V194.0 A4,4 0 0 1 466.0,198.0 H210.0 Z" fill="#2a78d6"/>
+<text x="478.0" y="193.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">65%</text>
+<path d="M210.0,200.0 H506.0 A4,4 0 0 1 510.0,204.0 V214.0 A4,4 0 0 1 506.0,218.0 H210.0 Z" fill="#eb6834"/>
+<text x="518.0" y="213.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">75%</text>
+<path d="M210.0,220.0 H392.8 A4,4 0 0 1 396.8,224.0 V234.0 A4,4 0 0 1 392.8,238.0 H210.0 Z" fill="#1baf7a"/>
+<text x="404.8" y="233.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">46.7%</text>
+<text x="198" y="286.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">No examples, JSON grammar</text>
+<text x="198" y="302.0" font-size="11.5" fill="#6f6e69" text-anchor="end">fallback up to 0%</text>
+<path d="M210.0,260.0 H516.0 A4,4 0 0 1 520.0,264.0 V274.0 A4,4 0 0 1 516.0,278.0 H210.0 Z" fill="#2a78d6"/>
+<text x="528.0" y="273.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">77.5%</text>
+<path d="M210.0,280.0 H556.0 A4,4 0 0 1 560.0,284.0 V294.0 A4,4 0 0 1 556.0,298.0 H210.0 Z" fill="#eb6834"/>
+<text x="568.0" y="293.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M210.0,300.0 H439.2 A4,4 0 0 1 443.2,304.0 V314.0 A4,4 0 0 1 439.2,318.0 H210.0 Z" fill="#1baf7a"/>
+<text x="451.2" y="313.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">58.3%</text>
+<text x="198" y="366.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Few-shot, free</text>
+<text x="198" y="382.0" font-size="11.5" fill="#6f6e69" text-anchor="end">fallback up to 6.7%</text>
+<path d="M210.0,340.0 H556.0 A4,4 0 0 1 560.0,344.0 V354.0 A4,4 0 0 1 556.0,358.0 H210.0 Z" fill="#2a78d6"/>
+<text x="568.0" y="353.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M210.0,360.0 H556.0 A4,4 0 0 1 560.0,364.0 V374.0 A4,4 0 0 1 556.0,378.0 H210.0 Z" fill="#eb6834"/>
+<text x="568.0" y="373.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M210.0,380.0 H526.0 A4,4 0 0 1 530.0,384.0 V394.0 A4,4 0 0 1 526.0,398.0 H210.0 Z" fill="#1baf7a"/>
+<text x="538.0" y="393.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">80%</text>
+<text x="198" y="446.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Few-shot, intent mask</text>
+<text x="198" y="462.0" font-size="11.5" fill="#6f6e69" text-anchor="end">fallback up to 6.7%</text>
+<path d="M210.0,420.0 H556.0 A4,4 0 0 1 560.0,424.0 V434.0 A4,4 0 0 1 556.0,438.0 H210.0 Z" fill="#2a78d6"/>
+<text x="568.0" y="433.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M210.0,440.0 H556.0 A4,4 0 0 1 560.0,444.0 V454.0 A4,4 0 0 1 556.0,458.0 H210.0 Z" fill="#eb6834"/>
+<text x="568.0" y="453.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M210.0,460.0 H526.0 A4,4 0 0 1 530.0,464.0 V474.0 A4,4 0 0 1 526.0,478.0 H210.0 Z" fill="#1baf7a"/>
+<text x="538.0" y="473.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">80%</text>
+<text x="198" y="526.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Few-shot + JSON (R2)</text>
+<text x="198" y="542.0" font-size="11.5" fill="#6f6e69" text-anchor="end">fallback up to 0%</text>
+<path d="M210.0,500.0 H576.0 A4,4 0 0 1 580.0,504.0 V514.0 A4,4 0 0 1 576.0,518.0 H210.0 Z" fill="#2a78d6"/>
+<text x="588.0" y="513.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
+<path d="M210.0,520.0 H572.8 A4,4 0 0 1 576.8,524.0 V534.0 A4,4 0 0 1 572.8,538.0 H210.0 Z" fill="#eb6834"/>
+<text x="584.8" y="533.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">91.7%</text>
+<path d="M210.0,540.0 H546.0 A4,4 0 0 1 550.0,544.0 V554.0 A4,4 0 0 1 546.0,558.0 H210.0 Z" fill="#1baf7a"/>
+<text x="558.0" y="553.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">85%</text>
 </svg>

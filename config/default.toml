@@ -27,6 +27,9 @@ kv_cache_max_files = 8   # older persistent caches are evicted (LRU)
 # docs/EVALUATION.md. Each stored entry costs ~147 MB.
 conversation_cache = false
 conversation_cache_entries = 1
+# Quantize the KV cache: 0 (off) | 8 | 4. 8-bit halves memory at equal accuracy; 4-bit
+# breaks routing. Not combinable with max_kv_size. See docs/EVALUATION.md.
+kv_bits = 0
 max_kv_size = 0
 constrained = true
 # Decode-time constraint: none | intent (intent name only) | json (whole decision via

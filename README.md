@@ -15,7 +15,7 @@ leaves your machine.
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![MLX](https://img.shields.io/badge/runs%20on-MLX-2a78d6)
 ![SwiftUI](https://img.shields.io/badge/app-SwiftUI-F05138?logo=swift&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-42%20passing-1baf7a)
+![Tests](https://img.shields.io/badge/tests-252%20passing-1baf7a)
 ![License: MIT](https://img.shields.io/badge/license-MIT-a3a29b)
 ![Whitepaper](https://img.shields.io/badge/whitepaper-PDF-eb6834)
 
@@ -80,7 +80,7 @@ Xcode command-line tools (`xcode-select --install`).
 ```bash
 git clone https://github.com/itzreqle/r2.git && cd r2
 uv sync                                  # Python 3.12 environment with everything R2 needs
-uv run pytest                            # 42 tests, no downloads, no microphone
+uv run pytest                            # 252 tests, no downloads, no microphone
 cd macos/R2App && ./build_app.sh --open  # build R2.app and launch it
 ```
 
@@ -135,64 +135,141 @@ confirmations.
 
 ## Results
 
-All numbers come from `artifacts/`, measured on an Apple Silicon Mac with Qwen3-1.7B (4-bit) on
-MLX and greedy decoding. Charts are drawn from those files by `scripts/make_readme_charts.py`.
+All numbers come from `artifacts/`, measured on an Apple M4 Mac (16 GB) with Qwen3-1.7B (4-bit) on
+MLX, greedy decoding and the default config (JSON grammar, strict validation). Charts are drawn from
+those files by `scripts/make_readme_charts.py`; every number was re-measured for this revision.
 
 ### The KV cache makes R2 respond 20× faster
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/kv-ttft-dark.svg">
-  <img src="docs/images/charts/kv-ttft-light.svg" width="760" alt="Time to first token: 1,460 ms without a cache, 71 ms with the prefix cache, 75 ms with the cache loaded from disk">
+  <img src="docs/images/charts/kv-ttft-light.svg" width="760" alt="Time to first token: 1,459 ms without a cache, 72 ms with the prefix cache, 72 ms with the cache loaded from disk">
 </picture>
 
 | Cache mode | Setup | Tokens processed per request | Time to first token | Whole decision | Same output as no cache |
 | --- | --- | ---: | ---: | ---: | :---: |
-| None | — | 1,140 | 1,460 ms | 1,628 ms | — |
-| Prefix (RAM) | built once in 1.5 s | 22 | **71 ms** | 227 ms | 20 / 20 |
-| Persistent (disk) | loaded in 89 ms | 22 | **75 ms** | 227 ms | 20 / 20 |
+| None | — | 1,140 | 1,459 ms | 1,611 ms | — |
+| Prefix (RAM) | built once in 1.5 s | 22 | **72 ms** | 227 ms | 20 / 20 |
+| Persistent (disk) | loaded in 82 ms | 22 | **72 ms** | 229 ms | 20 / 20 |
 
 The cached prompt takes 147 MB of memory: 28 layers × 8 key/value heads × 128 dimensions × 2
 (keys and values) × 2 bytes = 112 KiB per token, allocated in 256-token steps.
 
-### R2 picks the right action 96% of the time on unseen requests
+### R2 picks the right action 85–96% of the time on unseen requests
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/accuracy-dark.svg">
-  <img src="docs/images/charts/accuracy-light.svg" width="760" alt="Intent and parameter accuracy: dev set 92.5% and 92.5%; fresh test set 87.5% and 83.3% before tuning, 95.8% and 91.7% after">
+  <img src="docs/images/charts/accuracy-light.svg" width="760" alt="Intent and parameter accuracy: dev 92.5% and 92.5%; fresh before tuning 87.5% and 83.3%; fresh final 95.8% and 91.7%; test 85.0% and 85.0%">
 </picture>
 
 | Evaluation set | Cases | Right action | Right details | Malformed JSON | Median latency |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Dev set (`data/eval_heldout.jsonl`) | 40 | 92.5% | 92.5% | 0% | 298 ms |
+| Dev set (`data/eval_heldout.jsonl`) | 40 | 92.5% | 92.5% | 0% | 268 ms |
 | Fresh test set, before prompt tuning | 24 | 87.5% | 83.3% | 0% | 310 ms |
-| Fresh test set, final (`data/eval_fresh.jsonl`) | 24 | **95.8%** | **91.7%** | 0% | 311 ms |
+| Fresh test set, final (`data/eval_fresh.jsonl`) | 24 | **95.8%** | **91.7%** | 0% | 284 ms |
+| Test set (`data/eval_test.jsonl`) | 60 | **85.0%** | **85.0%** | 0% | 304 ms |
 
-The fresh test set was written *before* any prompt tuning and was never used for tuning, so it
-measures how R2 handles requests it hasn't seen.
+The fresh set was written before any prompt tuning and never used for it. The test set was
+written later, before any LoRA training data, and targets known weak spots: Dockerfiles and
+dotfiles, git write commands ("commit everything"), vague requests and recalled preferences.
+Its nine misses are the most honest picture of where routing still fails.
 
-### Few-shot examples matter most
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/datasets-dark.svg">
+  <img src="docs/images/charts/datasets-light.svg" width="760" alt="Share of each intent in the dev, fresh and test sets, with the number of synthetic training examples per intent">
+</picture>
+
+### Few-shot examples and a JSON grammar matter most
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/ablation-dark.svg">
-  <img src="docs/images/charts/ablation-light.svg" width="760" alt="Ablation on the dev set: plain prompt 85% / 77.5%; constrained decoding only 85% / 77.5%; few-shot examples only 92.5% / 92.5%; both 92.5% / 92.5%">
+  <img src="docs/images/charts/ablation-light.svg" width="760" alt="Exact accuracy for few-shot on/off times free, intent mask and JSON grammar on dev, fresh and test">
 </picture>
 
-| Few-shot examples | Constrained decoding | Right action | Right details | Malformed JSON |
-| :---: | :---: | ---: | ---: | ---: |
-| | | 85.0% | 77.5% | 2.5% |
-| | ✓ | 85.0% | 77.5% | 2.5% |
-| ✓ | | 92.5% | 92.5% | 0% |
-| ✓ | ✓ | 92.5% | 92.5% | 0% |
+| Few-shot examples | Decode constraint | Dev (40) | Fresh (24) | Test (60) | Fallback (test) |
+| :---: | --- | ---: | ---: | ---: | ---: |
+| | none | 65.0% | 75.0% | 46.7% | 20.0% |
+| | intent mask | 65.0% | 75.0% | 46.7% | 20.0% |
+| | JSON grammar | 77.5% | 87.5% | 58.3% | 0% |
+| ✓ | none | 87.5% | 87.5% | 80.0% | 6.7% |
+| ✓ | intent mask | 87.5% | 87.5% | 80.0% | 6.7% |
+| ✓ | **JSON grammar (default)** | **92.5%** | **91.7%** | **85.0%** | **0%** |
 
-Constrained decoding on its own doesn't change accuracy here. It only constrains the *intent
-name*, and the one malformed output put a parameter in the wrong place. It stays on as a
-guarantee: the model can never name an action that doesn't exist.
+Exact = right intent *and* right parameters, with strict validation (unknown parameters are
+rejected, not dropped). The model likes to add stray keys (`git_status {"clean": true}`); those
+outputs fail validation and fall back to a heuristic. Constraining the whole decision to its
+JSON schema with llguidance makes stray keys impossible, so fallbacks drop to zero at no latency
+cost. The intent-name mask alone never changes a result: every error it could prevent was a
+parameter error. Details: [docs/EVALUATION.md](docs/EVALUATION.md).
 
-**Update: strict validation + a full JSON grammar.** Unknown parameters are now rejected
-instead of silently dropped, which on its own costs 5 points on dev (87.5%). The model likes
-to add stray keys. Constraining the *whole* decision to its JSON schema with llguidance wins
-that back exactly (92.5% dev, 95.8% fresh, 0% fallback) at no latency cost, so it is the
-default now. Full table: [docs/EVALUATION.md](docs/EVALUATION.md#strict-validation--decode-time-constraint-m3).
+### Smaller KV caches: 8-bit is free, 4-bit and short windows are not
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/kv-variants-dark.svg">
+  <img src="docs/images/charts/kv-variants-light.svg" width="760" alt="Exact accuracy: 16-bit 92.2%, 8-bit 92.2%, 4-bit 6.2%, window 1024 25%, window 512 15.6%, window 256 9.4%">
+</picture>
+
+| KV variant (dev + fresh, 64 requests) | Cached prefix | Exact | TTFT |
+| --- | ---: | ---: | ---: |
+| 16-bit (default) | 147 MB | 92.2% | 70 ms |
+| 8-bit (`model.kv_bits = 8`) | 78 MB | 92.2% | 72 ms |
+| 4-bit | 41 MB | 6.2% | 77 ms |
+| No cache, rotating window 1,024 / 512 / 256 | — | 25.0% / 15.6% / 9.4% | ≈2.1 s |
+
+8-bit KV halves the cache with the same accuracy (two intents flipped, one each way) and keeps
+the logits within 1.1 of full precision at every length up to 8k tokens. It gives no speed-up:
+at this size decoding is bound by reading the 0.94 GB of weights, not the cache. 4-bit KV
+breaks Qwen3 even at R2's 1.1k-token prompt (KL 25.8 at the last position). A rotating window
+shorter than the prompt drops the instructions, so routing collapses. R2's history is bounded,
+so its context never needs a window. Both stay off by default.
+
+### Conversation-level KV reuse needs a stable history
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/conversation-dark.svg">
+  <img src="docs/images/charts/conversation-light.svg" width="760" alt="Mean TTFT for turns 1-4 and 5-10 with and without conversation reuse and sliding or block history">
+</picture>
+
+Three turns of history roughly triple the first-token time, because the history is prefilled
+on every turn. `model.conversation_cache` keeps each routing prompt's KV in mlx-lm's
+`LRUPromptCache` and reuses the longest shared *token prefix* next turn. It never changed a
+decision (100/100), but R2's sliding history window shifts every token once it is full, so the
+reuse only helps turns 2–4. A block window keeps the prefix stable (−48% TTFT after turn 4)
+but cost 3 of 100 exact decisions. Both stay off by default; the full study is in
+[docs/EVALUATION.md](docs/EVALUATION.md#conversation-level-kv-reuse).
+
+### Multi-step requests
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/multistep-dark.svg">
+  <img src="docs/images/charts/multistep-light.svg" width="760" alt="Exact-plan accuracy: clause 75.4% dev, 66.7% fresh; clause plus and-split and guard 93.4% dev, 93.3% fresh; one-shot model 47.5% dev, 40.0% fresh">
+</picture>
+
+"Check git status and then find the Swift files" becomes a plan of ordinary decisions, each
+passing the same permission gate. The default clause planner gets 93.3% of plans exactly right
+on a fresh set written before its options existed, and refuses every request with a forbidden
+part. A one-shot model planner is faster but silently drops the part it should refuse. The app
+shows each step of a run as it happens. See [docs/AGENT_RUNTIME.md](docs/AGENT_RUNTIME.md).
+
+### LoRA fine-tuning
+
+A LoRA adapter on the last 8 layers (2.5M parameters, 0.15% of the model, 10 MB) was trained
+for 700 steps on 700 synthetic, decontaminated examples (`training/synth_data.py`), with the
+loss on the decision only. It took 78 minutes on the M4, using only the cached base model.
+
+| Model | Decoding | Dev (40) | Fresh (24) | Test (60) | All 124 [95% CI] |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Base | JSON grammar (default) | 92.5% | 91.7% | 85.0% | 88.7% [81.9, 93.2] |
+| Base | free | 87.5% | 87.5% | 80.0% | 83.9% [76.4, 89.3] |
+| **LoRA** | JSON grammar | **100%** | **100%** | **93.3%** | **96.8%** [92.0, 98.7] |
+| **LoRA** | free | **100%** | **100%** | **93.3%** | **96.8%** [92.0, 98.7] |
+
+Over all 124 requests the adapter fixes 12 cases and breaks 2 (paired McNemar p = 0.013 with
+the grammar, p = 0.0004 without). With the adapter the grammar no longer matters, and TTFT is
+unchanged. It still sends "commit everything" to `git_status`. The training data is templated
+and the eval sets are small, so the adapter stays opt-in (`model.adapter_path`). Reproduce
+with `training/train.py --yes` and `training/compare_lora.py`
+([docs/MODEL_TRAINING.md](docs/MODEL_TRAINING.md)).
 
 ## How it works
 
@@ -201,7 +278,7 @@ flowchart LR
     mic([Voice]) --> stt["Whisper small<br/>speech to text"]
     kb([Text]) --> prompt
     stt --> prompt["Prompt<br/>cached instructions + recent turns + request"]
-    prompt --> llm["Qwen3-1.7B 4-bit on MLX<br/>intent-name token mask"]
+    prompt --> llm["Qwen3-1.7B 4-bit on MLX<br/>JSON-schema grammar"]
     kv[("KV cache<br/>RAM + disk")] <--> llm
     llm --> json["Proposed action<br/>as JSON"]
     json --> guard{"Schema, allowlist<br/>and path checks"}
@@ -226,7 +303,7 @@ sequenceDiagram
     participant Core as R2 core
     participant Cache as KV cache
     participant Model as Qwen3 on MLX
-    Note over Core,Cache: At startup, load the 1,118-token prefix from disk (89 ms) or build it once (1.5 s)
+    Note over Core,Cache: At startup, load the 1,118-token prefix from disk (82 ms) or build it once (1.5 s)
     App->>Core: find the swift files
     Core->>Cache: borrow the cached prefix
     Core->>Model: process only the ~22 new tokens
@@ -240,7 +317,7 @@ Three techniques keep the output reliable:
 - **Response prefill.** Each answer is forced to start with `{"intent": "`.
 - **Intent-name token mask.** While the model writes the action name, tokens that can't lead to
   a real action are blocked.
-- **Optional full-JSON grammar** (`model.constraint = "json"`). [llguidance](https://github.com/guidance-ai/llguidance)
+- **Full-JSON grammar** (`model.constraint = "json"`, the default). [llguidance](https://github.com/guidance-ai/llguidance)
   constrains the whole decision to a JSON schema generated from the Pydantic models: parameter
   names, types, lengths, and no extra keys. Allowlisted values (like app names) are left to
   the executor on purpose. A grammar that forces "some approved app" turns "open calculator"
@@ -274,22 +351,25 @@ for coursework, a thesis chapter or a reading group on efficient on-device LLMs.
 **Whitepaper.** [*R2: A Narrow, On-Device Voice Assistant with Persistent Prefix KV Caching
 and Constrained Intent Decoding*](paper/r2-whitepaper.pdf) covers the theory (prefix
 invariance, KV memory, a prefill/decode cost model, the decoding mask), the architecture, and
-every benchmark, including a context-length sweep from 128 to 4,096 tokens. Revision 2 adds the
+every benchmark, including a context-length sweep from 128 to 8,192 tokens. Revision 2 adds the
 API and confirmation hardening, the content-based cache fingerprint, the JSON-schema grammar
-ablation and the multi-step runtime. LaTeX source and figure scripts are in [`paper/`](paper/);
+ablation, the multi-step runtime, conversation-level KV reuse, quantised KV and rotating
+windows, a 60-case test set and a LoRA comparison. LaTeX source and figure scripts are in [`paper/`](paper/);
 rebuild the PDF with `paper/build.sh` (TinyTeX).
 
 **Research questions it answers**
 
 1. How much does prefix KV caching cut latency for a narrow assistant with a long, fixed
-   prompt? *(20.5× faster first token; output unchanged in all 20 requests)*
-2. Can a cached prompt survive restarts, and what does loading it cost? *(89 ms from disk vs
+   prompt? *(20.4× faster first token; output unchanged in all 20 requests)*
+2. Can a cached prompt survive restarts, and what does loading it cost? *(82 ms from disk vs
    1.5 s to rebuild, guarded by a content-based fingerprint and a per-layer check)*
 3. Which matters more for a 1.7B model's structured output: few-shot examples or constrained
-   decoding? *(few-shot: +7.5 points on intent, +15 on parameters; with strict validation, a
-   JSON-schema grammar recovers the 4–5 points that rejecting stray parameters would cost)*
-4. How far does prompt tuning generalise? *(fresh test set written before tuning: 87.5% →
-   95.8%)*
+   decoding? *(few-shot: +15 to +27 exact points across the three sets; with strict validation,
+   a JSON-schema grammar adds 4–12 more and removes every fallback)*
+4. How far does prompt tuning generalise? *(fresh set written before tuning: 91.7% exact;
+   a 60-case test set written last, aimed at weak spots: 85.0%)*
+5. Does quantising the KV cache help at this scale? *(8-bit halves memory at equal accuracy
+   but gives no speed-up; 4-bit breaks routing)*
 
 **Reproduce every number**
 
@@ -297,8 +377,14 @@ rebuild the PDF with `paper/build.sh` (TinyTeX).
 uv run python training/bench_kv.py                                    # KV cache benchmark
 uv run python training/evaluate.py --backend mlx                      # dev set
 uv run python training/evaluate.py --backend mlx --eval data/eval_fresh.jsonl
-uv run python training/evaluate.py --backend mlx --no-few-shot --no-constrain   # one ablation cell
+uv run python training/evaluate.py --backend mlx --eval data/eval_test.jsonl
 uv run python training/ablation.py                                    # few-shot x none/intent/json
+uv run python training/eval_multistep.py --backend mlx               # multi-step planners
+uv run python training/bench_conversation.py                          # conversation KV reuse
+uv run python training/bench_kv_variants.py                           # kv_bits, rotating windows
+uv run python training/synth_data.py                                  # synthetic LoRA data
+uv run python training/train.py --yes                                 # LoRA (cached model only)
+uv run python training/compare_lora.py                                # base vs adapter
 uv run python training/bench_scaling.py                               # context-length sweep
 uv run python training/bench_voice.py                                 # speech latency
 uv run python scripts/make_readme_charts.py                           # redraw the charts
@@ -321,10 +407,9 @@ Run `uv run jupyter lab` and pick the kernel *Python (narrow-ai)*. In VSCodium, 
 
 **Ideas for extensions:**
 
-- Multi-turn KV reuse across a whole conversation.
-- 4- and 8-bit KV cache quantization.
-- LoRA fine-tuning compared with few-shot prompting.
-- A comparison with other small models.
+- A comparison with other small models and other Macs.
+- A history policy that keeps the conversation prefix stable, so token-prefix reuse pays off.
+- Wake word ("Hey R2") on top of push-to-talk.
 
 Multi-step requests ("check git status and then find the Swift files") go through a bounded
 runtime. Each step is an ordinary intent that passes the same permission gate and
@@ -335,8 +420,8 @@ The open items are tracked in [docs/R2_PLAN.md](docs/R2_PLAN.md).
 
 **Limitations:**
 
-- The evaluation sets are small (40 and 24 cases), so a single case moves accuracy by 2.5–4
-  points.
+- The evaluation sets are small (40, 24 and 60 cases), so a single case moves accuracy by
+  1.7–4.2 points; Wilson intervals are reported.
 - All timings come from one Mac.
 - The 1.7B model's free-form answers are short and sometimes imprecise. They are spoken, never
   executed.

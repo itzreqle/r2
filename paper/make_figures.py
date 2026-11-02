@@ -22,6 +22,7 @@ OUT = ROOT / "paper" / "figures"
 
 # Validated categorical palette (light mode) and chart chrome.
 BLUE, ORANGE, AQUA, VIOLET = "#2a78d6", "#eb6834", "#1baf7a", "#6250d6"
+YELLOW = "#eda100"
 NEUTRAL, INK, INK2, MUTED, GRID = "#a3a29b", "#0b0b0b", "#52514e", "#6f6e69", "#e1e0d9"
 
 plt.rcParams.update({
@@ -107,6 +108,9 @@ def fig_kv_modes() -> None:
 
 
 # ---------------------------------------------------------------- scaling with context length
+FIT_MAX = 4096
+
+
 def fits(rows):
     n = np.array([r["prefix_tokens"] for r in rows], float)
     s = rows[0]["suffix_tokens"]
@@ -136,7 +140,7 @@ def fits(rows):
 def fig_scaling() -> dict:
     d = load("kv_scaling.json")
     rows = d["rows"]
-    f = fits(rows)
+    f = fits([r for r in rows if r["prefix_tokens"] <= FIT_MAX])  # fit range; 6-8k shown, not fitted
     n = np.array([r["prefix_tokens"] for r in rows], float)
     s = f["suffix_tokens"]
     unc = np.array([r["uncached_ms_median"] for r in rows])
@@ -167,7 +171,8 @@ def fig_scaling() -> dict:
     b.scatter(n, sp, s=14, color=BLUE, edgecolor="white", lw=0.6, zorder=3, label="Measured")
     b.set_yscale("log")
     b.set_xscale("log")
-    b.set_xticks([128, 256, 512, 1024, 2048, 4096], ["128", "256", "512", "1k", "2k", "4k"])
+    b.set_xticks([128, 256, 512, 1024, 2048, 4096, 8192],
+                 ["128", "256", "512", "1k", "2k", "4k", "8k"])
     b.set_yticks([2, 5, 10, 20, 50, 100, 200], ["2", "5", "10", "20", "50", "100", "200"])
     b.minorticks_off()
     b.set_xlabel("Cached prefix length $n$ (tokens, log)")
@@ -211,14 +216,18 @@ def fig_memory(model_cfg) -> None:
 
 
 # ---------------------------------------------------------------- accuracy & ablation
-def grouped_hbar(ax, groups, labels=("Intent accuracy", "Parameter accuracy")):
+def grouped_hbar(ax, groups, labels=("Intent accuracy", "Parameter accuracy"),
+                 colors=(BLUE, ORANGE, AQUA)):
+    """groups: (name, v1, v2, ...); one bar per value, series in fixed colour order."""
     ys = np.arange(len(groups))[::-1] * 1.0
-    h = 0.34
-    for y, (_name, ia, pa) in zip(ys, groups, strict=True):
-        b1 = ax.barh(y + h / 2 + 0.01, ia, height=h, color=BLUE, label=labels[0] if y == ys[0] else None)
-        b2 = ax.barh(y - h / 2 - 0.01, pa, height=h, color=ORANGE, label=labels[1] if y == ys[0] else None)
-        label_bars(ax, b1, lambda w: f"{w * 100:.1f}%")
-        label_bars(ax, b2, lambda w: f"{w * 100:.1f}%")
+    k = len(groups[0]) - 1
+    h = 0.68 / k
+    for y, (_name, *vals) in zip(ys, groups, strict=True):
+        for i, v in enumerate(vals):
+            off = (k - 1) / 2 * h - i * h
+            b = ax.barh(y + off, v, height=h - 0.02, color=colors[i],
+                        label=labels[i] if y == ys[0] else None)
+            label_bars(ax, b, lambda w: f"{w * 100:.1f}%")
     ax.set_yticks(ys, [g[0] for g in groups])
     ax.set_xlim(0, 1.14)
     ax.set_ylim(ys[-1] - 0.6, ys[0] + 0.75)  # room between the top bar label and the legend
@@ -229,26 +238,40 @@ def grouped_hbar(ax, groups, labels=("Intent accuracy", "Parameter accuracy")):
 def fig_accuracy() -> None:
     sets = [("Dev (40)", "eval_mlx_r2.json"), ("Fresh, before tuning (24)", "eval_fresh_before.json"),
             ("Fresh, final (24)", "eval_fresh.json")]
+    if (ART / "eval_test.json").exists():
+        sets.append(("Test (60)", "eval_test.json"))
     groups = []
     for name, f in sets:
         r = load(f)
         groups.append((name, r["accuracy"], r["param_accuracy"]))
-    fig, ax = plt.subplots(figsize=(COL, 1.75))
+    fig, ax = plt.subplots(figsize=(COL, 0.45 * len(groups) + 0.4))
     grouped_hbar(ax, groups)
     ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, handlelength=1)
     save(fig, "accuracy")
 
 
-def fig_ablation() -> None:
-    import csv
+ABLATION_ORDER = [  # (few_shot, constraint) -> label
+    ((False, "none"), "No examples, free"), ((False, "intent"), "No examples, intent mask"),
+    ((False, "json"), "No examples, JSON grammar"), ((True, "none"), "Few-shot, free"),
+    ((True, "intent"), "Few-shot, intent mask"), ((True, "json"), "Few-shot, JSON (R2)"),
+]
 
-    rows = {(r["few_shot"], r["constrained"]): r for r in csv.DictReader(open(ART / "ablation.csv"))}
-    order = [(("False", "False"), "Plain prompt"), (("False", "True"), "Constrained only"),
-             (("True", "False"), "Few-shot only"), (("True", "True"), "Both (R2)")]
-    groups = [(n, float(rows[k]["intent_acc"]), float(rows[k]["param_acc"])) for k, n in order]
-    fig, ax = plt.subplots(figsize=(COL, 2.1))
-    grouped_hbar(ax, groups)
-    ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, handlelength=1)
+
+def ablation_rows() -> tuple[list[str], dict]:
+    """split -> {(few_shot, constraint): row} from training/ablation.py."""
+    splits = [s for s in ("dev", "fresh", "test") if (ART / f"ablation_{s}.json").exists()]
+    return splits, {s: {(r["few_shot"], r["constraint"]): r for r in load(f"ablation_{s}.json")}
+                    for s in splits}
+
+
+def fig_ablation() -> None:
+    splits, rows = ablation_rows()
+    names = {"dev": "Dev (40)", "fresh": "Fresh (24)", "test": "Test (60)"}
+    groups = [(label, *[rows[s][key]["param_acc"] for s in splits]) for key, label in ABLATION_ORDER]
+    fig, ax = plt.subplots(figsize=(COL, 3.3))
+    grouped_hbar(ax, groups, labels=[names[s] for s in splits])
+    ax.legend(loc="lower center", bbox_to_anchor=(0.4, 1.0), ncol=3, handlelength=1)
+    ax.set_xlabel("Exact decision accuracy (intent and parameters)")
     save(fig, "ablation")
 
 
@@ -257,7 +280,8 @@ def fig_confusion() -> None:
               "remember_preference", "recall_preference", "answer_question", "general_help",
               "clarify_request", "unsupported"]
     M = np.zeros((len(labels), len(labels)), int)
-    for f in ("eval_mlx_r2.json", "eval_fresh.json"):
+    files = [f for f in ("eval_mlx_r2.json", "eval_fresh.json", "eval_test.json") if (ART / f).exists()]
+    for f in files:
         for c in load(f)["cases"]:
             M[labels.index(c["expected"]), labels.index(c["predicted"])] += 1
     fig, ax = plt.subplots(figsize=(COL, 3.0))
@@ -285,7 +309,9 @@ def fig_confusion() -> None:
 
 def fig_latency() -> None:
     fig, ax = plt.subplots(figsize=(COL, 1.9))
-    for f, name, c in (("eval_mlx_r2.json", "Dev", BLUE), ("eval_fresh.json", "Fresh", ORANGE)):
+    sets = [("eval_mlx_r2.json", "Dev", BLUE), ("eval_fresh.json", "Fresh", ORANGE),
+            ("eval_test.json", "Test", AQUA)]
+    for f, name, c in [x for x in sets if (ART / x[0]).exists()]:
         cases = load(f)["cases"][1:]  # first case includes Metal kernel compilation
         for key, ls in (("latency_ms", "-"), ("ttft", (0, (3, 2)))):
             v = np.sort([cc["latency_ms"] if key == "latency_ms" else cc["metrics"]["ttft_ms"] for cc in cases])
@@ -298,6 +324,70 @@ def fig_latency() -> None:
     ax.set_ylabel("Fraction of requests")
     ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, fontsize=6.5, handlelength=1.8)
     save(fig, "latency")
+
+
+def fig_kv_variants() -> None:
+    p = ART / "kv_variants.json"
+    if not p.exists():
+        print("skip kv_variants figure")
+        return
+    d = json.load(open(p))
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDE, 2.0), gridspec_kw={"width_ratios": [1, 1.25]})
+    micro = d["micro"]
+    ns = sorted({r["n"] for r in micro})
+    for bits, c in ((16, BLUE), (8, ORANGE), (4, AQUA)):
+        rows = sorted((r for r in micro if r["kv_bits"] == bits), key=lambda r: r["n"])
+        a.plot([r["n"] for r in rows], [r["kv_mb"] for r in rows], marker="o", ms=3.5, lw=1.2,
+               color=c, label=f"{bits}-bit" if bits != 16 else "16-bit (default)")
+    a.set_xscale("log", base=2)
+    a.set_xticks(ns, [f"{n:,}" for n in ns])
+    a.minorticks_off()
+    a.set_xlabel("Cached context (tokens)")
+    a.set_ylabel("KV cache (MB)")
+    a.set_title("(a) KV size; decode and prefill time unchanged", loc="left")
+    a.legend(loc="upper left", handlelength=1.2)
+    e = d["e2e"]
+    order = [("prefix/kv16", "16-bit prefix (R2)"), ("prefix/kv8", "8-bit prefix"),
+             ("prefix/kv4", "4-bit prefix"), ("none/kv16/win0", "No cache, full window"),
+             ("none/kv16/win1024", "Window 1,024"), ("none/kv16/win512", "Window 512"),
+             ("none/kv16/win256", "Window 256")]
+    ys = np.arange(len(order))[::-1]
+    vals = [e[k]["exact_accuracy"] for k, _ in order]
+    bars = b.barh(ys, vals, height=0.62, color=BLUE)
+    label_bars(b, bars, lambda w: f"{w * 100:.1f}%")
+    b.set_yticks(ys, [n for _, n in order])
+    b.set_xlim(0, 1.12)
+    b.set_xticks([0, 0.25, 0.5, 0.75, 1.0], ["0%", "25%", "50%", "75%", "100%"])
+    b.grid(axis="y", visible=False)
+    b.set_title("(b) Routing accuracy, dev + fresh (64)", loc="left")
+    fig.tight_layout(w_pad=2.0)
+    save(fig, "kv_variants")
+
+
+def fig_conversation() -> None:
+    p = ART / "conversation_bench.json"
+    if not p.exists():
+        print("skip conversation figure")
+        return
+    d = json.load(open(p))["ttft_by_turn"]
+    series = [("prefix/sliding", "Sliding history, prefix cache (default)", BLUE, "-"),
+              ("conversation/sliding", "Sliding + conversation reuse", ORANGE, "-"),
+              ("conversation/block", "Block + conversation reuse", AQUA, "-"),
+              ("prefix/block", "Block history, prefix cache", YELLOW, "-"),
+              ("prefix/none", "No history", NEUTRAL, (0, (3, 2)))]
+    fig, ax = plt.subplots(figsize=(COL, 2.2))
+    for key, name, c, ls in series:
+        if key not in d:
+            continue
+        turns = sorted(int(t) for t in d[key])
+        ax.plot(turns, [d[key][str(t)] for t in turns], color=c, lw=1.2, ls=ls, marker="o", ms=2.8,
+                label=name)
+    ax.set_xlabel("Turn in the session")
+    ax.set_ylabel("Median TTFT (ms)")
+    ax.set_ylim(bottom=0)
+    ax.set_xticks(range(1, 11))
+    ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, fontsize=6, handlelength=1.6)
+    save(fig, "conversation")
 
 
 def fig_voice() -> None:
@@ -327,22 +417,27 @@ def fig_voice() -> None:
 
 
 def fig_f1() -> None:
-    dev, fresh = load("eval_mlx_r2.json")["per_intent_f1"], load("eval_fresh.json")["per_intent_f1"]
-    names = sorted(set(dev) | set(fresh), key=lambda k: (fresh.get(k, dev.get(k, 0)), k))
-    fig, ax = plt.subplots(figsize=(COL, 2.6))
+    sets = [("Dev", "eval_mlx_r2.json", BLUE), ("Fresh", "eval_fresh.json", ORANGE),
+            ("Test", "eval_test.json", AQUA)]
+    sets = [(n, load(f)["per_intent_f1"], c) for n, f, c in sets if (ART / f).exists()]
+    allk = set().union(*(f1 for _, f1, _ in sets))
+    names = sorted(allk, key=lambda k: (sum(f1.get(k, 0) for _, f1, _ in sets), k))
+    fig, ax = plt.subplots(figsize=(COL, 3.0))
     ys = np.arange(len(names))
-    h = 0.36
-    ax.barh(ys + h / 2 + 0.01, [dev.get(k, math.nan) for k in names], height=h, color=BLUE, label="Dev")
-    ax.barh(ys - h / 2 - 0.01, [fresh.get(k, math.nan) for k in names], height=h, color=ORANGE, label="Fresh")
-    for y, k in zip(ys, names, strict=True):  # make zero and missing values visible
-        for v, dy in ((dev.get(k), h / 2), (fresh.get(k), -h / 2)):
+    h = 0.78 / len(sets)
+    for i, (label, f1, c) in enumerate(sets):
+        off = (len(sets) - 1) / 2 * h - i * h
+        ax.barh(ys + off, [f1.get(k, math.nan) for k in names], height=h - 0.02, color=c, label=label)
+        for y, k in zip(ys, names, strict=True):  # make zero and missing values visible
+            v = f1.get(k)
             if v is None or v == 0:
-                ax.text(0.01, y + dy, "n/a" if v is None else "0.00", va="center", fontsize=6, color=INK2)
+                ax.text(0.01, y + off, "n/a" if v is None else "0.00", va="center", fontsize=5.5,
+                        color=INK2)
     ax.set_yticks(ys, [k.replace("_preference", "_pref") for k in names])
     ax.set_xlim(0, 1.0)
     ax.set_xlabel("F1 score")
     ax.grid(axis="y", visible=False)
-    ax.legend(loc="lower center", bbox_to_anchor=(0.4, 1.0), ncol=2, handlelength=1)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.4, 1.0), ncol=3, handlelength=1)
     save(fig, "f1")
 
 
@@ -358,6 +453,8 @@ def main() -> None:
     fig_latency()
     fig_voice()
     fig_f1()
+    fig_kv_variants()
+    fig_conversation()
     (OUT / "fits.json").write_text(json.dumps(f, indent=2))
     print(json.dumps(f, indent=2))
 

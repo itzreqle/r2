@@ -4,6 +4,1462 @@
   "constraint": "json",
   "reports": [
     {
+      "planner": "heuristic",
+      "n": 61,
+      "plan_accuracy": 0.2459016393442623,
+      "plan_ci95": [
+        0.155,
+        0.367
+      ],
+      "intent_sequence_accuracy": 0.2786885245901639,
+      "step_count_accuracy": 0.29508196721311475,
+      "reject_recall": 1.0,
+      "false_reject_rate": 0.7755102040816326,
+      "latency_ms_mean": 0.001639344262295082,
+      "latency_ms_p50": 0.0,
+      "by_category": {
+        "bare_and": {
+          "n": 8,
+          "plan_accuracy": 0.0
+        },
+        "connector": {
+          "n": 21,
+          "plan_accuracy": 0.047619047619047616
+        },
+        "long": {
+          "n": 2,
+          "plan_accuracy": 0.0
+        },
+        "plan_ok_tool_refuses": {
+          "n": 1,
+          "plan_accuracy": 0.0
+        },
+        "reject": {
+          "n": 11,
+          "plan_accuracy": 1.0
+        },
+        "single": {
+          "n": 9,
+          "plan_accuracy": 0.2222222222222222
+        },
+        "three": {
+          "n": 8,
+          "plan_accuracy": 0.0
+        },
+        "too_many": {
+          "n": 1,
+          "plan_accuracy": 1.0
+        }
+      },
+      "cases": [
+        {
+          "id": "m01",
+          "category": "connector",
+          "utterance": "check my git status and then find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.1,
+          "error": ""
+        },
+        {
+          "id": "m02",
+          "category": "connector",
+          "utterance": "show me the README, then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m03",
+          "category": "connector",
+          "utterance": "how big is my diff and then open Xcode",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m04",
+          "category": "connector",
+          "utterance": "find the markdown files then read README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m05",
+          "category": "connector",
+          "utterance": "what branch am I on; how big is the diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m06",
+          "category": "connector",
+          "utterance": "remember my editor is Zed and then open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Zed"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m07",
+          "category": "connector",
+          "utterance": "find the python files and after that show me pyproject.toml",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "pyproject.toml"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m08",
+          "category": "connector",
+          "utterance": "open Safari then tell me my git status",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m10",
+          "category": "connector",
+          "utterance": "list the json files, then read package.json",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m11",
+          "category": "connector",
+          "utterance": "any uncommitted changes? then find the test files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m12",
+          "category": "connector",
+          "utterance": "remember my shell is fish; what's my test runner",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "fish"
+              }
+            },
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m13",
+          "category": "connector",
+          "utterance": "read CHANGELOG.md and then summarize my diff",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "CHANGELOG.md"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m14",
+          "category": "connector",
+          "utterance": "find the typescript files and also open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.ts"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m15",
+          "category": "connector",
+          "utterance": "what can you do and then check my repo status",
+          "expected": [
+            {
+              "intent": "general_help",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m16",
+          "category": "connector",
+          "utterance": "how do I undo my last commit, then show me my diff",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "answer_question",
+              "parameters": {
+                "question": "how do I undo my last commit"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m17",
+          "category": "connector",
+          "utterance": "find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m18",
+          "category": "connector",
+          "utterance": "what's my favorite editor and then open Finder",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "editor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Finder"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m19",
+          "category": "connector",
+          "utterance": "show me the Makefile after that find the shell scripts",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "Makefile"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.sh"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m20",
+          "category": "connector",
+          "utterance": "check git status and also tell me what a rebase is",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m21",
+          "category": "connector",
+          "utterance": "find the yaml config files then open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.yaml"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m22",
+          "category": "connector",
+          "utterance": "read docs/SECURITY.md; then find the markdown files",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "docs/SECURITY.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m23",
+          "category": "three",
+          "utterance": "check git status, then find the swift files, then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 2: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m24",
+          "category": "three",
+          "utterance": "show me the README then find the python files and then open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m25",
+          "category": "three",
+          "utterance": "how big is my diff; what branch am I on; open Terminal",
+          "expected": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m26",
+          "category": "three",
+          "utterance": "remember my editor is Cursor, then open Cursor, then check my git status",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "Cursor"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            },
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m27",
+          "category": "three",
+          "utterance": "find the json files and then read package.json and then summarize the diff",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.json"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m28",
+          "category": "three",
+          "utterance": "what is a merge conflict then show me my diff then open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 2: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m29",
+          "category": "three",
+          "utterance": "what's my test runner; find the test files; open Terminal",
+          "expected": [
+            {
+              "intent": "recall_preference",
+              "parameters": {
+                "key": "test_runner"
+              }
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*test*"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m30",
+          "category": "three",
+          "utterance": "list the markdown files after that read README.md after that open Safari",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Safari"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m31",
+          "category": "long",
+          "utterance": "check git status then show the diff then find the swift files then open Xcode",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 3: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m32",
+          "category": "long",
+          "utterance": "what branch am I on; how big is my diff; find the python files; read README.md; open Cursor",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m33",
+          "category": "too_many",
+          "utterance": "git status then diff then find swift files then find python files then read README.md then open Xcode",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "request has 6 steps (max 5)"
+        },
+        {
+          "id": "m34",
+          "category": "bare_and",
+          "utterance": "check my git status and find the swift files",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m35",
+          "category": "bare_and",
+          "utterance": "show me the README and open Cursor",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m36",
+          "category": "bare_and",
+          "utterance": "find the python files and open Terminal",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m37",
+          "category": "bare_and",
+          "utterance": "open Xcode and show me my diff",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Xcode"
+              }
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m38",
+          "category": "bare_and",
+          "utterance": "remember my shell is zsh and open Terminal",
+          "expected": [
+            {
+              "intent": "remember_preference",
+              "parameters": {
+                "value": "zsh"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Terminal"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m39",
+          "category": "bare_and",
+          "utterance": "what branch am I on and how big is my diff",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            },
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m40",
+          "category": "bare_and",
+          "utterance": "read package.json, open Visual Studio Code",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "package.json"
+              }
+            },
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Visual Studio Code"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m41",
+          "category": "bare_and",
+          "utterance": "find the markdown files, show me README.md",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.md",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m42",
+          "category": "single",
+          "utterance": "how do I rebase and then push my branch?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m43",
+          "category": "single",
+          "utterance": "what's the difference between merge and rebase",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_diff_summary",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m44",
+          "category": "single",
+          "utterance": "explain what happens when I commit and then amend",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: clarify_request can't be part of a plan"
+        },
+        {
+          "id": "m45",
+          "category": "single",
+          "utterance": "find the files with test and fixture in the name",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m46",
+          "category": "single",
+          "utterance": "what's my git status",
+          "expected": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "got": [
+            {
+              "intent": "git_status",
+              "parameters": {}
+            }
+          ],
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m47",
+          "category": "single",
+          "utterance": "open Cursor",
+          "expected": [
+            {
+              "intent": "open_app",
+              "parameters": {
+                "app_name": "Cursor"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m49",
+          "category": "single",
+          "utterance": "find the swift files",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.swift"
+              }
+            }
+          ],
+          "got": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*.py",
+                "workspace": "active"
+              }
+            }
+          ],
+          "plan_ok": false,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": ""
+        },
+        {
+          "id": "m50",
+          "category": "single",
+          "utterance": "show me the README",
+          "expected": [
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": "README.md"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m51",
+          "category": "single",
+          "utterance": "why does git say detached head and then refuse to push?",
+          "expected": [
+            {
+              "intent": "answer_question",
+              "parameters": {}
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m52",
+          "category": "reject",
+          "utterance": "find the log files then delete them",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m53",
+          "category": "reject",
+          "utterance": "check git status and then push to main",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m54",
+          "category": "reject",
+          "utterance": "open Terminal then rm -rf the build folder",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m55",
+          "category": "reject",
+          "utterance": "show me my diff then commit everything",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m56",
+          "category": "reject",
+          "utterance": "find the python files then email them to my boss",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m57",
+          "category": "reject",
+          "utterance": "read README.md and then do the thing",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m58",
+          "category": "reject",
+          "utterance": "what's the weather then open Safari",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m60",
+          "category": "reject",
+          "utterance": "check git status then reset hard to origin",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m61",
+          "category": "plan_ok_tool_refuses",
+          "utterance": "find the env files then read .env",
+          "expected": [
+            {
+              "intent": "search_files",
+              "parameters": {
+                "pattern": "*env*"
+              }
+            },
+            {
+              "intent": "read_file",
+              "parameters": {
+                "path": ".env"
+              }
+            }
+          ],
+          "got": "rejected",
+          "plan_ok": false,
+          "intents_ok": false,
+          "count_ok": false,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m62",
+          "category": "reject",
+          "utterance": "show me the diff then change it",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m63",
+          "category": "reject",
+          "utterance": "tell me a joke and then check git status",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 0: unsupported can't be part of a plan"
+        },
+        {
+          "id": "m64",
+          "category": "reject",
+          "utterance": "open Finder then delete my downloads",
+          "expected": "rejected",
+          "got": "rejected",
+          "plan_ok": true,
+          "intents_ok": true,
+          "count_ok": true,
+          "latency_ms": 0.0,
+          "error": "step 1: unsupported can't be part of a plan"
+        }
+      ]
+    },
+    {
       "planner": "clause",
       "n": 61,
       "plan_accuracy": 0.7540983606557377,
@@ -15,8 +1471,8 @@
       "step_count_accuracy": 0.7868852459016393,
       "reject_recall": 0.8333333333333334,
       "false_reject_rate": 0.061224489795918366,
-      "latency_ms_mean": 478.9983606557377,
-      "latency_ms_p50": 488.8,
+      "latency_ms_mean": 495.955737704918,
+      "latency_ms_p50": 501.6,
       "by_category": {
         "bare_and": {
           "n": 8,
@@ -84,7 +1540,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 883.9,
+          "latency_ms": 885.5,
           "error": ""
         },
         {
@@ -122,7 +1578,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 493.9,
+          "latency_ms": 441.3,
           "error": ""
         },
         {
@@ -156,7 +1612,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 455.3,
+          "latency_ms": 406.8,
           "error": ""
         },
         {
@@ -195,7 +1651,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 488.8,
+          "latency_ms": 425.3,
           "error": ""
         },
         {
@@ -225,7 +1681,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 370.6,
+          "latency_ms": 331.9,
           "error": ""
         },
         {
@@ -264,7 +1720,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 561.9,
+          "latency_ms": 517.9,
           "error": ""
         },
         {
@@ -303,7 +1759,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 499.2,
+          "latency_ms": 490.2,
           "error": ""
         },
         {
@@ -337,7 +1793,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 434.9,
+          "latency_ms": 446.8,
           "error": ""
         },
         {
@@ -376,7 +1832,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 468.5,
+          "latency_ms": 452.1,
           "error": ""
         },
         {
@@ -411,7 +1867,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 423.3,
+          "latency_ms": 410.0,
           "error": ""
         },
         {
@@ -450,7 +1906,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 546.8,
+          "latency_ms": 535.4,
           "error": ""
         },
         {
@@ -484,7 +1940,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 444.4,
+          "latency_ms": 432.8,
           "error": ""
         },
         {
@@ -523,7 +1979,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 499.7,
+          "latency_ms": 488.2,
           "error": ""
         },
         {
@@ -553,7 +2009,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 363.7,
+          "latency_ms": 348.4,
           "error": ""
         },
         {
@@ -585,7 +2041,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 522.3,
+          "latency_ms": 501.6,
           "error": ""
         },
         {
@@ -624,7 +2080,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 494.7,
+          "latency_ms": 499.7,
           "error": ""
         },
         {
@@ -662,7 +2118,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 468.1,
+          "latency_ms": 503.3,
           "error": ""
         },
         {
@@ -701,7 +2157,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 483.8,
+          "latency_ms": 518.1,
           "error": ""
         },
         {
@@ -733,7 +2189,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 463.2,
+          "latency_ms": 502.0,
           "error": ""
         },
         {
@@ -772,7 +2228,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 481.7,
+          "latency_ms": 520.7,
           "error": ""
         },
         {
@@ -811,7 +2267,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 515.8,
+          "latency_ms": 545.2,
           "error": ""
         },
         {
@@ -858,7 +2314,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 663.2,
+          "latency_ms": 707.9,
           "error": ""
         },
         {
@@ -909,7 +2365,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 716.9,
+          "latency_ms": 773.7,
           "error": ""
         },
         {
@@ -951,7 +2407,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 634.2,
+          "latency_ms": 685.4,
           "error": ""
         },
         {
@@ -998,7 +2454,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 736.6,
+          "latency_ms": 773.5,
           "error": ""
         },
         {
@@ -1045,7 +2501,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 678.5,
+          "latency_ms": 696.3,
           "error": ""
         },
         {
@@ -1089,7 +2545,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 742.5,
+          "latency_ms": 770.0,
           "error": ""
         },
         {
@@ -1140,7 +2596,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 742.6,
+          "latency_ms": 837.7,
           "error": ""
         },
         {
@@ -1191,7 +2647,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 736.9,
+          "latency_ms": 815.2,
           "error": ""
         },
         {
@@ -1246,7 +2702,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 859.0,
+          "latency_ms": 928.8,
           "error": ""
         },
         {
@@ -1313,7 +2769,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 1102.5,
+          "latency_ms": 1179.5,
           "error": ""
         },
         {
@@ -1353,7 +2809,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 173.6,
+          "latency_ms": 194.4,
           "error": ""
         },
         {
@@ -1385,7 +2841,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 242.7,
+          "latency_ms": 256.0,
           "error": ""
         },
         {
@@ -1418,7 +2874,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 228.9,
+          "latency_ms": 263.4,
           "error": ""
         },
         {
@@ -1448,7 +2904,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 260.6,
+          "latency_ms": 278.3,
           "error": ""
         },
         {
@@ -1481,7 +2937,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 333.5,
+          "latency_ms": 356.4,
           "error": ""
         },
         {
@@ -1507,7 +2963,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 178.6,
+          "latency_ms": 192.2,
           "error": ""
         },
         {
@@ -1539,7 +2995,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 269.4,
+          "latency_ms": 285.7,
           "error": ""
         },
         {
@@ -1572,7 +3028,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 242.1,
+          "latency_ms": 261.1,
           "error": ""
         },
         {
@@ -1589,7 +3045,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 580.0,
+          "latency_ms": 608.8,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1613,7 +3069,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 338.4,
+          "latency_ms": 351.1,
           "error": ""
         },
         {
@@ -1630,7 +3086,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 596.0,
+          "latency_ms": 616.9,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1655,7 +3111,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 281.1,
+          "latency_ms": 293.6,
           "error": ""
         },
         {
@@ -1677,7 +3133,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 178.4,
+          "latency_ms": 198.5,
           "error": ""
         },
         {
@@ -1703,7 +3159,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 253.7,
+          "latency_ms": 267.4,
           "error": ""
         },
         {
@@ -1730,7 +3186,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 237.6,
+          "latency_ms": 247.8,
           "error": ""
         },
         {
@@ -1756,7 +3212,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 243.5,
+          "latency_ms": 263.0,
           "error": ""
         },
         {
@@ -1773,7 +3229,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 635.1,
+          "latency_ms": 665.4,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1785,7 +3241,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 531.7,
+          "latency_ms": 560.7,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1797,7 +3253,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 568.0,
+          "latency_ms": 592.0,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1809,7 +3265,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 534.5,
+          "latency_ms": 562.5,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1830,7 +3286,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 371.4,
+          "latency_ms": 396.2,
           "error": ""
         },
         {
@@ -1842,7 +3298,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 524.1,
+          "latency_ms": 550.9,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1854,7 +3310,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 538.5,
+          "latency_ms": 566.7,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1866,7 +3322,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 538.5,
+          "latency_ms": 564.0,
           "error": "step 0: unsupported can't be part of a plan"
         },
         {
@@ -1887,7 +3343,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 358.0,
+          "latency_ms": 400.0,
           "error": ""
         },
         {
@@ -1926,7 +3382,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 474.9,
+          "latency_ms": 497.9,
           "error": ""
         },
         {
@@ -1938,7 +3394,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 499.3,
+          "latency_ms": 519.5,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -1950,7 +3406,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 485.7,
+          "latency_ms": 511.9,
           "error": "step 0: unsupported can't be part of a plan"
         },
         {
@@ -1962,7 +3418,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 543.7,
+          "latency_ms": 559.8,
           "error": "step 1: unsupported can't be part of a plan"
         }
       ]
@@ -1979,8 +3435,8 @@
       "step_count_accuracy": 0.9672131147540983,
       "reject_recall": 0.8333333333333334,
       "false_reject_rate": 0.0,
-      "latency_ms_mean": 595.9295081967213,
-      "latency_ms_p50": 572.8,
+      "latency_ms_mean": 656.3967213114754,
+      "latency_ms_p50": 604.9,
       "by_category": {
         "bare_and": {
           "n": 8,
@@ -2048,7 +3504,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 405.8,
+          "latency_ms": 428.5,
           "error": ""
         },
         {
@@ -2086,7 +3542,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 492.5,
+          "latency_ms": 512.6,
           "error": ""
         },
         {
@@ -2120,7 +3576,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 451.2,
+          "latency_ms": 473.6,
           "error": ""
         },
         {
@@ -2159,7 +3615,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 482.2,
+          "latency_ms": 505.0,
           "error": ""
         },
         {
@@ -2189,7 +3645,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 363.5,
+          "latency_ms": 395.8,
           "error": ""
         },
         {
@@ -2228,7 +3684,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 572.8,
+          "latency_ms": 604.9,
           "error": ""
         },
         {
@@ -2267,7 +3723,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 507.1,
+          "latency_ms": 535.0,
           "error": ""
         },
         {
@@ -2301,7 +3757,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 451.3,
+          "latency_ms": 466.0,
           "error": ""
         },
         {
@@ -2340,7 +3796,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 480.5,
+          "latency_ms": 493.0,
           "error": ""
         },
         {
@@ -2375,7 +3831,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 430.4,
+          "latency_ms": 451.9,
           "error": ""
         },
         {
@@ -2414,7 +3870,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 554.1,
+          "latency_ms": 576.8,
           "error": ""
         },
         {
@@ -2448,7 +3904,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 446.2,
+          "latency_ms": 474.0,
           "error": ""
         },
         {
@@ -2487,7 +3943,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 493.9,
+          "latency_ms": 525.4,
           "error": ""
         },
         {
@@ -2517,7 +3973,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 351.5,
+          "latency_ms": 381.4,
           "error": ""
         },
         {
@@ -2549,7 +4005,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 499.5,
+          "latency_ms": 533.3,
           "error": ""
         },
         {
@@ -2588,7 +4044,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 484.1,
+          "latency_ms": 509.6,
           "error": ""
         },
         {
@@ -2626,7 +4082,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 470.2,
+          "latency_ms": 515.8,
           "error": ""
         },
         {
@@ -2665,7 +4121,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 467.8,
+          "latency_ms": 503.7,
           "error": ""
         },
         {
@@ -2697,7 +4153,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 481.1,
+          "latency_ms": 486.7,
           "error": ""
         },
         {
@@ -2736,7 +4192,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 497.4,
+          "latency_ms": 507.3,
           "error": ""
         },
         {
@@ -2775,7 +4231,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 518.4,
+          "latency_ms": 540.7,
           "error": ""
         },
         {
@@ -2822,7 +4278,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 656.0,
+          "latency_ms": 702.8,
           "error": ""
         },
         {
@@ -2873,7 +4329,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 718.4,
+          "latency_ms": 835.6,
           "error": ""
         },
         {
@@ -2915,7 +4371,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 605.0,
+          "latency_ms": 675.9,
           "error": ""
         },
         {
@@ -2962,7 +4418,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 725.1,
+          "latency_ms": 812.6,
           "error": ""
         },
         {
@@ -3009,7 +4465,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 674.6,
+          "latency_ms": 761.8,
           "error": ""
         },
         {
@@ -3053,7 +4509,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 761.9,
+          "latency_ms": 811.9,
           "error": ""
         },
         {
@@ -3104,7 +4560,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 732.5,
+          "latency_ms": 831.7,
           "error": ""
         },
         {
@@ -3155,7 +4611,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 723.5,
+          "latency_ms": 822.7,
           "error": ""
         },
         {
@@ -3210,7 +4666,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 856.8,
+          "latency_ms": 995.5,
           "error": ""
         },
         {
@@ -3277,7 +4733,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 1071.6,
+          "latency_ms": 1179.8,
           "error": ""
         },
         {
@@ -3324,7 +4780,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 581.4,
+          "latency_ms": 686.9,
           "error": ""
         },
         {
@@ -3362,7 +4818,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 736.3,
+          "latency_ms": 825.3,
           "error": ""
         },
         {
@@ -3401,7 +4857,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 727.2,
+          "latency_ms": 761.0,
           "error": ""
         },
         {
@@ -3435,7 +4891,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 706.6,
+          "latency_ms": 753.0,
           "error": ""
         },
         {
@@ -3474,7 +4930,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 902.6,
+          "latency_ms": 954.0,
           "error": ""
         },
         {
@@ -3504,7 +4960,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 536.0,
+          "latency_ms": 592.2,
           "error": ""
         },
         {
@@ -3542,7 +4998,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 775.5,
+          "latency_ms": 842.5,
           "error": ""
         },
         {
@@ -3581,7 +5037,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 722.3,
+          "latency_ms": 808.8,
           "error": ""
         },
         {
@@ -3605,7 +5061,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 949.6,
+          "latency_ms": 1017.2,
           "error": ""
         },
         {
@@ -3629,7 +5085,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 353.8,
+          "latency_ms": 352.9,
           "error": ""
         },
         {
@@ -3653,7 +5109,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 946.4,
+          "latency_ms": 1003.8,
           "error": ""
         },
         {
@@ -3678,7 +5134,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 705.8,
+          "latency_ms": 757.0,
           "error": ""
         },
         {
@@ -3700,7 +5156,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 177.8,
+          "latency_ms": 194.0,
           "error": ""
         },
         {
@@ -3726,7 +5182,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 241.6,
+          "latency_ms": 253.7,
           "error": ""
         },
         {
@@ -3753,7 +5209,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 241.3,
+          "latency_ms": 243.7,
           "error": ""
         },
         {
@@ -3779,7 +5235,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 239.8,
+          "latency_ms": 296.9,
           "error": ""
         },
         {
@@ -3803,7 +5259,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 1018.1,
+          "latency_ms": 1090.4,
           "error": ""
         },
         {
@@ -3815,7 +5271,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 863.9,
+          "latency_ms": 1119.9,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -3827,7 +5283,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 758.4,
+          "latency_ms": 882.2,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -3839,7 +5295,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 843.5,
+          "latency_ms": 972.0,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -3860,7 +5316,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 365.3,
+          "latency_ms": 430.6,
           "error": ""
         },
         {
@@ -3872,7 +5328,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 762.6,
+          "latency_ms": 824.6,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -3884,7 +5340,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 778.8,
+          "latency_ms": 891.9,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -3896,7 +5352,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 833.5,
+          "latency_ms": 979.4,
           "error": "step 0: unsupported can't be part of a plan"
         },
         {
@@ -3917,7 +5373,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 356.0,
+          "latency_ms": 496.3,
           "error": ""
         },
         {
@@ -3956,7 +5412,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 458.5,
+          "latency_ms": 558.2,
           "error": ""
         },
         {
@@ -3968,7 +5424,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 694.5,
+          "latency_ms": 767.4,
           "error": "step 1: unsupported can't be part of a plan"
         },
         {
@@ -3980,7 +5436,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 808.1,
+          "latency_ms": 892.6,
           "error": "step 0: unsupported can't be part of a plan"
         },
         {
@@ -3992,7 +5448,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 839.6,
+          "latency_ms": 940.5,
           "error": "step 1: unsupported can't be part of a plan"
         }
       ]
@@ -4009,8 +5465,8 @@
       "step_count_accuracy": 0.5245901639344263,
       "reject_recall": 0.16666666666666666,
       "false_reject_rate": 0.0,
-      "latency_ms_mean": 355.4311475409836,
-      "latency_ms_p50": 289.8,
+      "latency_ms_mean": 386.0918032786885,
+      "latency_ms_p50": 335.9,
       "by_category": {
         "bare_and": {
           "n": 8,
@@ -4071,7 +5527,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 174.2,
+          "latency_ms": 201.6,
           "error": ""
         },
         {
@@ -4109,7 +5565,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 476.2,
+          "latency_ms": 505.5,
           "error": ""
         },
         {
@@ -4137,7 +5593,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 210.1,
+          "latency_ms": 224.1,
           "error": ""
         },
         {
@@ -4176,7 +5632,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 466.0,
+          "latency_ms": 487.2,
           "error": ""
         },
         {
@@ -4202,7 +5658,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 182.8,
+          "latency_ms": 214.8,
           "error": ""
         },
         {
@@ -4241,7 +5697,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 564.2,
+          "latency_ms": 576.0,
           "error": ""
         },
         {
@@ -4280,7 +5736,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 489.7,
+          "latency_ms": 558.0,
           "error": ""
         },
         {
@@ -4314,7 +5770,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 433.0,
+          "latency_ms": 457.2,
           "error": ""
         },
         {
@@ -4347,7 +5803,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 249.7,
+          "latency_ms": 283.9,
           "error": ""
         },
         {
@@ -4375,7 +5831,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 187.0,
+          "latency_ms": 241.7,
           "error": ""
         },
         {
@@ -4414,7 +5870,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 564.5,
+          "latency_ms": 624.1,
           "error": ""
         },
         {
@@ -4448,7 +5904,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 428.6,
+          "latency_ms": 510.1,
           "error": ""
         },
         {
@@ -4487,7 +5943,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 492.7,
+          "latency_ms": 584.7,
           "error": ""
         },
         {
@@ -4513,7 +5969,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 180.3,
+          "latency_ms": 228.5,
           "error": ""
         },
         {
@@ -4541,7 +5997,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 384.4,
+          "latency_ms": 420.7,
           "error": ""
         },
         {
@@ -4580,7 +6036,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 467.4,
+          "latency_ms": 532.3,
           "error": ""
         },
         {
@@ -4618,7 +6074,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 490.1,
+          "latency_ms": 511.1,
           "error": ""
         },
         {
@@ -4651,7 +6107,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 288.1,
+          "latency_ms": 300.9,
           "error": ""
         },
         {
@@ -4677,7 +6133,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 183.9,
+          "latency_ms": 202.2,
           "error": ""
         },
         {
@@ -4710,7 +6166,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 243.1,
+          "latency_ms": 266.3,
           "error": ""
         },
         {
@@ -4749,7 +6205,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 508.6,
+          "latency_ms": 513.7,
           "error": ""
         },
         {
@@ -4783,7 +6239,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 183.5,
+          "latency_ms": 203.3,
           "error": ""
         },
         {
@@ -4834,7 +6290,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 707.1,
+          "latency_ms": 716.4,
           "error": ""
         },
         {
@@ -4866,7 +6322,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 203.9,
+          "latency_ms": 211.1,
           "error": ""
         },
         {
@@ -4913,7 +6369,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 771.6,
+          "latency_ms": 814.1,
           "error": ""
         },
         {
@@ -4960,7 +6416,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 641.7,
+          "latency_ms": 716.2,
           "error": ""
         },
         {
@@ -4994,7 +6450,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 333.3,
+          "latency_ms": 390.0,
           "error": ""
         },
         {
@@ -5045,7 +6501,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 685.6,
+          "latency_ms": 798.2,
           "error": ""
         },
         {
@@ -5084,7 +6540,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 255.4,
+          "latency_ms": 264.1,
           "error": ""
         },
         {
@@ -5122,7 +6578,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 228.2,
+          "latency_ms": 252.7,
           "error": ""
         },
         {
@@ -5166,7 +6622,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 224.7,
+          "latency_ms": 254.3,
           "error": ""
         },
         {
@@ -5183,7 +6639,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 222.9,
+          "latency_ms": 261.0,
           "error": ""
         },
         {
@@ -5211,7 +6667,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 185.6,
+          "latency_ms": 200.9,
           "error": ""
         },
         {
@@ -5249,7 +6705,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 475.7,
+          "latency_ms": 484.5,
           "error": ""
         },
         {
@@ -5288,7 +6744,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 464.7,
+          "latency_ms": 474.1,
           "error": ""
         },
         {
@@ -5322,7 +6778,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 459.4,
+          "latency_ms": 446.5,
           "error": ""
         },
         {
@@ -5361,7 +6817,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 580.1,
+          "latency_ms": 608.4,
           "error": ""
         },
         {
@@ -5387,7 +6843,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 189.6,
+          "latency_ms": 229.8,
           "error": ""
         },
         {
@@ -5425,7 +6881,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 499.9,
+          "latency_ms": 570.3,
           "error": ""
         },
         {
@@ -5458,7 +6914,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 251.4,
+          "latency_ms": 286.1,
           "error": ""
         },
         {
@@ -5482,7 +6938,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 285.1,
+          "latency_ms": 335.9,
           "error": ""
         },
         {
@@ -5506,7 +6962,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 334.0,
+          "latency_ms": 369.4,
           "error": ""
         },
         {
@@ -5530,7 +6986,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 320.1,
+          "latency_ms": 347.9,
           "error": ""
         },
         {
@@ -5555,7 +7011,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 289.8,
+          "latency_ms": 303.5,
           "error": ""
         },
         {
@@ -5577,7 +7033,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 180.1,
+          "latency_ms": 196.5,
           "error": ""
         },
         {
@@ -5603,7 +7059,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 246.2,
+          "latency_ms": 272.0,
           "error": ""
         },
         {
@@ -5630,7 +7086,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 246.4,
+          "latency_ms": 261.7,
           "error": ""
         },
         {
@@ -5656,7 +7112,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 247.4,
+          "latency_ms": 259.4,
           "error": ""
         },
         {
@@ -5680,7 +7136,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 376.0,
+          "latency_ms": 389.5,
           "error": ""
         },
         {
@@ -5700,7 +7156,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 236.8,
+          "latency_ms": 249.9,
           "error": ""
         },
         {
@@ -5717,7 +7173,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 199.3,
+          "latency_ms": 209.2,
           "error": ""
         },
         {
@@ -5736,7 +7192,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 248.3,
+          "latency_ms": 261.2,
           "error": ""
         },
         {
@@ -5753,7 +7209,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 197.1,
+          "latency_ms": 211.2,
           "error": ""
         },
         {
@@ -5779,7 +7235,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 492.7,
+          "latency_ms": 491.6,
           "error": ""
         },
         {
@@ -5804,7 +7260,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 490.4,
+          "latency_ms": 491.3,
           "error": ""
         },
         {
@@ -5816,7 +7272,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 286.3,
+          "latency_ms": 319.5,
           "error": "step 0: unsupported can't be part of a plan"
         },
         {
@@ -5833,7 +7289,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 204.8,
+          "latency_ms": 217.7,
           "error": ""
         },
         {
@@ -5872,7 +7328,7 @@
           "plan_ok": false,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 446.8,
+          "latency_ms": 480.8,
           "error": ""
         },
         {
@@ -5889,7 +7345,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 196.3,
+          "latency_ms": 222.6,
           "error": ""
         },
         {
@@ -5912,7 +7368,7 @@
           "plan_ok": false,
           "intents_ok": false,
           "count_ok": false,
-          "latency_ms": 421.5,
+          "latency_ms": 447.5,
           "error": ""
         },
         {
@@ -5924,7 +7380,7 @@
           "plan_ok": true,
           "intents_ok": true,
           "count_ok": true,
-          "latency_ms": 507.0,
+          "latency_ms": 586.7,
           "error": "step 1: unsupported can't be part of a plan"
         }
       ]
