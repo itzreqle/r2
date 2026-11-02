@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="442" viewBox="0 0 760 442" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>LoRA adapter vs base model: exact accuracy</title><desc>Dev (40): 87.5%, 92.5%, 100%; Fresh (24): 87.5%, 91.7%, 100%; Test (60): 80%, 85%, 93.3%; All 124: 83.9%, 88.7%, 96.8%</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">LoRA adapter vs base model: exact accuracy</text>
+<text x="0" y="48" font-size="13" fill="#52514e">0.15% of parameters trained on 700 synthetic examples · paired McNemar p = 0.013</text>
+<rect x="0" y="66" width="12" height="12" rx="3" fill="#2a78d6"/>
+<text x="18" y="76.5" font-size="13" fill="#52514e">Base, free decoding</text>
+<rect x="182" y="66" width="12" height="12" rx="3" fill="#eb6834"/>
+<text x="200" y="76.5" font-size="13" fill="#52514e">Base, JSON grammar</text>
+<rect x="357" y="66" width="12" height="12" rx="3" fill="#1baf7a"/>
+<text x="375" y="76.5" font-size="13" fill="#52514e">LoRA adapter</text>
+<line x1="120.0" y1="92" x2="120.0" y2="412" stroke="#e1e0d9" stroke-width="1"/>
+<text x="120.0" y="430" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
+<line x1="242.5" y1="92" x2="242.5" y2="412" stroke="#e1e0d9" stroke-width="1"/>
+<text x="242.5" y="430" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
+<line x1="365.0" y1="92" x2="365.0" y2="412" stroke="#e1e0d9" stroke-width="1"/>
+<text x="365.0" y="430" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
+<line x1="487.5" y1="92" x2="487.5" y2="412" stroke="#e1e0d9" stroke-width="1"/>
+<text x="487.5" y="430" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
+<line x1="610.0" y1="92" x2="610.0" y2="412" stroke="#e1e0d9" stroke-width="1"/>
+<text x="610.0" y="430" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
+<line x1="120" y1="92" x2="120" y2="412" stroke="#c3c2b7" stroke-width="1"/>
+<text x="108" y="133.5" font-size="13.5" fill="#0b0b0b" text-anchor="end">Dev (40)</text>
+<path d="M120.0,100.0 H544.8 A4,4 0 0 1 548.8,104.0 V114.0 A4,4 0 0 1 544.8,118.0 H120.0 Z" fill="#2a78d6"/>
+<text x="556.8" y="113.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M120.0,120.0 H569.2 A4,4 0 0 1 573.2,124.0 V134.0 A4,4 0 0 1 569.2,138.0 H120.0 Z" fill="#eb6834"/>
+<text x="581.2" y="133.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">92.5%</text>
+<path d="M120.0,140.0 H606.0 A4,4 0 0 1 610.0,144.0 V154.0 A4,4 0 0 1 606.0,158.0 H120.0 Z" fill="#1baf7a"/>
+<text x="618.0" y="153.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">100%</text>
+<text x="108" y="213.5" font-size="13.5" fill="#0b0b0b" text-anchor="end">Fresh (24)</text>
+<path d="M120.0,180.0 H544.8 A4,4 0 0 1 548.8,184.0 V194.0 A4,4 0 0 1 544.8,198.0 H120.0 Z" fill="#2a78d6"/>
+<text x="556.8" y="193.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">87.5%</text>
+<path d="M120.0,200.0 H565.2 A4,4 0 0 1 569.2,204.0 V214.0 A4,4 0 0 1 565.2,218.0 H120.0 Z" fill="#eb6834"/>
+<text x="577.2" y="213.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">91.7%</text>
+<path d="M120.0,220.0 H606.0 A4,4 0 0 1 610.0,224.0 V234.0 A4,4 0 0 1 606.0,238.0 H120.0 Z" fill="#1baf7a"/>
+<text x="618.0" y="233.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">100%</text>
+<text x="108" y="293.5" font-size="13.5" fill="#0b0b0b" text-anchor="end">Test (60)</text>
+<path d="M120.0,260.0 H508.0 A4,4 0 0 1 512.0,264.0 V274.0 A4,4 0 0 1 508.0,278.0 H120.0 Z" fill="#2a78d6"/>
+<text x="520.0" y="273.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">80%</text>
+<path d="M120.0,280.0 H532.5 A4,4 0 0 1 536.5,284.0 V294.0 A4,4 0 0 1 532.5,298.0 H120.0 Z" fill="#eb6834"/>
+<text x="544.5" y="293.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">85%</text>
+<path d="M120.0,300.0 H573.3 A4,4 0 0 1 577.3,304.0 V314.0 A4,4 0 0 1 573.3,318.0 H120.0 Z" fill="#1baf7a"/>
+<text x="585.3" y="313.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">93.3%</text>
+<text x="108" y="373.5" font-size="13.5" fill="#0b0b0b" text-anchor="end">All 124</text>
+<path d="M120.0,340.0 H527.0 A4,4 0 0 1 531.0,344.0 V354.0 A4,4 0 0 1 527.0,358.0 H120.0 Z" fill="#2a78d6"/>
+<text x="539.0" y="353.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">83.9%</text>
+<path d="M120.0,360.0 H550.7 A4,4 0 0 1 554.7,364.0 V374.0 A4,4 0 0 1 550.7,378.0 H120.0 Z" fill="#eb6834"/>
+<text x="562.7" y="373.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">88.7%</text>
+<path d="M120.0,380.0 H590.2 A4,4 0 0 1 594.2,384.0 V394.0 A4,4 0 0 1 590.2,398.0 H120.0 Z" fill="#1baf7a"/>
+<text x="602.2" y="393.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">96.8%</text>
+</svg>

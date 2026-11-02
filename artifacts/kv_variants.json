@@ -1,0 +1,3259 @@
+{
+  "micro": [
+    {
+      "n": 1118,
+      "kv_bits": 16,
+      "kv_mb": 146.8,
+      "suffix_ms": 57.4,
+      "decode_ms": 15.28
+    },
+    {
+      "n": 1118,
+      "kv_bits": 8,
+      "kv_mb": 78.0,
+      "suffix_ms": 56.2,
+      "decode_ms": 13.15,
+      "max_dlogit": 1.125,
+      "same_argmax": true,
+      "top5_overlap": 5,
+      "kl": 1.044460251620194e-08
+    },
+    {
+      "n": 1118,
+      "kv_bits": 4,
+      "kv_mb": 41.3,
+      "suffix_ms": 56.2,
+      "decode_ms": 13.31,
+      "max_dlogit": 48.5,
+      "same_argmax": false,
+      "top5_overlap": 0,
+      "kl": 25.811628341674805
+    },
+    {
+      "n": 2048,
+      "kv_bits": 16,
+      "kv_mb": 234.9,
+      "suffix_ms": 63.4,
+      "decode_ms": 13.61
+    },
+    {
+      "n": 2048,
+      "kv_bits": 8,
+      "kv_mb": 124.8,
+      "suffix_ms": 62.5,
+      "decode_ms": 17.31,
+      "max_dlogit": 1.0,
+      "same_argmax": true,
+      "top5_overlap": 5,
+      "kl": -2.922707853514339e-09
+    },
+    {
+      "n": 2048,
+      "kv_bits": 4,
+      "kv_mb": 66.1,
+      "suffix_ms": 64.2,
+      "decode_ms": 16.14,
+      "max_dlogit": 13.281,
+      "same_argmax": true,
+      "top5_overlap": 3,
+      "kl": 3.184158856583963e-07
+    },
+    {
+      "n": 4096,
+      "kv_bits": 16,
+      "kv_mb": 469.8,
+      "suffix_ms": 69.2,
+      "decode_ms": 18.7
+    },
+    {
+      "n": 4096,
+      "kv_bits": 8,
+      "kv_mb": 249.6,
+      "suffix_ms": 73.5,
+      "decode_ms": 19.28,
+      "max_dlogit": 1.031,
+      "same_argmax": true,
+      "top5_overlap": 5,
+      "kl": -2.182348524115696e-09
+    },
+    {
+      "n": 4096,
+      "kv_bits": 4,
+      "kv_mb": 132.1,
+      "suffix_ms": 73.1,
+      "decode_ms": 18.54,
+      "max_dlogit": 39.188,
+      "same_argmax": false,
+      "top5_overlap": 1,
+      "kl": 6.654513359069824
+    },
+    {
+      "n": 8192,
+      "kv_bits": 16,
+      "kv_mb": 939.5,
+      "suffix_ms": 87.9,
+      "decode_ms": 23.13
+    },
+    {
+      "n": 8192,
+      "kv_bits": 8,
+      "kv_mb": 499.1,
+      "suffix_ms": 92.1,
+      "decode_ms": 23.4,
+      "max_dlogit": 1.078,
+      "same_argmax": true,
+      "top5_overlap": 5,
+      "kl": 1.6056327101221513e-10
+    },
+    {
+      "n": 8192,
+      "kv_bits": 4,
+      "kv_mb": 264.2,
+      "suffix_ms": 100.7,
+      "decode_ms": 20.97,
+      "max_dlogit": 37.125,
+      "same_argmax": true,
+      "top5_overlap": 2,
+      "kl": 0.22613860666751862
+    }
+  ],
+  "e2e": {
+    "prefix/kv16": {
+      "n": 64,
+      "intent_accuracy": 0.9375,
+      "exact_accuracy": 0.9219,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 70.2,
+      "peak_memory_gb": 1.355,
+      "kv_mb": 146.8,
+      "decisions": [
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.py",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.md",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.json",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.swift",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*config*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "pyproject.toml"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "docs/ARCHITECTURE.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "AGENTS.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "config/default.toml"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Xcode"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Terminal"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Safari"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "preferred_language",
+            "value": "Python"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "default_branch",
+            "value": "main"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "dark_mode",
+            "value": "on"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "language"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "default_branch"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Command not supported"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Email is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Political geography is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Music is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Booking flights is not a software development task"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Poetry is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Math is outside my developer scope"
+          }
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.yml",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*test*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "trainingREADME.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "pyproject.toml"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Visual Studio Code"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Finder"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "main_language",
+            "value": "Swift"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "code_style",
+            "value": "black"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "editor"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "code_style"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is a git stash?"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "how do I create a virtual environment in python"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "explain what a race condition is"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I sort it out?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "News is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Demographics is outside my developer scope"
+          }
+        ]
+      ],
+      "ok": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "same_decisions_vs_prefix/kv16": 64
+    },
+    "prefix/kv8": {
+      "n": 64,
+      "intent_accuracy": 0.9375,
+      "exact_accuracy": 0.9219,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 72.0,
+      "peak_memory_gb": 1.212,
+      "kv_mb": 78.0,
+      "decisions": [
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.py",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.md",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.json",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.swift",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*config*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "pyproject.toml"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "docs/ARCHITECTURE.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "AGENTS.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "config/default.toml"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Xcode"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Terminal"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Safari"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "preferred_language",
+            "value": "Python"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "default_branch",
+            "value": "main"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "dark_mode",
+            "value": "on"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "language"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "default_branch"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Command is not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Email is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Political geography is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Music is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Arbitrary shell commands are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Booking flights is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Poetry is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Math is outside my developer scope"
+          }
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.yml",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*test*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "trainingREADME.md"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Visual Studio Code"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Finder"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "main_language",
+            "value": "Swift"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "code_style",
+            "value": "black"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "editor"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "code_style"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is a git stash?"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "how do I create a virtual environment in python"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "explain what a race condition is"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I sort it out?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I change?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "News is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Demographics is outside my developer scope"
+          }
+        ]
+      ],
+      "ok": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "same_decisions_vs_prefix/kv16": 59
+    },
+    "prefix/kv4": {
+      "n": 64,
+      "intent_accuracy": 0.0781,
+      "exact_accuracy": 0.0625,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 76.9,
+      "peak_memory_gb": 1.174,
+      "kv_mb": 41.3,
+      "decisions": [
+        [
+          "clarify_request",
+          {
+            "question": " , "
+          }
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "aanwer"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "a"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " intent"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "parameters"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*parameters*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "a"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "  "
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "Justly"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "general"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "unsupported"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "intent"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " "
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " "
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*s*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "c\u0e25\u0e32rify"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "t"
+          }
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*parameters*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " {"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "     in   in   in   in   in   in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in in \u0432"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*\u0639\u0646\u062f the user's request is to be*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "a n"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " "
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "a n"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " "
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "general"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "a n"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "Just Start"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": ""
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "intent"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "overnment"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "a"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": " "
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*{*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*file*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "recall_preference",
+          {
+            "key": " "
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*find*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "general"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*sarch*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "language"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": ": ",
+            "value": " "
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": " "
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*path*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "general_help"
+          }
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "intent"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "\u05d4"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*news*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": ":"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": ": "
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "general_help"
+          }
+        ]
+      ],
+      "ok": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "same_decisions_vs_prefix/kv16": 1
+    },
+    "none/kv16/win0": {
+      "n": 64,
+      "intent_accuracy": 0.9375,
+      "exact_accuracy": 0.9219,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 1868.0,
+      "peak_memory_gb": 1.768,
+      "kv_mb": 0.0,
+      "decisions": [
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.py",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.md",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.json",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.swift",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*config*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "pyproject.toml"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "docs/ARCHITECTURE.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "AGENTS.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "config/default.toml"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Xcode"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Terminal"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Safari"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "preferred_language",
+            "value": "Python"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "default_branch",
+            "value": "main"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "dark_mode",
+            "value": "enabled"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "language"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "default_branch"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Command not supported"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Email is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Political geography is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Music is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Booking flights is not a software development task"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Poetry is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Math is outside my developer scope"
+          }
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_status",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "git_diff_summary",
+          {}
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*.yml",
+            "workspace": "active"
+          }
+        ],
+        [
+          "search_files",
+          {
+            "pattern": "*test*",
+            "workspace": "active"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "trainingREADME.md"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "pyproject.toml"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Visual Studio Code"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Finder"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "main_language",
+            "value": "Swift"
+          }
+        ],
+        [
+          "remember_preference",
+          {
+            "key": "code_style",
+            "value": "black"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "editor"
+          }
+        ],
+        [
+          "recall_preference",
+          {
+            "key": "code_style"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is a git stash?"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "how do I create a virtual environment in python"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "explain what a race condition is"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I sort it out?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "News is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Demographics is outside my developer scope"
+          }
+        ]
+      ],
+      "ok": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "same_decisions_vs_none/kv16/win0": 64
+    },
+    "none/kv16/win1024": {
+      "n": 64,
+      "intent_accuracy": 0.25,
+      "exact_accuracy": 0.25,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 2087.1,
+      "peak_memory_gb": 1.71,
+      "kv_mb": 0.0,
+      "decisions": [
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I fix?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Diff is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Development questions must be in the scope of software development, not general knowledge or trivia."
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Find markdown docs"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Location is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Math is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "open_app",
+          {
+            "app_name": "Terminal"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Preferences are outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Preferred language is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Chit-chat is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "General knowledge is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Chit-chat is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Formatting drives is destructive and not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Poetry is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Math is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "General knowledge is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Listed in the rules"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Chit-chat is outside my developer scope"
+          }
+        ],
+        [
+          "read_file",
+          {
+            "path": "README.md"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Finder is not an approved app"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Code style is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Code style is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Unsupported question"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Weather is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Sort it out"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Chit-chat is outside my developer scope"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Population is outside my developer scope"
+          }
+        ]
+      ],
+      "ok": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "same_decisions_vs_none/kv16/win0": 11
+    },
+    "none/kv16/win512": {
+      "n": 64,
+      "intent_accuracy": 0.1562,
+      "exact_accuracy": 0.1562,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 2042.8,
+      "peak_memory_gb": 1.71,
+      "kv_mb": 0.0,
+      "decisions": [
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the weather in paris?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the sum of 1 and 2?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the purpose of the question and answer in the given context?"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "list all python files"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the weather in paris today?"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the purpose of the query?"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "showing the importance of showing the importance of showing the importance of showing the importance of showing the importance of showing the importance of showing the importance of showing the importance of showing the importance of showing the importance"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "What is the difference between a list and a tuple in Python?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "how to use the terminal"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the default branch in git"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is a list in python"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the purpose of the question and answer system in the context of the given text?"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "What is the best way to improve my English skills?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "What is the difference between a list and a tuple in Python?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "do you have anything staged or modified?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the difference between a list and a tuple in python?"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the weather in paris today?"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what did I tell you about my main language"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "What is a race condition?"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the weather in paris today?"
+          }
+        ],
+        [
+          "answer_question",
+          {
+            "question": "what is the weather in paris today?"
+          }
+        ],
+        [
+          "general_help",
+          {}
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "general_help",
+          {
+            "topic": "chmod 777"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ]
+      ],
+      "ok": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true
+      ],
+      "same_decisions_vs_none/kv16/win0": 5
+    },
+    "none/kv16/win256": {
+      "n": 64,
+      "intent_accuracy": 0.0938,
+      "exact_accuracy": 0.0938,
+      "fallback_rate": 0.0,
+      "ttft_ms_mean": 2137.3,
+      "peak_memory_gb": 1.71,
+      "kv_mb": 0.0,
+      "decisions": [
+        [
+          "clarify_request",
+          {
+            "question": "What should I do about the missing 'user' parameter in the 'update' function?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do about the missing 'user' in the query?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What is the capital of France?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do about the missing file?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I fix?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I clarify?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "unsupported",
+          {
+            "reason": "Destructive actions are not allowed"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do next?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I do?"
+          }
+        ],
+        [
+          "clarify_request",
+          {
+            "question": "What should I update?"
+          }
+        ]
+      ],
+      "ok": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "same_decisions_vs_none/kv16/win0": 0
+    }
+  }
+}

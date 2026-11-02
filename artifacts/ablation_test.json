@@ -1,0 +1,1260 @@
+[
+  {
+    "few_shot": true,
+    "constraint": "none",
+    "constrained": false,
+    "intent_acc": 0.8,
+    "param_acc": 0.8,
+    "malformed": 0.067,
+    "fallback": 0.067,
+    "latency_ms": 332,
+    "ttft_ms": 118.4,
+    "decode_ms_per_token": 14.44,
+    "n": 60,
+    "misses": [
+      {
+        "id": "t02",
+        "utterance": "have I got any unstaged files",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t05",
+        "utterance": "is everything committed",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t06",
+        "utterance": "which files are modified",
+        "expected": "git_status",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t09",
+        "utterance": "how much code did I touch today",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t18",
+        "utterance": "are there any dockerfiles",
+        "expected": "search_files",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t20",
+        "utterance": "print the Dockerfile",
+        "expected": "read_file",
+        "got": "unsupported",
+        "params": {
+          "reason": "Dockerfile is not a developer task"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t23",
+        "utterance": "open src/narrow_ai/settings.py",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Finder"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t24",
+        "utterance": "what's in .gitignore",
+        "expected": "read_file",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.gitignore*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t40",
+        "utterance": "what indentation do I prefer",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t50",
+        "utterance": "do it again but better",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t51",
+        "utterance": "clean this up",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t53",
+        "utterance": "commit everything",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      }
+    ]
+  },
+  {
+    "few_shot": true,
+    "constraint": "intent",
+    "constrained": true,
+    "intent_acc": 0.8,
+    "param_acc": 0.8,
+    "malformed": 0.067,
+    "fallback": 0.067,
+    "latency_ms": 344,
+    "ttft_ms": 123.5,
+    "decode_ms_per_token": 14.8,
+    "n": 60,
+    "misses": [
+      {
+        "id": "t02",
+        "utterance": "have I got any unstaged files",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t05",
+        "utterance": "is everything committed",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t06",
+        "utterance": "which files are modified",
+        "expected": "git_status",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t09",
+        "utterance": "how much code did I touch today",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t18",
+        "utterance": "are there any dockerfiles",
+        "expected": "search_files",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t20",
+        "utterance": "print the Dockerfile",
+        "expected": "read_file",
+        "got": "unsupported",
+        "params": {
+          "reason": "Dockerfile is not a developer task"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t23",
+        "utterance": "open src/narrow_ai/settings.py",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Finder"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t24",
+        "utterance": "what's in .gitignore",
+        "expected": "read_file",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.gitignore*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t40",
+        "utterance": "what indentation do I prefer",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t50",
+        "utterance": "do it again but better",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t51",
+        "utterance": "clean this up",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t53",
+        "utterance": "commit everything",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      }
+    ]
+  },
+  {
+    "few_shot": true,
+    "constraint": "json",
+    "constrained": true,
+    "intent_acc": 0.85,
+    "param_acc": 0.85,
+    "malformed": 0.0,
+    "fallback": 0.0,
+    "latency_ms": 323,
+    "ttft_ms": 117.2,
+    "decode_ms_per_token": 16.03,
+    "n": 60,
+    "misses": [
+      {
+        "id": "t06",
+        "utterance": "which files are modified",
+        "expected": "git_status",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t18",
+        "utterance": "are there any dockerfiles",
+        "expected": "search_files",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t20",
+        "utterance": "print the Dockerfile",
+        "expected": "read_file",
+        "got": "unsupported",
+        "params": {
+          "reason": "Dockerfile is not a developer task"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t23",
+        "utterance": "open src/narrow_ai/settings.py",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Finder"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t24",
+        "utterance": "what's in .gitignore",
+        "expected": "read_file",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.gitignore*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t40",
+        "utterance": "what indentation do I prefer",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t50",
+        "utterance": "do it again but better",
+        "expected": "clarify_request",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t51",
+        "utterance": "clean this up",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "Destructive actions are not allowed"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t53",
+        "utterance": "commit everything",
+        "expected": "unsupported",
+        "got": "git_status",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "none",
+    "constrained": false,
+    "intent_acc": 0.567,
+    "param_acc": 0.467,
+    "malformed": 0.2,
+    "fallback": 0.2,
+    "latency_ms": 404,
+    "ttft_ms": 129.7,
+    "decode_ms_per_token": 13.51,
+    "n": 60,
+    "misses": [
+      {
+        "id": "t02",
+        "utterance": "have I got any unstaged files",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t03",
+        "utterance": "am I on main or a feature branch",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t04",
+        "utterance": "show me git status",
+        "expected": "git_status",
+        "got": "git_status",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "t05",
+        "utterance": "is everything committed",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t06",
+        "utterance": "which files are modified",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": ".*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t07",
+        "utterance": "what's in my diff",
+        "expected": "git_diff_summary",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "t08",
+        "utterance": "give me an overview of my changes",
+        "expected": "git_diff_summary",
+        "got": "git_status",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t09",
+        "utterance": "how much code did I touch today",
+        "expected": "git_diff_summary",
+        "got": "clarify_request",
+        "params": {
+          "question": "how much code did I touch today"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t10",
+        "utterance": "summarise what I changed",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t11",
+        "utterance": "diff stats please",
+        "expected": "git_diff_summary",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "t13",
+        "utterance": "list every rust source file",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "/*.rs*/",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t14",
+        "utterance": "where are the yml files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*yle*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t16",
+        "utterance": "find the shell scripts",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*shell scripts*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t18",
+        "utterance": "are there any dockerfiles",
+        "expected": "search_files",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t21",
+        "utterance": "read me the readme",
+        "expected": "read_file",
+        "got": "read_file",
+        "params": {
+          "path": "readme"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t23",
+        "utterance": "open src/narrow_ai/settings.py",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Visual Studio Code"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t24",
+        "utterance": "what's in .gitignore",
+        "expected": "read_file",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.gitignore",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t33",
+        "utterance": "note that my editor is neovim",
+        "expected": "remember_preference",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t35",
+        "utterance": "save that I use uv for python packages",
+        "expected": "remember_preference",
+        "got": "remember_preference",
+        "params": {
+          "key": "use_uv",
+          "value": "I use uv for python packages"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t36",
+        "utterance": "keep in mind I like 4 space indentation",
+        "expected": "remember_preference",
+        "got": "remember_preference",
+        "params": {
+          "key": "like_4_space_indentation",
+          "value": "4 space indentation"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t37",
+        "utterance": "what editor do I use",
+        "expected": "recall_preference",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t39",
+        "utterance": "which package manager did I mention",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "which package manager did I mention"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t40",
+        "utterance": "what indentation do I prefer",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t47",
+        "utterance": "why would I use a virtualenv",
+        "expected": "answer_question",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t49",
+        "utterance": "fix that",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "fix that"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t50",
+        "utterance": "do it again but better",
+        "expected": "clarify_request",
+        "got": "answer_question",
+        "params": {
+          "question": "do it again but better"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t52",
+        "utterance": "take care of it",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t53",
+        "utterance": "commit everything",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t54",
+        "utterance": "git reset --hard",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t56",
+        "utterance": "what time is it in Tokyo",
+        "expected": "unsupported",
+        "got": "clarify_request",
+        "params": {
+          "question": "what time is it in Tokyo"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t58",
+        "utterance": "rm -rf node_modules and reinstall",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t59",
+        "utterance": "who won the world cup",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "intent",
+    "constrained": true,
+    "intent_acc": 0.567,
+    "param_acc": 0.467,
+    "malformed": 0.2,
+    "fallback": 0.2,
+    "latency_ms": 381,
+    "ttft_ms": 121.7,
+    "decode_ms_per_token": 12.84,
+    "n": 60,
+    "misses": [
+      {
+        "id": "t02",
+        "utterance": "have I got any unstaged files",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.py",
+          "workspace": "active"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t03",
+        "utterance": "am I on main or a feature branch",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t04",
+        "utterance": "show me git status",
+        "expected": "git_status",
+        "got": "git_status",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "t05",
+        "utterance": "is everything committed",
+        "expected": "git_status",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t06",
+        "utterance": "which files are modified",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": ".*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t07",
+        "utterance": "what's in my diff",
+        "expected": "git_diff_summary",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "t08",
+        "utterance": "give me an overview of my changes",
+        "expected": "git_diff_summary",
+        "got": "git_status",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t09",
+        "utterance": "how much code did I touch today",
+        "expected": "git_diff_summary",
+        "got": "clarify_request",
+        "params": {
+          "question": "how much code did I touch today"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t10",
+        "utterance": "summarise what I changed",
+        "expected": "git_diff_summary",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t11",
+        "utterance": "diff stats please",
+        "expected": "git_diff_summary",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "heuristic"
+      },
+      {
+        "id": "t13",
+        "utterance": "list every rust source file",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "/*.rs*/",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t14",
+        "utterance": "where are the yml files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*yle*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t16",
+        "utterance": "find the shell scripts",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*shell scripts*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t18",
+        "utterance": "are there any dockerfiles",
+        "expected": "search_files",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t21",
+        "utterance": "read me the readme",
+        "expected": "read_file",
+        "got": "read_file",
+        "params": {
+          "path": "readme"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t23",
+        "utterance": "open src/narrow_ai/settings.py",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Visual Studio Code"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t24",
+        "utterance": "what's in .gitignore",
+        "expected": "read_file",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.gitignore",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t33",
+        "utterance": "note that my editor is neovim",
+        "expected": "remember_preference",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t35",
+        "utterance": "save that I use uv for python packages",
+        "expected": "remember_preference",
+        "got": "remember_preference",
+        "params": {
+          "key": "use_uv",
+          "value": "I use uv for python packages"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t36",
+        "utterance": "keep in mind I like 4 space indentation",
+        "expected": "remember_preference",
+        "got": "remember_preference",
+        "params": {
+          "key": "like_4_space_indentation",
+          "value": "4 space indentation"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t37",
+        "utterance": "what editor do I use",
+        "expected": "recall_preference",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t39",
+        "utterance": "which package manager did I mention",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "which package manager did I mention"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t40",
+        "utterance": "what indentation do I prefer",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t47",
+        "utterance": "why would I use a virtualenv",
+        "expected": "answer_question",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t49",
+        "utterance": "fix that",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "fix that"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t50",
+        "utterance": "do it again but better",
+        "expected": "clarify_request",
+        "got": "answer_question",
+        "params": {
+          "question": "do it again but better"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t52",
+        "utterance": "take care of it",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t53",
+        "utterance": "commit everything",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t54",
+        "utterance": "git reset --hard",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t56",
+        "utterance": "what time is it in Tokyo",
+        "expected": "unsupported",
+        "got": "clarify_request",
+        "params": {
+          "question": "what time is it in Tokyo"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t58",
+        "utterance": "rm -rf node_modules and reinstall",
+        "expected": "unsupported",
+        "got": "unsupported",
+        "params": {
+          "reason": "Request is outside the supported developer domain"
+        },
+        "source": "heuristic"
+      },
+      {
+        "id": "t59",
+        "utterance": "who won the world cup",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  },
+  {
+    "few_shot": false,
+    "constraint": "json",
+    "constrained": true,
+    "intent_acc": 0.683,
+    "param_acc": 0.583,
+    "malformed": 0.0,
+    "fallback": 0.0,
+    "latency_ms": 240,
+    "ttft_ms": 85.3,
+    "decode_ms_per_token": 13.03,
+    "n": 60,
+    "misses": [
+      {
+        "id": "t06",
+        "utterance": "which files are modified",
+        "expected": "git_status",
+        "got": "search_files",
+        "params": {
+          "pattern": ".*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t08",
+        "utterance": "give me an overview of my changes",
+        "expected": "git_diff_summary",
+        "got": "git_status",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t09",
+        "utterance": "how much code did I touch today",
+        "expected": "git_diff_summary",
+        "got": "clarify_request",
+        "params": {
+          "question": "how much code did I touch today"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t13",
+        "utterance": "list every rust source file",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "/*.rs*/",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t14",
+        "utterance": "where are the yml files",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*yle*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t16",
+        "utterance": "find the shell scripts",
+        "expected": "search_files",
+        "got": "search_files",
+        "params": {
+          "pattern": "*shell scripts*",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t18",
+        "utterance": "are there any dockerfiles",
+        "expected": "search_files",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t21",
+        "utterance": "read me the readme",
+        "expected": "read_file",
+        "got": "read_file",
+        "params": {
+          "path": "readme"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t23",
+        "utterance": "open src/narrow_ai/settings.py",
+        "expected": "read_file",
+        "got": "open_app",
+        "params": {
+          "app_name": "Visual Studio Code"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t24",
+        "utterance": "what's in .gitignore",
+        "expected": "read_file",
+        "got": "search_files",
+        "params": {
+          "pattern": "*.gitignore",
+          "workspace": "active"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t33",
+        "utterance": "note that my editor is neovim",
+        "expected": "remember_preference",
+        "got": "general_help",
+        "params": {
+          "topic": "editor"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t35",
+        "utterance": "save that I use uv for python packages",
+        "expected": "remember_preference",
+        "got": "remember_preference",
+        "params": {
+          "key": "use_uv",
+          "value": "I use uv for python packages"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t36",
+        "utterance": "keep in mind I like 4 space indentation",
+        "expected": "remember_preference",
+        "got": "remember_preference",
+        "params": {
+          "key": "like_4_space_indentation",
+          "value": "4 space indentation"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t37",
+        "utterance": "what editor do I use",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {
+          "topic": "editor"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t39",
+        "utterance": "which package manager did I mention",
+        "expected": "recall_preference",
+        "got": "clarify_request",
+        "params": {
+          "question": "which package manager did I mention"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t40",
+        "utterance": "what indentation do I prefer",
+        "expected": "recall_preference",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t47",
+        "utterance": "why would I use a virtualenv",
+        "expected": "answer_question",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t49",
+        "utterance": "fix that",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {
+          "reason": "fix that"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t50",
+        "utterance": "do it again but better",
+        "expected": "clarify_request",
+        "got": "answer_question",
+        "params": {
+          "question": "do it again but better"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t52",
+        "utterance": "take care of it",
+        "expected": "clarify_request",
+        "got": "unsupported",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t53",
+        "utterance": "commit everything",
+        "expected": "unsupported",
+        "got": "git_status",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t54",
+        "utterance": "git reset --hard",
+        "expected": "unsupported",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t56",
+        "utterance": "what time is it in Tokyo",
+        "expected": "unsupported",
+        "got": "clarify_request",
+        "params": {
+          "question": "what time is it in Tokyo"
+        },
+        "source": "model"
+      },
+      {
+        "id": "t58",
+        "utterance": "rm -rf node_modules and reinstall",
+        "expected": "unsupported",
+        "got": "git_diff_summary",
+        "params": {},
+        "source": "model"
+      },
+      {
+        "id": "t59",
+        "utterance": "who won the world cup",
+        "expected": "unsupported",
+        "got": "general_help",
+        "params": {},
+        "source": "model"
+      }
+    ]
+  }
+]

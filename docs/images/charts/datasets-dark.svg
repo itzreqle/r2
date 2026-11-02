@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1002" viewBox="0 0 760 1002" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>What the evaluation sets contain</title><desc>unsupported: 10, 4, 8; search files: 5, 2, 8; read file: 4, 2, 7; git status: 4, 2, 6; open app: 3, 2, 5; git diff summary: 3, 2, 5; remember preference: 3, 2, 5; clarify request: 3, 2, 4; answer question: 0, 3, 5; recall preference: 2, 2, 4; general help: 3, 1, 3</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#f0efec">What the evaluation sets contain</text>
+<text x="0" y="48" font-size="13" fill="#c3c2b7">Share of each set · bar label = number of cases · synthetic LoRA set: 700 train / 70 valid</text>
+<rect x="0" y="66" width="12" height="12" rx="3" fill="#3987e5"/>
+<text x="18" y="76.5" font-size="13" fill="#c3c2b7">Dev (40)</text>
+<rect x="101" y="66" width="12" height="12" rx="3" fill="#d95926"/>
+<text x="119" y="76.5" font-size="13" fill="#c3c2b7">Fresh (24)</text>
+<rect x="217" y="66" width="12" height="12" rx="3" fill="#199e70"/>
+<text x="235" y="76.5" font-size="13" fill="#c3c2b7">Test (60)</text>
+<line x1="190.0" y1="92" x2="190.0" y2="972" stroke="#2c2c2a" stroke-width="1"/>
+<text x="190.0" y="990" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
+<line x1="310.0" y1="92" x2="310.0" y2="972" stroke="#2c2c2a" stroke-width="1"/>
+<text x="310.0" y="990" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">10%</text>
+<line x1="430.0" y1="92" x2="430.0" y2="972" stroke="#2c2c2a" stroke-width="1"/>
+<text x="430.0" y="990" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">20%</text>
+<line x1="550.0" y1="92" x2="550.0" y2="972" stroke="#2c2c2a" stroke-width="1"/>
+<text x="550.0" y="990" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">30%</text>
+<line x1="190" y1="92" x2="190" y2="972" stroke="#383835" stroke-width="1"/>
+<text x="178" y="126.0" font-size="13.5" fill="#f0efec" text-anchor="end">unsupported</text>
+<text x="178" y="142.0" font-size="11.5" fill="#9a9993" text-anchor="end">116 synthetic</text>
+<path d="M190.0,100.0 H486.0 A4,4 0 0 1 490.0,104.0 V114.0 A4,4 0 0 1 486.0,118.0 H190.0 Z" fill="#3987e5"/>
+<text x="498.0" y="113.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">10</text>
+<path d="M190.0,120.0 H386.0 A4,4 0 0 1 390.0,124.0 V134.0 A4,4 0 0 1 386.0,138.0 H190.0 Z" fill="#d95926"/>
+<text x="398.0" y="133.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">4</text>
+<path d="M190.0,140.0 H346.0 A4,4 0 0 1 350.0,144.0 V154.0 A4,4 0 0 1 346.0,158.0 H190.0 Z" fill="#199e70"/>
+<text x="358.0" y="153.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">8</text>
+<text x="178" y="206.0" font-size="13.5" fill="#f0efec" text-anchor="end">search files</text>
+<text x="178" y="222.0" font-size="11.5" fill="#9a9993" text-anchor="end">85 synthetic</text>
+<path d="M190.0,180.0 H336.0 A4,4 0 0 1 340.0,184.0 V194.0 A4,4 0 0 1 336.0,198.0 H190.0 Z" fill="#3987e5"/>
+<text x="348.0" y="193.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">5</text>
+<path d="M190.0,200.0 H286.0 A4,4 0 0 1 290.0,204.0 V214.0 A4,4 0 0 1 286.0,218.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="213.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,220.0 H346.0 A4,4 0 0 1 350.0,224.0 V234.0 A4,4 0 0 1 346.0,238.0 H190.0 Z" fill="#199e70"/>
+<text x="358.0" y="233.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">8</text>
+<text x="178" y="286.0" font-size="13.5" fill="#f0efec" text-anchor="end">read file</text>
+<text x="178" y="302.0" font-size="11.5" fill="#9a9993" text-anchor="end">91 synthetic</text>
+<path d="M190.0,260.0 H306.0 A4,4 0 0 1 310.0,264.0 V274.0 A4,4 0 0 1 306.0,278.0 H190.0 Z" fill="#3987e5"/>
+<text x="318.0" y="273.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">4</text>
+<path d="M190.0,280.0 H286.0 A4,4 0 0 1 290.0,284.0 V294.0 A4,4 0 0 1 286.0,298.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="293.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,300.0 H326.0 A4,4 0 0 1 330.0,304.0 V314.0 A4,4 0 0 1 326.0,318.0 H190.0 Z" fill="#199e70"/>
+<text x="338.0" y="313.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">7</text>
+<text x="178" y="366.0" font-size="13.5" fill="#f0efec" text-anchor="end">git status</text>
+<text x="178" y="382.0" font-size="11.5" fill="#9a9993" text-anchor="end">53 synthetic</text>
+<path d="M190.0,340.0 H306.0 A4,4 0 0 1 310.0,344.0 V354.0 A4,4 0 0 1 306.0,358.0 H190.0 Z" fill="#3987e5"/>
+<text x="318.0" y="353.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">4</text>
+<path d="M190.0,360.0 H286.0 A4,4 0 0 1 290.0,364.0 V374.0 A4,4 0 0 1 286.0,378.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="373.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,380.0 H306.0 A4,4 0 0 1 310.0,384.0 V394.0 A4,4 0 0 1 306.0,398.0 H190.0 Z" fill="#199e70"/>
+<text x="318.0" y="393.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">6</text>
+<text x="178" y="446.0" font-size="13.5" fill="#f0efec" text-anchor="end">open app</text>
+<text x="178" y="462.0" font-size="11.5" fill="#9a9993" text-anchor="end">76 synthetic</text>
+<path d="M190.0,420.0 H276.0 A4,4 0 0 1 280.0,424.0 V434.0 A4,4 0 0 1 276.0,438.0 H190.0 Z" fill="#3987e5"/>
+<text x="288.0" y="433.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+<path d="M190.0,440.0 H286.0 A4,4 0 0 1 290.0,444.0 V454.0 A4,4 0 0 1 286.0,458.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="453.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,460.0 H286.0 A4,4 0 0 1 290.0,464.0 V474.0 A4,4 0 0 1 286.0,478.0 H190.0 Z" fill="#199e70"/>
+<text x="298.0" y="473.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">5</text>
+<text x="178" y="526.0" font-size="13.5" fill="#f0efec" text-anchor="end">git diff summary</text>
+<text x="178" y="542.0" font-size="11.5" fill="#9a9993" text-anchor="end">41 synthetic</text>
+<path d="M190.0,500.0 H276.0 A4,4 0 0 1 280.0,504.0 V514.0 A4,4 0 0 1 276.0,518.0 H190.0 Z" fill="#3987e5"/>
+<text x="288.0" y="513.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+<path d="M190.0,520.0 H286.0 A4,4 0 0 1 290.0,524.0 V534.0 A4,4 0 0 1 286.0,538.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="533.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,540.0 H286.0 A4,4 0 0 1 290.0,544.0 V554.0 A4,4 0 0 1 286.0,558.0 H190.0 Z" fill="#199e70"/>
+<text x="298.0" y="553.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">5</text>
+<text x="178" y="606.0" font-size="13.5" fill="#f0efec" text-anchor="end">remember preference</text>
+<text x="178" y="622.0" font-size="11.5" fill="#9a9993" text-anchor="end">61 synthetic</text>
+<path d="M190.0,580.0 H276.0 A4,4 0 0 1 280.0,584.0 V594.0 A4,4 0 0 1 276.0,598.0 H190.0 Z" fill="#3987e5"/>
+<text x="288.0" y="593.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+<path d="M190.0,600.0 H286.0 A4,4 0 0 1 290.0,604.0 V614.0 A4,4 0 0 1 286.0,618.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="613.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,620.0 H286.0 A4,4 0 0 1 290.0,624.0 V634.0 A4,4 0 0 1 286.0,638.0 H190.0 Z" fill="#199e70"/>
+<text x="298.0" y="633.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">5</text>
+<text x="178" y="686.0" font-size="13.5" fill="#f0efec" text-anchor="end">clarify request</text>
+<text x="178" y="702.0" font-size="11.5" fill="#9a9993" text-anchor="end">34 synthetic</text>
+<path d="M190.0,660.0 H276.0 A4,4 0 0 1 280.0,664.0 V674.0 A4,4 0 0 1 276.0,678.0 H190.0 Z" fill="#3987e5"/>
+<text x="288.0" y="673.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+<path d="M190.0,680.0 H286.0 A4,4 0 0 1 290.0,684.0 V694.0 A4,4 0 0 1 286.0,698.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="693.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,700.0 H266.0 A4,4 0 0 1 270.0,704.0 V714.0 A4,4 0 0 1 266.0,718.0 H190.0 Z" fill="#199e70"/>
+<text x="278.0" y="713.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">4</text>
+<text x="178" y="766.0" font-size="13.5" fill="#f0efec" text-anchor="end">answer question</text>
+<text x="178" y="782.0" font-size="11.5" fill="#9a9993" text-anchor="end">65 synthetic</text>
+<path d="M190.0,740.0 H190.0 A1.5,1.5 0 0 1 191.5,741.5 V756.5 A1.5,1.5 0 0 1 190.0,758.0 H190.0 Z" fill="#3987e5"/>
+<text x="199.5" y="753.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">0</text>
+<path d="M190.0,760.0 H336.0 A4,4 0 0 1 340.0,764.0 V774.0 A4,4 0 0 1 336.0,778.0 H190.0 Z" fill="#d95926"/>
+<text x="348.0" y="773.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+<path d="M190.0,780.0 H286.0 A4,4 0 0 1 290.0,784.0 V794.0 A4,4 0 0 1 286.0,798.0 H190.0 Z" fill="#199e70"/>
+<text x="298.0" y="793.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">5</text>
+<text x="178" y="846.0" font-size="13.5" fill="#f0efec" text-anchor="end">recall preference</text>
+<text x="178" y="862.0" font-size="11.5" fill="#9a9993" text-anchor="end">40 synthetic</text>
+<path d="M190.0,820.0 H246.0 A4,4 0 0 1 250.0,824.0 V834.0 A4,4 0 0 1 246.0,838.0 H190.0 Z" fill="#3987e5"/>
+<text x="258.0" y="833.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,840.0 H286.0 A4,4 0 0 1 290.0,844.0 V854.0 A4,4 0 0 1 286.0,858.0 H190.0 Z" fill="#d95926"/>
+<text x="298.0" y="853.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">2</text>
+<path d="M190.0,860.0 H266.0 A4,4 0 0 1 270.0,864.0 V874.0 A4,4 0 0 1 266.0,878.0 H190.0 Z" fill="#199e70"/>
+<text x="278.0" y="873.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">4</text>
+<text x="178" y="926.0" font-size="13.5" fill="#f0efec" text-anchor="end">general help</text>
+<text x="178" y="942.0" font-size="11.5" fill="#9a9993" text-anchor="end">38 synthetic</text>
+<path d="M190.0,900.0 H276.0 A4,4 0 0 1 280.0,904.0 V914.0 A4,4 0 0 1 276.0,918.0 H190.0 Z" fill="#3987e5"/>
+<text x="288.0" y="913.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+<path d="M190.0,920.0 H236.0 A4,4 0 0 1 240.0,924.0 V934.0 A4,4 0 0 1 236.0,938.0 H190.0 Z" fill="#d95926"/>
+<text x="248.0" y="933.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">1</text>
+<path d="M190.0,940.0 H246.0 A4,4 0 0 1 250.0,944.0 V954.0 A4,4 0 0 1 246.0,958.0 H190.0 Z" fill="#199e70"/>
+<text x="258.0" y="953.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">3</text>
+</svg>

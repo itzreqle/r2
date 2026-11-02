@@ -57,7 +57,8 @@ def main() -> int:
     for name in ("train", "valid", "test"):
         path = args.data_dir / f"{name}.jsonl"
         if not path.is_file():
-            all_errors.append(f"missing {path}")
+            if name != "test":  # mlx-lm needs train + valid; test is optional
+                all_errors.append(f"missing {path}")
             continue
         n, errors = validate_file(path)
         counts[name] = n

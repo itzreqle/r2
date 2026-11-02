@@ -23,20 +23,23 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 ### 2. KV cache system (the core research piece)
 - [x] System-prompt **prefix KV cache**: prefill once, reuse every request, trim back after
 - [x] **Persistent KV cache on disk** (`artifacts/kv/*.safetensors`) with metadata guard
-      (model id, adapter, prompt hash, template hash) — rejects stale caches
+      (snapshot revision, weight/tokenizer/config/adapter content hashes, prompt + template hash,
+      mlx versions) — rejects stale caches; every layer validated on load
 - [x] Cache modes: `none | prefix | persistent` (config + CLI flag) for experiments
 - [x] Equivalence check: cached vs uncached greedy output must match (20/20 identical)
 - [x] Multi-prefix LRU (intent prompt + answer prompt both stay cached)
-- [x] Benchmark script `training/bench_kv.py` → `artifacts/kv_bench.json` (TTFT 1460 → 71 ms, 20.5×)
-- [ ] Multi-turn conversation cache via `LRUPromptCache` (token-prefix matching)
-- [ ] Quantized KV (`kv_bits=4/8`) ablation — expected ~no gain at <2k tokens
-- [ ] Rotating-window (`max_kv_size`) study for long sessions
+- [x] Benchmark script `training/bench_kv.py` → `artifacts/kv_bench.json` (TTFT 1,459 → 72 ms, 20.4×)
+- [x] Multi-turn conversation cache via `LRUPromptCache` (token-prefix matching): `model.conversation_cache`,
+      off by default; only pays off with a stable history prefix (`training/bench_conversation.py`, docs/EVALUATION.md)
+- [ ] Multi-turn follow-up eval set ("open it", "why did that fail?") to choose the history policy
+- [x] Quantized KV (`kv_bits=4/8`) ablation: 8-bit halves memory at equal accuracy, no speed-up; 4-bit breaks routing (`model.kv_bits`, off)
+- [x] Rotating-window (`max_kv_size`) study: windows shorter than the prompt collapse routing; R2's bounded history never needs one
 
 ### 3. Reliable structured output
 - [x] Response prefill: the assistant turn is forced to start with `{"intent": "`
 - [x] Intent-name **constrained decoding** (logits processor over allowed intent names)
 - [x] Pydantic validation + heuristic fallback (fail closed)
-- [ ] Full JSON-schema grammar (Outlines / XGrammar) for parameters too
+- [x] Full JSON-schema grammar for parameters too (llguidance; see section 8 / M3)
 
 ### 4. Tools R2 can use
 - [x] git status, git diff summary, file search, read file (path-guarded, secrets refused)
@@ -44,7 +47,7 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] open approved app (confirmation required)
 - [x] help, clarify, unsupported (refuses out-of-domain / destructive)
 - [x] answer_question: short spoken answers to developer questions (text only, never executed)
-- [ ] run allow-listed tests, explain test output (second LLM call)
+- [x] run allow-listed tests, explain test output (second LLM call): `tools.test_commands` id → fixed argv, always confirmed, bounded, failure explained by a third cached prompt (heuristic fallback offline)
 
 ### 5. R2 app (main app)
 - [x] `r2` command: Siri-style terminal UI (orb/status, transcript, spoken replies)
@@ -61,7 +64,7 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] Held-out dev set (40) + fresh test set (24, written before tuning): 92.5% / 95.8% intent accuracy
 - [x] Ablation: few-shot × constrained decoding (`artifacts/ablation.csv`)
 - [x] Real MLX baseline numbers recorded in `artifacts/`
-- [ ] Larger synthetic dataset (300–1000 examples) + LoRA training and comparison
+- [x] Larger synthetic dataset (700 + 70) + LoRA training and comparison: 88.7% → 96.8% on all 124 eval requests (McNemar p = 0.013), adapter opt-in
 - [ ] Model comparison (newer small models vs Qwen3-1.7B)
 
 ### 7. Interactive notebooks
@@ -73,3 +76,13 @@ Legend: `[x]` done in this sprint · `[ ]` future (or maybe never)
 - [x] `05_voice_loop` — synthesize → transcribe → R2 → speak
 - [x] Kernel `Python (narrow-ai)` + VSCodium fix (`scripts/fix_vscodium_pet.sh`)
 - [ ] LoRA training notebook (kept as old `06_lora_train_smoke` stub)
+
+### 8. Hardening and extensibility (post-review)
+- [x] M1 local API: per-session bearer token (0600), `Host` allowlist, no browser `Origin`, JSON-only bodies, loopback-only bind
+- [x] M1 confirmations: single-use, expiring `confirmation_id` bound to the decision digest (button, typed and spoken "yes")
+- [x] M1 file tools: `O_NOFOLLOW` + fd real-path check (TOCTOU), no symlinked-dir search, filename sanitising; adversarial tests in `tests/security/`
+- [x] M2 KV cache integrity: snapshot revision + content-hash fingerprint, every-layer validation, atomic save, eviction
+- [x] M3 strict parameter validation + full JSON-schema constrained decoding (llguidance), default `constraint = "json"` after a 3×2 ablation
+- [x] M4 agent runtime foundation: tool registry (+ prechecks before confirmation), bounded plan → gate → execute loop, `/run` API, metadata-only run store ([AGENT_RUNTIME.md](AGENT_RUNTIME.md))
+- [x] SwiftUI view for multi-step runs
+- [x] Larger multi-step evaluation set: 61 dev + 30 fresh requests; `split_and` + `question_guard` take the clause planner from 66.7% to 93.3% on the fresh set (reject recall 100%); one-shot model planner 40.0% with 0% reject recall

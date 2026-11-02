@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from narrow_ai.intents.schemas import IntentName, IntentSpec, PermissionLevel
+
+if TYPE_CHECKING:
+    from narrow_ai.settings import Settings
 
 
 class IntentRegistry:
@@ -25,8 +30,14 @@ class IntentRegistry:
         return "\n".join(lines)
 
 
-def default_registry() -> IntentRegistry:
-    """R2 intents. run_tests / explain_test_output are not implemented yet."""
+def default_registry(settings: Settings | None = None) -> IntentRegistry:
+    """R2 intents.
+
+    ``run_tests`` / ``explain_test_output`` are offered only when the config enables
+    them *and* lists at least one test command. Otherwise they are not implemented, so
+    they appear neither in the prompt nor in the grammar, and the gate refuses them.
+    """
+    tests_on = settings is not None and settings.tools.run_tests_enabled()
     specs = [
         IntentSpec(
             name=IntentName.GENERAL_HELP,
@@ -60,15 +71,15 @@ def default_registry() -> IntentRegistry:
         ),
         IntentSpec(
             name=IntentName.EXPLAIN_TEST_OUTPUT,
-            description="Explain supplied test output",
+            description="Explain the output of the last test run",
             permission=PermissionLevel.NONE,
-            implemented=False,
+            implemented=tests_on,
         ),
         IntentSpec(
             name=IntentName.RUN_TESTS,
             description="Run an allowlisted test command",
             permission=PermissionLevel.EXECUTE,
-            implemented=False,
+            implemented=tests_on,
         ),
         IntentSpec(
             name=IntentName.OPEN_APP,

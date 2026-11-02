@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="422" viewBox="0 0 760 422" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>Conversation reuse only helps while the history prefix is stable</title><desc>No history: turns 1-4 96 ms, turns 5-10 95 ms; Sliding history (default): turns 1-4 192 ms, turns 5-10 295 ms; Sliding + reuse: turns 1-4 138 ms, turns 5-10 300 ms; Block history: turns 1-4 181 ms, turns 5-10 227 ms; Block + reuse: turns 1-4 136 ms, turns 5-10 154 ms</desc>
+<text x="0" y="24" font-size="18" font-weight="600" fill="#f0efec">Conversation reuse only helps while the history prefix is stable</text>
+<text x="0" y="48" font-size="13" fill="#c3c2b7">Mean TTFT over 10 sessions × 10 turns · history ≤ 3 turns</text>
+<rect x="0" y="66" width="12" height="12" rx="3" fill="#3987e5"/>
+<text x="18" y="76.5" font-size="13" fill="#c3c2b7">Turns 1–4</text>
+<rect x="108" y="66" width="12" height="12" rx="3" fill="#d95926"/>
+<text x="126" y="76.5" font-size="13" fill="#c3c2b7">Turns 5–10</text>
+<line x1="200.0" y1="92" x2="200.0" y2="392" stroke="#2c2c2a" stroke-width="1"/>
+<text x="200.0" y="410" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="302.5" y1="92" x2="302.5" y2="392" stroke="#2c2c2a" stroke-width="1"/>
+<text x="302.5" y="410" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">100 ms</text>
+<line x1="405.0" y1="92" x2="405.0" y2="392" stroke="#2c2c2a" stroke-width="1"/>
+<text x="405.0" y="410" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">200 ms</text>
+<line x1="507.5" y1="92" x2="507.5" y2="392" stroke="#2c2c2a" stroke-width="1"/>
+<text x="507.5" y="410" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">300 ms</text>
+<line x1="610.0" y1="92" x2="610.0" y2="392" stroke="#2c2c2a" stroke-width="1"/>
+<text x="610.0" y="410" font-size="12" fill="#9a9993" text-anchor="middle" style="font-variant-numeric: tabular-nums">400 ms</text>
+<line x1="200" y1="92" x2="200" y2="392" stroke="#383835" stroke-width="1"/>
+<text x="188" y="116.0" font-size="13.5" fill="#f0efec" text-anchor="end">No history</text>
+<text x="188" y="132.0" font-size="11.5" fill="#9a9993" text-anchor="end">92% exact</text>
+<path d="M200.0,100.0 H294.5 A4,4 0 0 1 298.5,104.0 V114.0 A4,4 0 0 1 294.5,118.0 H200.0 Z" fill="#3987e5"/>
+<text x="306.5" y="113.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">96 ms</text>
+<path d="M200.0,120.0 H293.6 A4,4 0 0 1 297.6,124.0 V134.0 A4,4 0 0 1 293.6,138.0 H200.0 Z" fill="#d95926"/>
+<text x="305.6" y="133.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">95 ms</text>
+<text x="188" y="176.0" font-size="13.5" fill="#f0efec" text-anchor="end">Sliding history (default)</text>
+<text x="188" y="192.0" font-size="11.5" fill="#9a9993" text-anchor="end">90% exact</text>
+<path d="M200.0,160.0 H393.1 A4,4 0 0 1 397.1,164.0 V174.0 A4,4 0 0 1 393.1,178.0 H200.0 Z" fill="#3987e5"/>
+<text x="405.1" y="173.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">192 ms</text>
+<path d="M200.0,180.0 H498.6 A4,4 0 0 1 502.6,184.0 V194.0 A4,4 0 0 1 498.6,198.0 H200.0 Z" fill="#d95926"/>
+<text x="510.6" y="193.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">295 ms</text>
+<text x="188" y="236.0" font-size="13.5" fill="#f0efec" text-anchor="end">Sliding + reuse</text>
+<text x="188" y="252.0" font-size="11.5" fill="#9a9993" text-anchor="end">90% exact</text>
+<path d="M200.0,220.0 H337.7 A4,4 0 0 1 341.7,224.0 V234.0 A4,4 0 0 1 337.7,238.0 H200.0 Z" fill="#3987e5"/>
+<text x="349.7" y="233.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">138 ms</text>
+<path d="M200.0,240.0 H503.5 A4,4 0 0 1 507.5,244.0 V254.0 A4,4 0 0 1 503.5,258.0 H200.0 Z" fill="#d95926"/>
+<text x="515.5" y="253.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">300 ms</text>
+<text x="188" y="296.0" font-size="13.5" fill="#f0efec" text-anchor="end">Block history</text>
+<text x="188" y="312.0" font-size="11.5" fill="#9a9993" text-anchor="end">87% exact</text>
+<path d="M200.0,280.0 H381.1 A4,4 0 0 1 385.1,284.0 V294.0 A4,4 0 0 1 381.1,298.0 H200.0 Z" fill="#3987e5"/>
+<text x="393.1" y="293.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">181 ms</text>
+<path d="M200.0,300.0 H428.5 A4,4 0 0 1 432.5,304.0 V314.0 A4,4 0 0 1 428.5,318.0 H200.0 Z" fill="#d95926"/>
+<text x="440.5" y="313.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">227 ms</text>
+<text x="188" y="356.0" font-size="13.5" fill="#f0efec" text-anchor="end">Block + reuse</text>
+<text x="188" y="372.0" font-size="11.5" fill="#9a9993" text-anchor="end">87% exact</text>
+<path d="M200.0,340.0 H335.3 A4,4 0 0 1 339.3,344.0 V354.0 A4,4 0 0 1 335.3,358.0 H200.0 Z" fill="#3987e5"/>
+<text x="347.3" y="353.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">136 ms</text>
+<path d="M200.0,360.0 H353.6 A4,4 0 0 1 357.6,364.0 V374.0 A4,4 0 0 1 353.6,378.0 H200.0 Z" fill="#d95926"/>
+<text x="365.6" y="373.5" font-size="12.5" fill="#f0efec" style="font-variant-numeric: tabular-nums">154 ms</text>
+</svg>

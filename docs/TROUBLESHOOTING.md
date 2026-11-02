@@ -10,6 +10,10 @@
 | `say` fails | macOS TTS unavailable; check `which say` |
 | Git tool errors | Ensure `--workspace` is a git repo |
 | Tests want network | Default suite must not; remove `@pytest.mark.mlx` runs from CI |
+| `uv run pytest` → "Failed to spawn: pytest" | The `(r2)` in the checkout path breaks the launcher's shebang; use `uv run python -m pytest` |
+| "model.constraint = 'json' needs llguidance" at start | `uv sync --group grammar` (it is a default group, so plain `uv sync` also works) or set `model.constraint = "intent"` |
+| `/status` shows `kv_cache.source = "built"` after an update | Expected once: the cache fingerprint changed (new weights, tokenizer, adapter, template or mlx version); old files are evicted (max `kv_cache_max_files`) |
+| Paper build: `pdflatex` / `tectonic` fails | Use `paper/build.sh` (TinyTeX in `~/Library/TinyTeX`); tectonic's bundle URL now redirects to an uncached mirror |
 
 ## VSCodium: no Python environments / kernel not selectable
 
@@ -37,6 +41,9 @@ Without pet, a fallback also works: in VSCodium user settings set `"python.locat
 | ⌥Space does nothing | Another app (e.g. ChatGPT, Raycast) owns it; Settings shows a warning — change theirs or turn ours off |
 | Robotic voice | Settings → Voice → turn on Natural voice; the core must have the `tts` group installed |
 | "R2 can't be opened" | Ad-hoc signed build: right-click R2.app → Open once |
+| `swift build`: "missing required module 'SwiftShims'" | `.build` was created at another checkout path (repo moved/renamed). `build_app.sh` now cleans it automatically; by hand: `rm -rf macos/R2App/.build` |
+| Every request returns 401 | The core rotates its token on each start; the app rereads `~/.local/share/narrow-ai/api-token` once on a 401. If it persists, Restart Core |
+| "Cancelled" after saying yes | The confirmation id expired (120 s) or belonged to an older prompt; ask again |
 
 ## Reset preferences
 

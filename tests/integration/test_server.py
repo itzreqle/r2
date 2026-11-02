@@ -2,16 +2,67 @@
 
 from __future__ import annotations
 
+import http.client
 import json
+import stat
 import threading
+import urllib.error
 import urllib.request
 from pathlib import Path
 
 import pytest
 
+from narrow_ai.r2.auth import ApiToken
 from narrow_ai.r2.core import R2
 from narrow_ai.r2.server import make_server
 from narrow_ai.settings import Settings
+
+
+class Api:
+    def __init__(self, base: str, port: int, token: ApiToken, r2: R2) -> None:
+        self.base, self.port, self.token, self.r2 = base, port, token, r2
+
+    def request(
+        self,
+        method: str,
+        path: str,
+        body: dict | bytes | None = None,
+        *,
+        ctype: str = "application/json",
+        auth: str | None = "default",
+        headers: dict[str, str] | None = None,
+    ) -> tuple[int, dict]:
+        data = body if isinstance(body, bytes) or body is None else json.dumps(body).encode()
+        hdrs = {"Content-Type": ctype} if method == "POST" else {}
+        if auth == "default":
+            hdrs["Authorization"] = f"Bearer {self.token.value}"
+        elif auth is not None:
+            hdrs["Authorization"] = auth
+        hdrs.update(headers or {})
+        req = urllib.request.Request(self.base + path, data=data, method=method, headers=hdrs)
+        try:
+            with urllib.request.urlopen(req, timeout=10) as r:
+                return r.status, json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            return e.code, json.loads(e.read())
+
+    def post(self, path: str, body: dict | bytes | None = None, **kw) -> tuple[int, dict]:
+        return self.request("POST", path, {} if body is None else body, **kw)
+
+    def get(self, path: str, **kw) -> tuple[int, dict]:
+        return self.request("GET", path, **kw)
+
+    def raw(self, method: str, path: str, headers: dict[str, str], body: bytes = b"") -> int:
+        """Send exact headers (urllib always rewrites Host)."""
+        conn = http.client.HTTPConnection("127.0.0.1", self.port, timeout=10)
+        conn.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
+        for k, v in headers.items():
+            conn.putheader(k, v)
+        conn.putheader("Content-Length", str(len(body)))
+        conn.endheaders(body)
+        code = conn.getresponse().status
+        conn.close()
+        return code
 
 
 @pytest.fixture()
@@ -20,48 +71,302 @@ def api(tmp_path: Path):
     s = Settings()
     s.memory.db_path = str(tmp_path / "prefs.db")
     r2 = R2(s, backend="fake", workspace=tmp_path)
-    httpd = make_server(r2, port=0, speak=False)
-    t = threading.Thread(target=httpd.serve_forever, daemon=True)
+    token = ApiToken.create(tmp_path / "run" / "api-token")
+    httpd = make_server(r2, token=token, port=0, speak=False)
+    t = threading.Thread(target=httpd.serve_forever, kwargs={"poll_interval": 0.02}, daemon=True)
     t.start()
-    base = f"http://127.0.0.1:{httpd.server_address[1]}"
-    yield base, r2
+    port = httpd.server_address[1]
+    yield Api(f"http://127.0.0.1:{port}", port, token, r2)
     httpd.shutdown()
     httpd.server_close()
 
 
-def _post(url: str, body: dict | bytes, ctype: str = "application/json"):
-    data = body if isinstance(body, bytes) else json.dumps(body).encode()
-    req = urllib.request.Request(url, data=data, method="POST", headers={"Content-Type": ctype})
-    try:
-        with urllib.request.urlopen(req, timeout=10) as r:
-            return r.status, json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        return e.code, json.loads(e.read())
-
-
 def test_health_status_and_ask(api):
-    base, _ = api
-    with urllib.request.urlopen(base + "/health") as r:
-        assert json.loads(r.read())["ok"] is True
-    with urllib.request.urlopen(base + "/status") as r:
-        assert json.loads(r.read())["backend"] == "fake"
-    code, out = _post(base + "/ask", {"text": "find python files", "speak": False})
+    code, out = api.get("/health", auth=None)  # health is public
+    assert code == 200 and out["ok"] is True
+    assert api.get("/status")[1]["backend"] == "fake"
+    code, out = api.post("/ask", {"text": "find python files", "speak": False})
     assert code == 200 and out["intent"] == "search_files" and "demo.py" in out["text"]
 
 
-def test_confirmation_survives_between_requests(api):
-    base, r2 = api
-    code, out = _post(base + "/ask", {"text": "remember editor=Cursor", "speak": False})
-    assert out["needs_confirmation"] and r2.orch.preferences.get("editor") is None
-    code, out = _post(base + "/confirm", {"speak": False})
-    assert out["ok"] and r2.orch.preferences.get("editor") == "Cursor"
-    code, out = _post(base + "/confirm", {"speak": False})
-    assert out["text"] == "Nothing to confirm."
-
-
 def test_bad_requests_are_rejected(api):
-    base, _ = api
-    assert _post(base + "/ask", {"text": ""})[0] == 400
-    assert _post(base + "/ask_audio", b"not a wav file at all, definitely not RIFF data....",
-                 "audio/wav")[0] == 400
-    assert _post(base + "/nope", {})[0] == 404
+    assert api.post("/ask", {"text": ""})[0] == 400
+    assert api.post("/ask_audio", b"not a wav file at all, definitely not RIFF data....",
+                    ctype="audio/wav")[0] == 400
+    assert api.post("/nope", {})[0] == 404
+
+
+# --------------------------------------------------------------------- auth / origin
+@pytest.mark.parametrize("auth", [None, "Bearer wrong-token", "Basic abc", "Bearer "])
+def test_requests_without_valid_token_are_401(api, auth):
+    assert api.get("/status", auth=auth)[0] == 401
+    code, _ = api.post("/ask", {"text": "git status"}, auth=auth)
+    assert code == 401
+    assert api.post("/confirm", {}, auth=auth)[0] == 401
+    assert api.post("/reset", {}, auth=auth)[0] == 401
+    assert api.post("/listen/start", {}, auth=auth)[0] == 401
+
+
+@pytest.mark.parametrize(
+    "host", ["evil.test", "evil.test:8765", "127.0.0.1", "localhost:1", "", "127.0.0.1.nip.io"]
+)
+def test_foreign_host_header_is_403(api, host):
+    """DNS rebinding: a browser sends the attacker's hostname in Host."""
+    headers = {"Authorization": f"Bearer {api.token.value}"}
+    if host:
+        headers["Host"] = host
+    assert api.raw("GET", "/status", headers) == 403
+    assert api.raw("GET", "/health", headers) == 403
+
+
+@pytest.mark.parametrize("host", ["127.0.0.1:{p}", "localhost:{p}", "LOCALHOST:{p}"])
+def test_loopback_host_header_is_allowed(api, host):
+    headers = {"Host": host.format(p=api.port), "Authorization": f"Bearer {api.token.value}"}
+    assert api.raw("GET", "/status", headers) == 200
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        {"Origin": "https://evil.test"},
+        {"Origin": "null"},
+        {"Origin": "http://localhost:3000"},
+        {"Sec-Fetch-Site": "cross-site"},
+        {"Sec-Fetch-Site": "same-site"},
+    ],
+)
+def test_browser_requests_are_403_even_with_token(api, extra):
+    assert api.get("/status", headers=extra)[0] == 403
+    assert api.post("/confirm", {}, headers=extra)[0] == 403
+
+
+@pytest.mark.parametrize(
+    "ctype", ["text/plain", "application/x-www-form-urlencoded", "multipart/form-data", ""]
+)
+def test_simple_request_content_types_are_415(api, ctype):
+    """CSRF 'simple requests' can't set application/json without a preflight."""
+    assert api.post("/ask", {"text": "git status"}, ctype=ctype)[0] == 415
+    assert api.post("/ask_audio", b"RIFF" + b"\0" * 60, ctype=ctype or "text/plain")[0] == 415
+
+
+def test_preflight_and_other_verbs_are_refused(api):
+    headers = {
+        "Host": f"127.0.0.1:{api.port}",
+        "Access-Control-Request-Method": "POST",
+    }
+    assert api.raw("OPTIONS", "/ask", headers) == 405
+    assert api.raw("DELETE", "/reset", headers) == 405
+
+
+def test_malformed_content_length_is_400(api):
+    headers = {
+        "Host": f"127.0.0.1:{api.port}",
+        "Authorization": f"Bearer {api.token.value}",
+        "Content-Type": "application/json",
+    }
+    conn = http.client.HTTPConnection("127.0.0.1", api.port, timeout=10)
+    conn.putrequest("POST", "/ask", skip_host=True)
+    for k, v in {**headers, "Content-Length": "abc"}.items():
+        conn.putheader(k, v)
+    conn.endheaders()
+    assert conn.getresponse().status == 400
+    conn.close()
+
+
+def test_token_file_is_private(api):
+    mode = stat.S_IMODE(api.token.path.stat().st_mode)
+    assert mode == 0o600
+    assert api.token.path.read_text() == api.token.value
+    assert len(api.token.value) >= 40
+
+
+def test_non_loopback_bind_is_refused(tmp_path):
+    s = Settings()
+    s.memory.db_path = str(tmp_path / "prefs.db")
+    r2 = R2(s, backend="fake", workspace=tmp_path)
+    token = ApiToken.create(tmp_path / "tok")
+    for host in ("0.0.0.0", "192.168.1.10", "example.com"):
+        with pytest.raises(ValueError, match="non-loopback"):
+            make_server(r2, token=token, host=host, port=0)
+
+
+# --------------------------------------------------------------------- confirmations
+def _park_remember(api) -> dict:
+    code, out = api.post("/ask", {"text": "remember editor=Cursor", "speak": False})
+    assert code == 200 and out["needs_confirmation"]
+    assert out["confirmation_id"] and out["expires_in"] > 0
+    assert api.r2.orch.preferences.get("editor") is None
+    return out
+
+
+def test_confirmation_with_id_survives_between_requests(api):
+    out = _park_remember(api)
+    code, done = api.post("/confirm", {"confirmation_id": out["confirmation_id"]})
+    assert code == 200 and done["ok"] and api.r2.orch.preferences.get("editor") == "Cursor"
+    # Single use: replaying the same id does nothing.
+    code, again = api.post("/confirm", {"confirmation_id": out["confirmation_id"]})
+    assert again["text"] == "Nothing to confirm."
+
+
+def test_confirm_without_or_with_wrong_id_never_executes(api):
+    _park_remember(api)
+    code, out = api.post("/confirm", {})
+    assert code == 200 and not out["ok"] and "cancelled" in out["text"]
+    assert api.r2.orch.preferences.get("editor") is None
+    assert api.r2.orch.pending is None  # fail closed: the attempt cancelled it
+
+    _park_remember(api)
+    code, out = api.post("/confirm", {"confirmation_id": "x" * 22})
+    assert not out["ok"] and api.r2.orch.preferences.get("editor") is None
+
+
+@pytest.mark.parametrize("word", ["yes", "Yes!", "do it", "ok"])
+def test_typed_yes_without_id_does_not_confirm(api, word):
+    _park_remember(api)
+    code, out = api.post("/ask", {"text": word})
+    assert not out["ok"] and api.r2.orch.preferences.get("editor") is None
+
+
+def test_typed_yes_with_matching_id_confirms(api):
+    """Hands-free path: the client echoes the id of the prompt it is showing."""
+    out = _park_remember(api)
+    code, done = api.post("/ask", {"text": "yes", "confirmation_id": out["confirmation_id"]})
+    assert done["ok"] and api.r2.orch.preferences.get("editor") == "Cursor"
+
+
+def test_old_id_cannot_approve_a_newer_action(api):
+    first = _park_remember(api)
+    code, second = api.post("/ask", {"text": "remember theme=dark"})
+    assert second["confirmation_id"] != first["confirmation_id"]
+    code, out = api.post("/confirm", {"confirmation_id": first["confirmation_id"]})
+    assert not out["ok"]
+    prefs = api.r2.orch.preferences
+    assert prefs.get("theme") is None and prefs.get("editor") is None
+
+
+def test_expired_confirmation_is_rejected(api):
+    now = [1000.0]
+    api.r2.orch.clock = lambda: now[0]
+    out = _park_remember(api)
+    now[0] += api.r2.settings.security.confirmation_ttl_sec + 1
+    code, res = api.post("/confirm", {"confirmation_id": out["confirmation_id"]})
+    assert not res["ok"] and "expired" in res["text"]
+    assert api.r2.orch.preferences.get("editor") is None
+
+
+def test_status_does_not_leak_confirmation_id(api):
+    out = _park_remember(api)
+    code, st = api.get("/status")
+    assert st["pending"]["intent"] == "remember_preference"
+    assert out["confirmation_id"] not in json.dumps(st)
+
+
+# --------------------------------------------------------------------- multi-step runs
+@pytest.fixture()
+def run_api(api, tmp_path):
+    api.r2.settings.agent.runs_db_path = str(tmp_path / "runs.db")
+    return api
+
+
+def test_run_endpoints_require_auth(run_api):
+    assert run_api.post("/run", {"text": "what can you do"}, auth=None)[0] == 401
+    assert run_api.get("/runs/abc", auth=None)[0] == 401
+    assert run_api.post("/runs/abc/confirm", {}, auth=None)[0] == 401
+
+
+def test_run_completes_and_can_be_polled(run_api):
+    code, run = run_api.post("/run", {"text": "find python files and then what can you do"})
+    assert code == 200 and run["status"] == "completed"
+    assert [s["intent"] for s in run["steps"]] == ["search_files", "general_help"]
+    assert "demo.py" in run["steps"][0]["message"]
+    code, polled = run_api.get(f"/runs/{run['id']}")
+    assert code == 200 and polled["status"] == "completed"
+    assert polled["events"][-1]["type"] == "run_finished"
+
+
+def test_run_confirmation_is_bound_to_its_id(run_api):
+    code, run = run_api.post("/run", {"text": "find python files then remember editor=Cursor"})
+    assert run["status"] == "awaiting_confirmation" and run["confirmation_id"]
+    cid = run["confirmation_id"]
+    code, polled = run_api.get(f"/runs/{run['id']}")
+    assert cid not in json.dumps(polled)  # polling never leaks the id
+    # The single-request /confirm endpoint can't approve a run's step.
+    assert run_api.post("/confirm", {"confirmation_id": cid})[1]["text"] == "Nothing to confirm."
+    code, done = run_api.post(f"/runs/{run['id']}/confirm", {"confirmation_id": cid})
+    assert done["status"] == "completed"
+    assert run_api.r2.orch.preferences.get("editor") == "Cursor"
+
+
+def test_run_wrong_id_cancels(run_api):
+    code, run = run_api.post("/run", {"text": "remember editor=Cursor"})
+    code, out = run_api.post(f"/runs/{run['id']}/confirm", {"confirmation_id": "nope"})
+    assert out["status"] == "cancelled" and run_api.r2.orch.preferences.get("editor") is None
+
+
+@pytest.mark.parametrize("path", ["/runs/does-not-exist", "/runs/../status", "/runs/a%2Fb"])
+def test_unknown_or_malformed_run_ids_are_404(run_api, path):
+    assert run_api.get(path)[0] == 404
+
+
+def test_rejected_plan_runs_nothing(run_api):
+    code, run = run_api.post("/run", {"text": "find python files then tell me a joke"})
+    assert code == 200 and run["status"] == "rejected" and run["steps"] == []
+
+
+# --------------------------------------------------------------------- /ask with allow_runs
+def test_ask_without_allow_runs_stays_single_step(run_api):
+    code, out = run_api.post("/ask", {"text": "find python files then what can you do"})
+    assert code == 200 and "run" not in out and out["intent"] != "multi_step"
+
+
+def test_ask_starts_a_run_and_spoken_yes_continues_it(run_api):
+    code, out = run_api.post(
+        "/ask", {"text": "find python files then remember editor=Helix", "allow_runs": True}
+    )
+    assert code == 200 and out["intent"] == "multi_step"
+    assert out["run"]["status"] == "awaiting_confirmation" and out["needs_confirmation"]
+    assert "confirmation_id" not in out["run"]  # the id travels only at the top level
+    cid = out["confirmation_id"]
+    assert "Remember editor = Helix" in out["speech"]
+    # A "yes" (typed or spoken via /ask_audio) with the on-screen id approves the step.
+    code, out = run_api.post("/ask", {"text": "yes", "confirmation_id": cid, "allow_runs": True})
+    assert out["run"]["status"] == "completed" and out["intent"] == "multi_step"
+    assert run_api.r2.orch.preferences.get("editor") == "Helix"
+
+
+def test_run_confirm_button_and_wrong_id(run_api):
+    _, out = run_api.post(
+        "/ask", {"text": "what can you do then remember editor=Vim", "allow_runs": True}
+    )
+    _, bad = run_api.post("/confirm", {"confirmation_id": "nope"})
+    assert bad["run"]["status"] == "cancelled" and run_api.r2.orch.preferences.get("editor") is None
+    _, out = run_api.post(
+        "/ask", {"text": "what can you do then remember editor=Vim", "allow_runs": True}
+    )
+    _, ok = run_api.post("/confirm", {"confirmation_id": out["confirmation_id"]})
+    assert ok["run"]["status"] == "completed" and run_api.r2.orch.preferences.get("editor") == "Vim"
+
+
+def test_no_cancel_and_supersede_stop_a_paused_run(run_api):
+    body = {"text": "find python files then remember editor=Emacs", "allow_runs": True}
+    _, out = run_api.post("/ask", body)
+    run_id = out["run"]["id"]
+    _, out = run_api.post("/ask", {"text": "no", "allow_runs": True})
+    assert out["speech"] == "Okay, cancelled."
+    assert run_api.get(f"/runs/{run_id}")[1]["status"] == "cancelled"
+    _, out = run_api.post("/ask", body)
+    run_id = out["run"]["id"]
+    _, out = run_api.post("/ask", {"text": "what's my git status", "allow_runs": True})
+    assert run_api.get(f"/runs/{run_id}")[1]["status"] == "cancelled"  # superseded
+    _, out = run_api.post("/ask", body)
+    run_api.post("/cancel", {})
+    assert run_api.get(f"/runs/{out['run']['id']}")[1]["status"] == "cancelled"
+    assert run_api.r2.orch.preferences.get("editor") is None
+
+
+def test_ask_with_a_refused_part_runs_nothing(run_api):
+    _, out = run_api.post(
+        "/ask", {"text": "find python files then delete them all", "allow_runs": True}
+    )
+    assert out["run"]["status"] == "rejected" and out["run"]["steps"] == []
+    assert "didn't do any of it" in out["speech"]

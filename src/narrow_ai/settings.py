@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import tomllib
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -30,12 +30,34 @@ class ModelSettings(BaseModel):
     max_tokens: int = 128
     temperature: float = 0.0
     max_history_turns: int = 3
+    # How history is cut once it holds max_history_turns: "sliding" drops the oldest
+    # turn every time; "block" keeps only the latest turn, so the token prefix stays
+    # stable for longer (see conversation_cache).
+    history_window: Literal["sliding", "block"] = "sliding"
     exclusive_heavy_jobs: bool = True
     max_kv_size: int = 0  # 0 = unbounded; >0 = rotating window (only when cache_mode=none)
     cache_mode: str = "prefix"  # none | prefix | persistent
     kv_cache_dir: str = ""  # empty = artifacts/kv
-    constrained: bool = True  # constrain intent name during decoding
+    kv_cache_max_files: int = 8  # persistent caches kept on disk (LRU by last use)
+    # Keep each routing prompt's KV and reuse the longest shared token prefix next
+    # turn (history included). Needs cache_mode prefix|persistent and max_kv_size 0.
+    conversation_cache: bool = False
+    conversation_cache_entries: int = Field(default=1, ge=1, le=16)  # ~147 MB each
+    # Quantize the KV cache: 0 = off, 8 or 4 bits (group size kv_group_size).
+    # Not combinable with max_kv_size. See docs/EVALUATION.md for the measurements.
+    kv_bits: Literal[0, 4, 8] = 0
+    kv_group_size: Literal[32, 64, 128] = 64
+    constrained: bool = True  # legacy switch: True = "intent", False = "none"
+    # Decode-time constraint: none | intent (intent name only) | json (whole decision,
+    # needs the llguidance `grammar` group). Empty = derived from `constrained`.
+    constraint: str = ""
     few_shot: bool = True
+
+    def constraint_mode(self) -> str:
+        mode = (self.constraint or ("intent" if self.constrained else "none")).strip().lower()
+        if mode not in {"none", "intent", "json"}:
+            raise ValueError(f"model.constraint must be none|intent|json, got {mode!r}")
+        return mode
 
 
 class ToolsSettings(BaseModel):
@@ -48,7 +70,14 @@ class ToolsSettings(BaseModel):
     command_timeout_sec: int = 30
     max_output_chars: int = 8000
     approved_apps: list[str] = Field(default_factory=list)
-    approved_test_commands: list[str] = Field(default_factory=list)
+    # run_tests: id -> fixed argv (no shell). Order matters: the first is the default.
+    test_commands: dict[str, list[str]] = Field(default_factory=dict)
+    test_timeout_sec: int = Field(default=300, ge=5, le=3600)
+    # After a failing run, make one extra text-only model call to explain the failure.
+    explain_test_failures: bool = True
+
+    def run_tests_enabled(self) -> bool:
+        return self.allow_run_tests and bool(self.test_commands)
 
 
 class MemorySettings(BaseModel):
@@ -80,6 +109,25 @@ class SecuritySettings(BaseModel):
     require_confirmation_for_writes: bool = True
     block_path_escape: bool = True
     redact_secrets_in_logs: bool = True
+    # Local HTTP API (r2 serve): bearer token file, rotated on every start (0600).
+    api_token_path: str = ""  # empty = ~/.local/share/narrow-ai/api-token
+    # Pending privileged actions expire after this many seconds.
+    confirmation_ttl_sec: int = 120
+
+
+class AgentSettings(BaseModel):
+    """Bounded multi-step runs (docs/AGENT_RUNTIME.md)."""
+
+    enabled: bool = True
+    planner: str = "clauses"  # clauses (split + per-clause intent engine) | model (one shot)
+    # ClausePlanner options (data/eval_multistep*.jsonl: 66.7% → 93.3% on the fresh set)
+    split_and: bool = True  # split "X and Y" only if every part is a concrete tool action
+    question_guard: bool = True  # "how do I A and then B?" → one answer, not a rejection
+    max_steps: int = Field(default=5, ge=1, le=5)
+    max_wall_sec: float = 60.0  # active execution time per run (not time awaiting a person)
+    persist_runs: bool = True  # run/step *metadata* only, never tool output
+    runs_db_path: str = ""  # empty = next to the preference DB (runs.db)
+    max_runs_in_memory: int = 50
 
 
 class Settings(BaseSettings):
@@ -97,6 +145,7 @@ class Settings(BaseSettings):
     speech: SpeechSettings = Field(default_factory=SpeechSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     security: SecuritySettings = Field(default_factory=SecuritySettings)
+    agent: AgentSettings = Field(default_factory=AgentSettings)
 
     def workspace_path(self) -> Path:
         raw = self.workspace.path.strip() or os.getcwd()
@@ -106,6 +155,18 @@ class Settings(BaseSettings):
         if self.memory.db_path.strip():
             return Path(self.memory.db_path).expanduser().resolve()
         return Path.home() / ".local" / "share" / "narrow-ai" / "preferences.db"
+
+    def runs_db_path(self) -> Path:
+        raw = self.agent.runs_db_path.strip()
+        if raw:
+            return Path(raw).expanduser().resolve()
+        return self.db_path().with_name("runs.db")
+
+    def api_token_path(self) -> Path:
+        raw = self.security.api_token_path.strip()
+        if raw:
+            return Path(raw).expanduser().resolve()
+        return Path.home() / ".local" / "share" / "narrow-ai" / "api-token"
 
     def kv_cache_dir(self) -> Path:
         raw = self.model.kv_cache_dir.strip()

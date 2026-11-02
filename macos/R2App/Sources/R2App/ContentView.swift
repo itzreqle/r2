@@ -1,6 +1,100 @@
 import AppKit
 import SwiftUI
 
+// MARK: - Multi-step run
+
+/// Checklist for a multi-step run ("check git status then find the swift files").
+/// Display only: confirming/cancelling uses the normal Confirm/Cancel bar and voice "yes".
+struct RunStepsCard: View {
+    let steps: [R2Client.RunStep]
+    let status: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("\(steps.count) steps", systemImage: "list.number")
+                Spacer()
+                Text(statusLabel).foregroundStyle(statusColor)
+            }
+            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .foregroundStyle(.white.opacity(0.6))
+            ForEach(steps) { step in
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Image(systemName: icon(step.status))
+                        .font(.system(size: 16))
+                        .foregroundStyle(color(step.status))
+                        .frame(width: 20)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(step.title.capitalized)
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white.opacity(step.status == "skipped" ? 0.4 : 0.95))
+                        if !step.speech.isEmpty && step.status != "pending" && step.status != "skipped" {
+                            Text(step.speech)
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.72))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Step \(step.id + 1), \(step.title), \(step.status.replacingOccurrences(of: "_", with: " "))")
+            }
+        }
+        .padding(16)
+        .fixedSize(horizontal: false, vertical: true)   // never squeezed by the window height
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.white.opacity(0.06))
+                .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.08)))
+        )
+        .padding(.horizontal, 24)
+        .transition(.opacity.combined(with: .move(edge: .bottom)))
+    }
+
+    private var statusLabel: String {
+        switch status {
+        case "awaiting_confirmation": return "Waiting for you"
+        case "completed": return "Done"
+        case "failed": return "Stopped"
+        case "rejected": return "Not started"
+        case "cancelled": return "Cancelled"
+        default: return "Running"
+        }
+    }
+
+    private var statusColor: Color {
+        switch status {
+        case "completed": return .green
+        case "awaiting_confirmation": return .orange
+        case "failed", "rejected": return .red
+        default: return .white.opacity(0.55)
+        }
+    }
+
+    private func icon(_ s: String) -> String {
+        switch s {
+        case "ok": return "checkmark.circle.fill"
+        case "failed": return "xmark.circle.fill"
+        case "awaiting_confirmation": return "questionmark.circle.fill"
+        case "running": return "circle.dotted"
+        case "skipped": return "minus.circle"
+        case "cancelled": return "slash.circle"
+        default: return "circle"
+        }
+    }
+
+    private func color(_ s: String) -> Color {
+        switch s {
+        case "ok": return .green
+        case "failed": return .red
+        case "awaiting_confirmation": return .orange
+        default: return .white.opacity(0.4)
+        }
+    }
+}
+
 // MARK: - Main window
 
 struct ContentView: View {
@@ -14,33 +108,26 @@ struct ContentView: View {
             Color.black.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                Spacer(minLength: 30)
+                Spacer(minLength: runMode ? 8 : 30)
 
+                // A multi-step run needs room for its step list: the orb steps back.
                 OrbView(phase: r2.phase, level: r2.level, speechTick: r2.speechTick)
-                    .frame(width: 400, height: 400)          // room for the halo to fade out
-                    .padding(.vertical, -60)
-                    .contentShape(Circle().inset(by: 110))
+                    .frame(width: orbSize, height: orbSize)   // room for the halo to fade out
+                    .padding(.vertical, -orbSize * 0.15)
+                    .contentShape(Circle().inset(by: orbSize * 0.275))
                     .onTapGesture { r2.toggleListening() }
                     .help(r2.phase == .listening ? "Click to stop" : "Click to talk (⌘L)")
 
-                captionView
-                    .padding(.top, 4)
-
-                replyView
-                    .padding(.top, 10)
-
-                if r2.phase == .confirm { confirmBar.padding(.top, 18) }
-
-                if !r2.detail.isEmpty { detailCard.padding(.top, 16) }
-
-                // Ideas only before the first request (and after New Conversation).
-                if r2.detail.isEmpty && r2.caption.isEmpty && (r2.phase == .idle || r2.phase == .offline) {
-                    SuggestionChips()
-                        .padding(.top, 22)
-                        .transition(.opacity)
+                if runMode {
+                    // Scroll instead of squeezing: every card keeps its natural height.
+                    ScrollView(.vertical) {
+                        conversation.padding(.bottom, 8)
+                    }
+                    .scrollIndicators(.automatic)
+                } else {
+                    conversation
+                    Spacer(minLength: 16)
                 }
-
-                Spacer(minLength: 16)
 
                 inputBar
                 footer
@@ -50,7 +137,36 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .animation(.smooth(duration: 0.35), value: r2.phase)
         .animation(.smooth(duration: 0.35), value: r2.detail)
+        .animation(.smooth(duration: 0.35), value: r2.runSteps)
         .onAppear { inputFocused = true }
+    }
+
+    private var runMode: Bool { !r2.runSteps.isEmpty }
+    private var orbSize: CGFloat { runMode ? 220 : 400 }
+
+    /// Caption, reply, run steps, confirmation and output, top to bottom.
+    @ViewBuilder private var conversation: some View {
+        captionView
+            .padding(.top, 4)
+
+        replyView
+            .padding(.top, 10)
+
+        if runMode { RunStepsCard(steps: r2.runSteps, status: r2.runStatus).padding(.top, 14) }
+
+        if r2.phase == .confirm { confirmBar.padding(.top, 18) }
+
+        // While a run waits for a yes, the step list says it all; show output after.
+        if !r2.detail.isEmpty && !(r2.phase == .confirm && runMode) {
+            detailCard.padding(.top, 16)
+        }
+
+        // Ideas only before the first request (and after New Conversation).
+        if r2.detail.isEmpty && r2.caption.isEmpty && (r2.phase == .idle || r2.phase == .offline) {
+            SuggestionChips()
+                .padding(.top, 22)
+                .transition(.opacity)
+        }
     }
 
     // What R2 heard / you typed — like Siri's live caption.
@@ -96,8 +212,11 @@ struct ContentView: View {
         HStack(spacing: 12) {
             Button("Cancel", role: .cancel) { r2.cancel() }
                 .keyboardShortcut(.cancelAction)
+            // ⌘Return, not plain Return: a stray Enter after R2 grabs focus (⌥Space,
+            // launch) must never approve a privileged action.
             Button("Confirm") { r2.confirm() }
-                .keyboardShortcut(.defaultAction)
+                .keyboardShortcut(.return, modifiers: .command)
+                .help("Confirm (⌘Return)")
                 .tint(.orange)
                 .buttonStyle(.borderedProminent)
         }
@@ -131,7 +250,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)
                 }
-                .frame(maxHeight: 170)
+                .frame(minHeight: 60, maxHeight: 170)
             }
         }
         .padding(14)

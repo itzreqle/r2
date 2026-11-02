@@ -16,12 +16,25 @@ adapter_path = ""
 max_tokens = 128
 temperature = 0.0
 max_history_turns = 3
+history_window = "sliding"   # sliding | block (block keeps the KV prefix stable longer)
 exclusive_heavy_jobs = true
 # KV cache: none | prefix | persistent  (persistent = prefix cache saved to artifacts/kv)
 cache_mode = "persistent"
 kv_cache_dir = ""
+kv_cache_max_files = 8   # older persistent caches are evicted (LRU)
+# Reuse the KV of the previous routing prompt (history included) by token-prefix match.
+# Measured: helps only with a stable history prefix (history_window = "block"); see
+# docs/EVALUATION.md. Each stored entry costs ~147 MB.
+conversation_cache = false
+conversation_cache_entries = 1
+# Quantize the KV cache: 0 (off) | 8 | 4. 8-bit halves memory at equal accuracy; 4-bit
+# breaks routing. Not combinable with max_kv_size. See docs/EVALUATION.md.
+kv_bits = 0
 max_kv_size = 0
 constrained = true
+# Decode-time constraint: none | intent (intent name only) | json (whole decision via
+# llguidance, `uv sync --group grammar`). Empty = derived from `constrained` above.
+constraint = "json"   # measured best: see docs/EVALUATION.md (strict validation + json grammar)
 few_shot = true
 
 [tools]
@@ -34,7 +47,16 @@ allow_open_app = true
 command_timeout_sec = 30
 max_output_chars = 8000
 approved_apps = ["Terminal", "Visual Studio Code", "Cursor", "Xcode", "Safari", "Finder"]
-approved_test_commands = []
+# run_tests: off by default. It runs the *project's* code, so every run asks for
+# confirmation. The model can only pick an id below; the argv is fixed here and runs
+# without a shell (shells as argv[0] are refused). The first entry is the default.
+test_timeout_sec = 300
+explain_test_failures = true   # one extra text-only model call when a run fails
+
+[tools.test_commands]
+# unit = ["uv", "run", "python", "-m", "pytest", "-q"]
+# lint = ["uv", "run", "ruff", "check", "."]
+# swift = ["swift", "test"]
 
 [memory]
 enabled = true
@@ -61,3 +83,14 @@ json = false
 require_confirmation_for_writes = true
 block_path_escape = true
 redact_secrets_in_logs = true
+
+[agent]
+# Bounded multi-step runs ("check git status and then find the swift files").
+# Every step goes through the same permission gate, validation and confirmation.
+enabled = true
+planner = "clauses"   # clauses (split on "and then"/"then"/";", route each clause) | model
+split_and = true      # also split "X and Y" / "X, Y" when every part is a tool action
+question_guard = true # "how do I rebase and then push?" is one question, not two steps
+max_steps = 5
+max_wall_sec = 60
+persist_runs = true   # metadata only (intents, status), never tool output

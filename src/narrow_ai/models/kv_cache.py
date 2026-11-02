@@ -13,9 +13,12 @@ Three modes (``model.cache_mode``):
 Several prefixes can be cached at once (e.g. the intent-routing prompt and the
 question-answering prompt), so alternating between them never rebuilds anything.
 
-A disk cache is only valid for the exact model, adapter, chat template, prefix
-text and mlx-lm version it was built with; a fingerprint in the file's metadata
-is checked on load and stale caches are rebuilt.
+A disk cache is only valid for the exact weights, tokenizer, adapter, chat
+template, prefix text and mlx / mlx-lm versions it was built with. The
+fingerprint (see ``models/fingerprint.py``) names the file and is re-checked
+from its metadata on load. Every layer's type, offset and key length is then
+validated, and anything stale or damaged is rebuilt. Saves are atomic (temp file +
+rename), and the directory is trimmed to the ``max_files`` most recently used caches.
 """
 
 from __future__ import annotations
@@ -23,6 +26,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import time
 from collections import OrderedDict
 from pathlib import Path
@@ -33,12 +37,73 @@ from narrow_ai.models.base import CacheStats
 logger = logging.getLogger(__name__)
 
 CACHE_MODES = ("none", "prefix", "persistent")
+KV_BITS = (0, 4, 8)  # 0 = full precision (the model's dtype)
+
+
+TMP_SUFFIX = ".tmp.safetensors"
+STALE_TMP_SEC = 3600
 
 
 def fingerprint(**parts: str) -> dict[str, str]:
     fp = {k: str(v) for k, v in sorted(parts.items())}
     fp["fingerprint"] = hashlib.sha256(json.dumps(fp, sort_keys=True).encode()).hexdigest()[:20]
     return fp
+
+
+def validate_layers(cache: list[Any], expected_classes: list[str], n_tokens: int) -> str | None:
+    """Why a loaded cache can't be reused for an ``n_tokens`` prefix, or None if it can.
+
+    Checks *every* layer: count, cache type, offset, and that stored keys
+    actually hold ``n_tokens`` positions. (Duck-typed, so testable without MLX.)
+    """
+    if len(cache) != len(expected_classes):
+        return f"layer count {len(cache)} != {len(expected_classes)}"
+    for i, (layer, cls) in enumerate(zip(cache, expected_classes, strict=True)):
+        if type(layer).__name__ != cls:
+            return f"layer {i}: {type(layer).__name__} != {cls}"
+        offset = getattr(layer, "offset", None)
+        if offset != n_tokens:
+            return f"layer {i}: offset {offset} != {n_tokens}"
+        keys = getattr(layer, "keys", None)
+        shape = getattr(keys, "shape", None)
+        if shape is not None and (len(shape) < 2 or shape[-2] < n_tokens):
+            return f"layer {i}: keys hold {shape[-2] if shape else 0} < {n_tokens} positions"
+    return None
+
+
+def evict_cache_files(
+    cache_dir: Path, max_files: int, *, keep: set[Path] | None = None, now: float | None = None
+) -> list[Path]:
+    """Delete all but the ``max_files`` most recently used caches and stale temp files."""
+    if not cache_dir.is_dir():
+        return []
+    keep = {p.resolve() for p in keep or set()}
+    now = time.time() if now is None else now
+    removed: list[Path] = []
+    finals: list[Path] = []
+    for p in cache_dir.glob("prefix-*.safetensors"):
+        if p.name.endswith(TMP_SUFFIX):
+            try:  # an interrupted save; leave young ones alone (another writer?)
+                if now - p.stat().st_mtime > STALE_TMP_SEC:
+                    p.unlink()
+                    removed.append(p)
+            except OSError:
+                pass
+        else:
+            finals.append(p)
+    finals.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    budget = max(max_files, len(keep))
+    for p in finals[budget:]:
+        if p.resolve() in keep:
+            continue
+        try:
+            p.unlink()
+            removed.append(p)
+        except OSError:
+            pass
+    if removed:
+        logger.info("evicted %d KV cache file(s) from %s", len(removed), cache_dir)
+    return removed
 
 
 class PrefixKVCache:
@@ -49,9 +114,16 @@ class PrefixKVCache:
         cache_dir: Path | None = None,
         base_fingerprint: dict[str, str] | None = None,
         max_entries: int = 4,
+        max_files: int = 8,
+        kv_bits: int = 0,
+        kv_group_size: int = 64,
     ) -> None:
         if mode not in CACHE_MODES:
             raise ValueError(f"cache mode must be one of {CACHE_MODES}, got {mode!r}")
+        if kv_bits not in KV_BITS:
+            raise ValueError(f"kv_bits must be one of {KV_BITS}, got {kv_bits!r}")
+        self.kv_bits = kv_bits
+        self.kv_group_size = kv_group_size
         self.model = model
         self.mode = mode
         self.cache_dir = cache_dir
@@ -60,6 +132,9 @@ class PrefixKVCache:
         self._prefix_tokens: list[int] = []
         self._prefix_text: str = ""
         self.max_entries = max_entries
+        self.max_files = max_files
+        self._expected_classes: list[str] | None = None
+        self._paths_in_use: set[Path] = set()
         # prefix text -> (cache, prefix tokens); most recently used last
         self._entries: OrderedDict[str, tuple[list[Any], list[int]]] = OrderedDict()
         self.stats = CacheStats(mode=mode)
@@ -91,8 +166,13 @@ class PrefixKVCache:
             self.stats.extra["entries"] = len(self._entries)
 
     def _load_or_build(self, prefix_text: str) -> None:
+        quant = (
+            {"kv_bits": str(self.kv_bits), "kv_group_size": str(self.kv_group_size)}
+            if self.kv_bits else {}  # full-precision fingerprints stay as they were
+        )
         fp = fingerprint(
             **self.base_fingerprint,
+            **quant,
             prefix_sha=hashlib.sha256(prefix_text.encode()).hexdigest(),
             prefix_tokens=str(len(self._prefix_tokens)),
         )
@@ -112,6 +192,9 @@ class PrefixKVCache:
         step = 2048
         for i in range(0, len(self._prefix_tokens), step):
             self.model(tokens[i : i + step][None], cache=cache)
+            mx.eval([c.state for c in cache])
+        if self.kv_bits:  # quantize once; request tokens are then appended quantized
+            cache = [self._quantize(c) for c in cache]
             mx.eval([c.state for c in cache])
         self._cache = cache
         self.stats.build_ms = (time.perf_counter() - t0) * 1000
@@ -145,15 +228,36 @@ class PrefixKVCache:
         if meta.get("fingerprint") != fp["fingerprint"]:
             logger.warning("KV cache fingerprint mismatch, rebuilding")
             return False
-        if cache[0].offset != len(self._prefix_tokens):
-            logger.warning("KV cache length mismatch, rebuilding")
+        problem = validate_layers(cache, self._model_layer_classes(), len(self._prefix_tokens))
+        if problem:
+            logger.warning("KV cache %s failed validation (%s), rebuilding", path.name, problem)
             return False
         self._cache = cache
+        self._paths_in_use.add(path)
+        try:
+            os.utime(path)  # recency for LRU eviction
+        except OSError:
+            pass
         self.stats.load_ms = (time.perf_counter() - t0) * 1000
         self.stats.source = "disk"
         self.stats.path = str(path)
         logger.info("KV prefix cache loaded from disk in %.0f ms", self.stats.load_ms)
         return True
+
+    def _quantize(self, layer: Any) -> Any:
+        if not hasattr(layer, "to_quantized"):
+            return layer
+        return layer.to_quantized(group_size=self.kv_group_size, bits=self.kv_bits)
+
+    def _model_layer_classes(self) -> list[str]:
+        if self._expected_classes is None:
+            from mlx_lm.models.cache import make_prompt_cache
+
+            layers = make_prompt_cache(self.model)
+            if self.kv_bits:
+                layers = [self._quantize(c) for c in layers]
+            self._expected_classes = [type(c).__name__ for c in layers]
+        return self._expected_classes
 
     def _save(self, fp: dict[str, str]) -> None:
         from mlx_lm.models.cache import save_prompt_cache
@@ -162,9 +266,19 @@ class PrefixKVCache:
         if path is None or self._cache is None:
             return
         path.parent.mkdir(parents=True, exist_ok=True)
-        save_prompt_cache(str(path), self._cache, metadata=fp)
+        # Atomic: a crash mid-write leaves only a temp file, never a torn cache.
+        tmp = path.with_name(f"{path.stem}.{os.getpid()}{TMP_SUFFIX}")
+        try:
+            save_prompt_cache(str(tmp), self._cache, metadata=fp)
+            os.replace(tmp, path)
+        except Exception:
+            tmp.unlink(missing_ok=True)
+            raise
         self.stats.path = str(path)
+        self._paths_in_use.add(path)
         logger.info("KV prefix cache saved to %s", path)
+        if self.cache_dir is not None:
+            evict_cache_files(self.cache_dir, self.max_files, keep=self._paths_in_use)
 
     # ------------------------------------------------------------------ use
     def acquire(self, full_tokens: list[int]) -> tuple[list[Any] | None, list[int], int]:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import time
@@ -10,6 +11,7 @@ from typing import Any
 
 from narrow_ai.models.base import CacheStats, GenerationResult, ModelBackend
 from narrow_ai.models.constrained import IntentNameConstraint
+from narrow_ai.models.conversation_cache import ConversationCache
 from narrow_ai.models.kv_cache import PrefixKVCache
 
 logger = logging.getLogger(__name__)
@@ -41,7 +43,12 @@ class MlxBackend(ModelBackend):
         max_kv_size: int | None = None,
         cache_mode: str = "prefix",
         cache_dir: Path | None = None,
+        cache_max_files: int = 8,
         stop_at_json: bool = True,
+        conversation_cache: bool = False,
+        conversation_entries: int = 1,
+        kv_bits: int = 0,
+        kv_group_size: int = 64,
         load: bool = True,
     ) -> None:
         self.model_id = model_id
@@ -51,7 +58,15 @@ class MlxBackend(ModelBackend):
         self.max_kv_size = max_kv_size
         self.cache_mode = cache_mode
         self.cache_dir = cache_dir
+        self.cache_max_files = cache_max_files
         self.stop_at_json = stop_at_json
+        self.conversation_cache = conversation_cache
+        self.conversation_entries = conversation_entries
+        if kv_bits and max_kv_size:  # mlx-lm can't quantize a rotating cache: fail early
+            raise ValueError("model.kv_bits and model.max_kv_size can't be combined")
+        self.kv_bits = kv_bits
+        self.kv_group_size = kv_group_size
+        self.conv: ConversationCache | None = None
         self._model: Any = None
         self._tokenizer: Any = None
         self._load_time_ms = 0.0
@@ -78,25 +93,68 @@ class MlxBackend(ModelBackend):
             self._model, self._tokenizer = mlx_load(source)
         self._load_time_ms = (time.perf_counter() - t0) * 1000
         logger.info("Model loaded in %.0f ms", self._load_time_ms)
-        template = getattr(self._tokenizer, "chat_template", "") or ""
-        import hashlib
-
-        self._fingerprint = {
-            "model_id": self.model_id,
-            "adapter": adapter or "",
-            "template_sha": hashlib.sha256(template.encode()).hexdigest()[:16],
-            "mlx_lm": getattr(mlx_lm, "__version__", "?"),
-        }
+        self._fingerprint = self._build_fingerprint(source, adapter, mlx_lm)
         self.set_cache_mode(self.cache_mode)
 
-    def set_cache_mode(self, mode: str) -> None:
+    def _reset_conversation(self) -> None:
+        """Drop every stored conversation prompt (new model, new mode, or reset)."""
+        on = self.conversation_cache and self.cache_mode != "none" and not self.max_kv_size
+        self.conv = ConversationCache(self.conversation_entries) if on else None
+
+    def set_conversation_cache(self, enabled: bool) -> None:
+        """Turn conversation reuse on/off without rebuilding the prefix caches."""
+        self.conversation_cache = enabled
+        self._reset_conversation()
+
+    def reset_conversation(self) -> None:
+        if self.conv is not None:
+            self._reset_conversation()  # fresh store and counters
+
+    def _build_fingerprint(self, source: str, adapter: str | None, mlx_lm: Any) -> dict[str, str]:
+        """Identity of everything a cached prefix depends on (see models/fingerprint.py)."""
+        import hashlib
+
+        import mlx.core as mx
+
+        from narrow_ai.models.fingerprint import (
+            FP_VERSION,
+            adapter_fingerprint,
+            snapshot_fingerprint,
+        )
+
+        template = getattr(self._tokenizer, "chat_template", "") or ""
+        t0 = time.perf_counter()
+        fp = {
+            "fp_version": FP_VERSION,
+            "model_id": self.model_id,
+            **snapshot_fingerprint(source),
+            "adapter_sha": adapter_fingerprint(adapter),
+            "template_sha": hashlib.sha256(template.encode()).hexdigest()[:16],
+            "mlx_lm": getattr(mlx_lm, "__version__", "?"),
+            "mlx": getattr(mx, "__version__", "?"),
+        }
+        logger.info(
+            "KV fingerprint: revision=%s weights=%s (%.1f ms)",
+            fp["revision"],
+            fp["weights_sha"][:12],
+            (time.perf_counter() - t0) * 1000,
+        )
+        return fp
+
+    def set_cache_mode(self, mode: str, *, conversation: bool | None = None) -> None:
         """Swap KV cache strategy at runtime (used by benchmarks / notebooks)."""
         self.cache_mode = mode
+        if conversation is not None:
+            self.conversation_cache = conversation
+        self._reset_conversation()
         self.kv = PrefixKVCache(
             self._model,
             mode=mode,
             cache_dir=self.cache_dir,
             base_fingerprint=self._fingerprint,
+            max_files=self.cache_max_files,
+            kv_bits=self.kv_bits,
+            kv_group_size=self.kv_group_size,
         )
 
     @property
@@ -155,6 +213,9 @@ class MlxBackend(ModelBackend):
         if self.kv is None:
             return CacheStats()
         self.kv.stats.extra["nbytes"] = self.kv.nbytes()
+        if self.conv is not None:
+            self.kv.stats.extra.update(self.conv.stats.as_dict())
+            self.kv.stats.extra["conversation_nbytes"] = self.conv.nbytes
         return self.kv.stats
 
     # ------------------------------------------------------------------ generate
@@ -166,6 +227,8 @@ class MlxBackend(ModelBackend):
         temperature: float | None = None,
         prefill: str = "",
         constrain_intents: list[str] | None = None,
+        constraint_schema: dict | None = None,
+        conversation: bool = False,
     ) -> GenerationResult:
         if self._model is None or self._tokenizer is None:
             self.load()
@@ -181,10 +244,28 @@ class MlxBackend(ModelBackend):
         if prefix_tokens and full_tokens[: len(prefix_tokens)] == prefix_tokens:
             self.kv.prepare(prefix_text, prefix_tokens)
         cache, suffix, n_cached = self.kv.acquire(full_tokens)
+        source = self.kv.stats.source if cache is not None else "none"
+        # Conversation reuse works on a copy, so the shared prefix is never touched.
+        owned = False
+        if conversation and cache is not None and self.conv is not None:
+            hit, rest = self.conv.fetch(full_tokens, min_reuse=n_cached)
+            if hit is not None:
+                cache, suffix, n_cached = hit, rest, len(full_tokens) - len(rest)
+                source = "conversation"
+            else:
+                cache = copy.deepcopy(cache)
+            owned = True
 
         processors = None
-        constraint = None
-        if constrain_intents and prefill:
+        constraint: Any = None
+        if constraint_schema is not None:
+            from narrow_ai.models.json_constraint import JsonSchemaConstraint
+
+            constraint = JsonSchemaConstraint(
+                self._tokenizer, constraint_schema, len(suffix), prefill=prefill
+            )
+            processors = [constraint]
+        elif constrain_intents and prefill:
             constraint = IntentNameConstraint(self._tokenizer, constrain_intents, len(suffix))
             processors = [constraint]
 
@@ -200,12 +281,16 @@ class MlxBackend(ModelBackend):
             kwargs["prompt_cache"] = cache
         elif self.max_kv_size:
             kwargs["max_kv_size"] = self.max_kv_size
+        elif self.kv_bits:  # no prefix cache: quantize the request's own cache
+            kwargs.update(kv_bits=self.kv_bits, kv_group_size=self.kv_group_size,
+                          quantized_kv_start=0)
 
         mx.reset_peak_memory()
         t0 = time.perf_counter()
         ttft = 0.0
         text = ""
         last = None
+        finished = False
         try:
             for resp in stream_generate(self._model, self._tokenizer, prompt=suffix, **kwargs):
                 if last is None:
@@ -219,8 +304,13 @@ class MlxBackend(ModelBackend):
                     and _json_complete(prefill + text)
                 ):
                     break
+            finished = True
         finally:
-            self.kv.release(cache)
+            if not owned:
+                self.kv.release(cache)
+            elif finished:  # never keep state from a call that raised mid-way
+                assert self.conv is not None
+                self.conv.store(full_tokens, cache)
         elapsed = (time.perf_counter() - t0) * 1000
 
         return GenerationResult(
@@ -233,6 +323,12 @@ class MlxBackend(ModelBackend):
                 "model_id": self.model_id,
                 "temperature": temp,
                 "constrained_steps": constraint.masked_steps if constraint else 0,
+                "constraint": (
+                    "json"
+                    if constraint_schema is not None
+                    else ("intent" if constraint else "none")
+                ),
+                "constraint_failed": getattr(constraint, "failed", "") or "",
             },
             ttft_ms=ttft,
             prompt_tokens=last.prompt_tokens if last else len(suffix),
@@ -240,10 +336,11 @@ class MlxBackend(ModelBackend):
             prompt_tps=last.prompt_tps if last else 0.0,
             generation_tps=last.generation_tps if last else 0.0,
             peak_memory_gb=float(mx.get_peak_memory()) / 1e9,
-            cache_source=self.kv.stats.source if cache is not None else "none",
+            cache_source=source,
         )
 
     def close(self) -> None:
         self._model = None
         self._tokenizer = None
         self.kv = None
+        self.conv = None

@@ -1,22 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="302" viewBox="0 0 760 302" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
-<title>Intent and parameter accuracy</title><desc>Dev set (40 cases): intent 92.5%, parameters 92.5%; Fresh test set (24 cases, before tuning): intent 87.5%, parameters 83.3%; Fresh test set (24 cases, final): intent 95.8%, parameters 91.7%</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="362" viewBox="0 0 760 362" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+<title>Intent and parameter accuracy</title><desc>Dev set (40 cases): intent 92.5%, parameters 92.5%; Fresh test set (24 cases, before tuning): intent 87.5%, parameters 83.3%; Fresh test set (24 cases, final): intent 95.8%, parameters 91.7%; Test set (60 cases, written before the LoRA data): intent 85%, parameters 85%</desc>
 <text x="0" y="24" font-size="18" font-weight="600" fill="#0b0b0b">Intent and parameter accuracy</text>
-<text x="0" y="48" font-size="13" fill="#52514e">Qwen3-1.7B-4bit on MLX · 0% malformed JSON in every run</text>
+<text x="0" y="48" font-size="13" fill="#52514e">Qwen3-1.7B-4bit on MLX · default config (JSON grammar, strict validation)</text>
 <rect x="0" y="66" width="12" height="12" rx="3" fill="#2a78d6"/>
 <text x="18" y="76.5" font-size="13" fill="#52514e">Intent accuracy</text>
 <rect x="153" y="66" width="12" height="12" rx="3" fill="#eb6834"/>
 <text x="171" y="76.5" font-size="13" fill="#52514e">Parameter accuracy</text>
-<line x1="200.0" y1="92" x2="200.0" y2="272" stroke="#e1e0d9" stroke-width="1"/>
-<text x="200.0" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
-<line x1="302.5" y1="92" x2="302.5" y2="272" stroke="#e1e0d9" stroke-width="1"/>
-<text x="302.5" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
-<line x1="405.0" y1="92" x2="405.0" y2="272" stroke="#e1e0d9" stroke-width="1"/>
-<text x="405.0" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
-<line x1="507.5" y1="92" x2="507.5" y2="272" stroke="#e1e0d9" stroke-width="1"/>
-<text x="507.5" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
-<line x1="610.0" y1="92" x2="610.0" y2="272" stroke="#e1e0d9" stroke-width="1"/>
-<text x="610.0" y="290" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
-<line x1="200" y1="92" x2="200" y2="272" stroke="#c3c2b7" stroke-width="1"/>
+<line x1="200.0" y1="92" x2="200.0" y2="332" stroke="#e1e0d9" stroke-width="1"/>
+<text x="200.0" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">0%</text>
+<line x1="302.5" y1="92" x2="302.5" y2="332" stroke="#e1e0d9" stroke-width="1"/>
+<text x="302.5" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">25%</text>
+<line x1="405.0" y1="92" x2="405.0" y2="332" stroke="#e1e0d9" stroke-width="1"/>
+<text x="405.0" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">50%</text>
+<line x1="507.5" y1="92" x2="507.5" y2="332" stroke="#e1e0d9" stroke-width="1"/>
+<text x="507.5" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">75%</text>
+<line x1="610.0" y1="92" x2="610.0" y2="332" stroke="#e1e0d9" stroke-width="1"/>
+<text x="610.0" y="350" font-size="12" fill="#6f6e69" text-anchor="middle" style="font-variant-numeric: tabular-nums">100%</text>
+<line x1="200" y1="92" x2="200" y2="332" stroke="#c3c2b7" stroke-width="1"/>
 <text x="188" y="116.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Dev set</text>
 <text x="188" y="132.0" font-size="11.5" fill="#6f6e69" text-anchor="end">40 cases</text>
 <path d="M200.0,100.0 H575.2 A4,4 0 0 1 579.2,104.0 V114.0 A4,4 0 0 1 575.2,118.0 H200.0 Z" fill="#2a78d6"/>
@@ -35,4 +35,10 @@
 <text x="600.9" y="233.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">95.8%</text>
 <path d="M200.0,240.0 H571.8 A4,4 0 0 1 575.8,244.0 V254.0 A4,4 0 0 1 571.8,258.0 H200.0 Z" fill="#eb6834"/>
 <text x="583.8" y="253.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">91.7%</text>
+<text x="188" y="296.0" font-size="13.5" fill="#0b0b0b" text-anchor="end">Test set</text>
+<text x="188" y="312.0" font-size="11.5" fill="#6f6e69" text-anchor="end">60 cases, written before the LoRA data</text>
+<path d="M200.0,280.0 H544.5 A4,4 0 0 1 548.5,284.0 V294.0 A4,4 0 0 1 544.5,298.0 H200.0 Z" fill="#2a78d6"/>
+<text x="556.5" y="293.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">85%</text>
+<path d="M200.0,300.0 H544.5 A4,4 0 0 1 548.5,304.0 V314.0 A4,4 0 0 1 544.5,318.0 H200.0 Z" fill="#eb6834"/>
+<text x="556.5" y="313.5" font-size="12.5" fill="#0b0b0b" style="font-variant-numeric: tabular-nums">85%</text>
 </svg>

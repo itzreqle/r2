@@ -9,8 +9,24 @@ REPO="$(cd "$HERE/../.." && pwd)"
 APP="$HERE/build/R2.app"
 cd "$HERE"
 
+# SwiftPM/Clang module caches embed the absolute checkout path. After the repo is
+# moved or renamed they fail with "missing required module 'SwiftShims'", so start
+# clean whenever .build was produced at a different path.
+STAMP=".build/.r2-build-path"
+if [[ -d .build && "$(cat "$STAMP" 2>/dev/null)" != "$HERE" ]]; then
+  echo "▸ .build was created at another path; cleaning it"
+  rm -rf .build
+fi
+
 echo "▸ swift build (release)"
-swift build -c release 2>&1 | tail -1
+LOG="$(mktemp -t r2-swift-build)"
+if ! swift build -c release >"$LOG" 2>&1; then
+  grep -E "error:|warning: .*error" "$LOG" || tail -20 "$LOG"
+  echo "✗ swift build failed (full log: $LOG)"
+  exit 1
+fi
+tail -1 "$LOG"; rm -f "$LOG"
+echo "$HERE" > "$STAMP"
 
 echo "▸ assembling $APP"
 rm -rf "$APP"

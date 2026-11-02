@@ -59,13 +59,16 @@ class ReadFileParams(BaseModel):
 class ExplainTestOutputParams(BaseModel):
     model_config = {"extra": "forbid"}
 
-    output: str = Field(..., min_length=1, max_length=50_000)
+    # Empty = explain the output of the last run_tests in this session.
+    output: str = Field(default="", max_length=50_000)
 
 
 class RunTestsParams(BaseModel):
     model_config = {"extra": "forbid"}
 
-    command_id: str = Field(..., min_length=1, max_length=64)
+    # An id from tools.test_commands; empty = the first configured command. The model
+    # only ever picks an id: the argv comes from config, never from model text.
+    command_id: str = Field(default="", max_length=64)
 
 
 class OpenAppParams(BaseModel):
