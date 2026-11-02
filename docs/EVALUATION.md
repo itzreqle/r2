@@ -152,3 +152,21 @@ none 18 / 2, p = 0.0004. Per set only test/none is significant alone (p = 0.039)
 Remaining adapter misses (test): t14 `*.yaml` for "yml", t18 dockerfiles → recall_preference,
 t36 preference value wording, t53 "commit everything" → git_status.
 
+
+
+### Rank sweep (`training/lora_sweep.py`, `training/lora_subspace.py`; whitepaper Figs. 14–15):
+
+| Rank r | Trainable params | log10 | Dev | Fresh | Test | All 124 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| — (base) | 0 | — | 92.5% | 91.7% | 85.0% | 88.7% |
+| 1 | 311,296 | 5.49 | 95.0% | 100% | 95.0% | 96.0% |
+| 4 | 1,245,184 | 6.10 | 100% | 100% | 93.3% | 96.8% |
+| 8 | 2,490,368 | 6.40 | 100% | 100% | 93.3% | 96.8% |
+| 64 | 19,922,944 | 7.30 | 90.0% | 87.5% | 81.7% | 85.5% |
+
+A rank-1 update is already enough. r = 64 is confounded: mlx-lm keeps the multiplier fixed
+(α/r = 20) instead of α, so the big adapter takes larger steps, and it was not retuned. Its update
+is still effectively low-rank: the top 8 of 64 directions hold 70–87% of ‖ΔW‖², against 18% for a
+random matrix. Unlike Hu et al., the A subspaces of the r = 8 and r = 64 runs overlap no better
+than chance, because A stays close to its random initialisation in a 700-step run; the output
+directions of ΔW overlap 20–60× more than chance.

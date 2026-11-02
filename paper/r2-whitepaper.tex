@@ -1400,6 +1400,63 @@ so the 1.1k prompt tokens, identical in every example, contribute no gradient. W
 in 78 minutes, 24 of them spent on validation. \Cref{fig:lora}a shows the validation loss falling
 from 2.47 to 0.14 within 100 steps and to 0.007 at the end.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/lora_rank.pdf}
+\caption{(a) Exact accuracy against $\log_{10}$ of the number of trainable parameters, for
+LoRA ranks $r\in\{1,4,8,64\}$ on the same 8 layers, data, seed and 700 steps
+(\cref{eq:loraparams}: $311{,}296\,r$ parameters). The dashed line is the base model with few-shot
+examples and the grammar. (b) Share of $\|\Delta W\|_F^2$ in the top-$k$ singular directions of
+the $r=64$ updates, averaged over the 8 layers, against a random rank-64 product of the same shape.}
+\label{fig:lorarank}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/lora_subspace.pdf}
+\caption{Normalised subspace similarity $\phi(i,j)$ (\cref{eq:phi}) between the $r=8$ and $r=64$
+adapters in the last adapted layer (28), after Hu et al.~\cite{hu2022lora}. Rows 1--2: on the
+row spaces of $A$, as in the original analysis; rows 3--4: on the output directions of $\Delta W$;
+row 5: two random Gaussian matrices. Expected values for random subspaces are
+$\max(i,j)/D$ ($D=2{,}048$ for $W_q$, $1{,}024$ for $W_v$), at most 0.03 and 0.06.}
+\label{fig:lorasubspace}
+\end{figure*}
+
+\paragraph{How much rank is needed?}
+Hu et al.\ find that a very small rank often suffices~\cite{hu2022lora}. We repeat the run with
+$r=1$, 4 and 64, everything else fixed (\cref{fig:lorarank}a). Exact accuracy on all 124 requests
+is 96.0\% at $r=1$ (311k parameters), 96.8\% at $r=4$ and $r=8$, and drops to 85.5\% at $r=64$
+(19.9M), below the base model. The first three are within one or two requests of each other, so a
+rank-1 update already captures what the task needs. The $r=64$ result is confounded: mlx-lm applies
+a fixed multiplier ($\alpha/r=20$ for every rank) rather than a fixed $\alpha$, so the larger
+adapter takes effectively larger steps; its final validation loss is also the highest (0.029 vs.\
+0.007--0.010). We did not retune it and do not read it as a property of high rank.
+
+\paragraph{Is the learned update low-rank?}
+\Cref{fig:lorarank}b answers this directly for the $r=64$ adapter. Although it may use 64
+directions, its top 8 carry 70--87\% of $\|\Delta W\|_F^2$ (mean over layers, by module) and its
+single top direction 26--40\%, whereas a random rank-64 product puts 18\% in its top 8. The update
+that fine-tuning finds is therefore effectively low-rank, the premise of \cref{eq:lora}.
+
+\paragraph{Subspace similarity.}
+Following Hu et al., for two adapters let $U^{i}_{1}$ and $U^{j}_{2}$ hold the top-$i$ and top-$j$
+singular vectors of the matrices being compared, and
+\begin{equation}\label{eq:phi}
+\phi(i,j)=\frac{\big\|U_1^{i\top}U_2^{j}\big\|_F^2}{\min(i,j)}\in[0,1],
+\end{equation}
+which is 1 when one subspace contains the other and $\max(i,j)/D$ in expectation for random
+subspaces of $\mathbb{R}^D$. On the row spaces of $A$ (\cref{fig:lorasubspace}, rows 1--2) we
+\emph{do not} reproduce Hu et al.'s strong overlap: the $r=8$ and $r=64$ adapters agree no better
+than random matrices ($\phi(1,1)\approx0.002$ for every module). The reason is visible in the
+weights: $A$ starts random and, after 700 steps at learning rate $10^{-4}$, its column norms have
+grown only 3--26\% (mean 9\%) above the initial scale, so its row space is still mostly the random
+initialisation, which differs between the two runs. $B$ starts at zero and is entirely learned, so
+we also compare the output directions of $\Delta W$ (rows 3--4). There the top direction of the
+$r=8$ update lies 28\% ($W_q$) and 39\% ($W_v$) inside the $r=64$ update's span, 9 and 6 times the
+random expectation, and $\phi(1,1)$ averages 0.02--0.06 across modules and layers, 20--60 times
+chance. The two runs therefore learn related but not identical directions; a longer training
+budget, as in the original study on GPT-3, may be needed to see the stronger alignment.
+
 \paragraph{Data.} \texttt{synth\_data.py} generates 700 training and 70 validation examples over the
 11 intents from grammar-aware templates (commands, questions and statements with optional politeness
 and a wake phrase), with parameters filled from the same vocabularies the tools accept. Any
@@ -1562,7 +1619,7 @@ file tools against links and races; adds bounded multi-step requests with a clie
 conversation-level KV reuse (\cref{sec:convreuse}), quantised KV and rotating windows
 (\cref{sec:kvvariants}); adds a 60-request test set and a LoRA comparison with its rationale and parameter
 count (\cref{sec:lora}); and states why existing assistants do not meet R2's requirements
-(\cref{sec:why}).
+(\cref{sec:why}); and adds a LoRA rank sweep and subspace analysis (\cref{fig:lorarank,fig:lorasubspace}).
 All measurements were repeated with the final code.
 
 \section*{Acknowledgements}

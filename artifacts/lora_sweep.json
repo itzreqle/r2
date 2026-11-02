@@ -1,0 +1,193 @@
+{
+ "runs": {
+  "8": {
+   "rank": 8,
+   "params": 2490368,
+   "val_loss": [
+    [
+     1,
+     2.474
+    ],
+    [
+     100,
+     0.142
+    ],
+    [
+     200,
+     0.121
+    ],
+    [
+     300,
+     0.024
+    ],
+    [
+     400,
+     0.024
+    ],
+    [
+     500,
+     0.013
+    ],
+    [
+     600,
+     0.008
+    ],
+    [
+     700,
+     0.007
+    ]
+   ],
+   "eval": {
+    "dev": {
+     "n": 40,
+     "exact": 1.0,
+     "fallback": 0.0
+    },
+    "fresh": {
+     "n": 24,
+     "exact": 1.0,
+     "fallback": 0.0
+    },
+    "test": {
+     "n": 60,
+     "exact": 0.9333333333333333,
+     "fallback": 0.0
+    }
+   }
+  },
+  "1": {
+   "rank": 1,
+   "params": 311296,
+   "val_loss": [
+    [
+     1,
+     2.474
+    ],
+    [
+     700,
+     0.01
+    ]
+   ],
+   "eval": {
+    "dev": {
+     "n": 40,
+     "exact": 0.95,
+     "fallback": 0.0
+    },
+    "fresh": {
+     "n": 24,
+     "exact": 1.0,
+     "fallback": 0.0
+    },
+    "test": {
+     "n": 60,
+     "exact": 0.95,
+     "fallback": 0.0
+    }
+   }
+  },
+  "4": {
+   "rank": 4,
+   "params": 1245184,
+   "val_loss": [
+    [
+     1,
+     2.474
+    ],
+    [
+     700,
+     0.007
+    ]
+   ],
+   "eval": {
+    "dev": {
+     "n": 40,
+     "exact": 1.0,
+     "fallback": 0.0
+    },
+    "fresh": {
+     "n": 24,
+     "exact": 1.0,
+     "fallback": 0.0
+    },
+    "test": {
+     "n": 60,
+     "exact": 0.9333333333333333,
+     "fallback": 0.0
+    }
+   }
+  },
+  "64": {
+   "rank": 64,
+   "params": 19922944,
+   "val_loss": [
+    [
+     1,
+     2.474
+    ],
+    [
+     700,
+     0.029
+    ]
+   ],
+   "eval": {
+    "dev": {
+     "n": 40,
+     "exact": 0.9,
+     "fallback": 0.0
+    },
+    "fresh": {
+     "n": 24,
+     "exact": 0.875,
+     "fallback": 0.0
+    },
+    "test": {
+     "n": 60,
+     "exact": 0.8166666666666667,
+     "fallback": 0.0
+    }
+   }
+  }
+ },
+ "base": {
+  "dev": {
+   "n": 40,
+   "exact": 0.925,
+   "exact_ci95": [
+    0.801,
+    0.974
+   ],
+   "intent": 0.925,
+   "fallback": 0.0,
+   "ttft_ms_median": 101.7,
+   "ok": null,
+   "cases": null
+  },
+  "fresh": {
+   "n": 24,
+   "exact": 0.9166666666666666,
+   "exact_ci95": [
+    0.742,
+    0.977
+   ],
+   "intent": 0.9583333333333334,
+   "fallback": 0.0,
+   "ttft_ms_median": 122.0,
+   "ok": null,
+   "cases": null
+  },
+  "test": {
+   "n": 60,
+   "exact": 0.85,
+   "exact_ci95": [
+    0.739,
+    0.919
+   ],
+   "intent": 0.85,
+   "fallback": 0.0,
+   "ttft_ms_median": 107.1,
+   "ok": null,
+   "cases": null
+  }
+ }
+}

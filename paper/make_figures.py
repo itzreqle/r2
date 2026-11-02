@@ -473,6 +473,87 @@ def fig_lora() -> None:
     save(fig, "lora")
 
 
+def fig_lora_rank() -> None:
+    """(a) exact accuracy vs log10(# trainable params); (b) energy of dW in its top directions."""
+    if not (ART / "lora_sweep.json").exists() or not (ART / "lora_subspace.json").exists():
+        return
+    d, sub = load("lora_sweep.json"), load("lora_subspace.json")
+    runs = sorted(d["runs"].values(), key=lambda r: r["params"])
+    x = np.log10([r["params"] for r in runs])
+    sets = [("dev", "Dev (40)", BLUE, "o"), ("fresh", "Fresh (24)", ORANGE, "s"),
+            ("test", "Test (60)", AQUA, "^")]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDE, 2.5))
+    for key, name, col, mk in sets:
+        a.plot(x, [r["eval"][key]["exact"] for r in runs], color=col, lw=1.2, ls="-", marker=mk,
+               ms=4, mec="white", mew=0.5, label=name)
+    n = sum(runs[0]["eval"][k]["n"] for k, *_ in sets)
+    pooled = [sum(r["eval"][k]["exact"] * r["eval"][k]["n"] for k, *_ in sets) / n for r in runs]
+    a.plot(x, pooled, color=INK, lw=2, ls="-", marker="D", ms=4, mec="white", mew=0.5,
+           label="All (124)")
+    base = sum(d["base"][k]["exact"] * d["base"][k]["n"] for k, *_ in sets) / n
+    a.axhline(base, color=MUTED, lw=0.9, ls=(0, (3, 2)))
+    a.annotate(f"base model, 0 trained ({base:.1%})", (x[0], base), xytext=(0, -9),
+               textcoords="offset points", fontsize=6.5, color=INK2)
+    a.set_xticks(x, [f"{np.log10(r['params']):.2f}\nr={r['rank']}\n{r['params'] / 1e6:.2g}M"
+                     for r in runs])
+    a.set_ylim(0.75, 1.03)
+    a.set_yticks([0.8, 0.85, 0.9, 0.95, 1.0], ["80%", "85%", "90%", "95%", "100%"])
+    a.set_xlabel("log$_{10}$ # trainable parameters")
+    a.set_ylabel("Exact accuracy")
+    a.set_title("(a) Accuracy vs. adapter size (8 layers, 700 steps)", loc="left")
+    a.legend(loc="lower left", ncol=2)
+    mods = [("self_attn.q_proj", "$W_q$", BLUE), ("self_attn.v_proj", "$W_v$", ORANGE),
+            ("mlp.down_proj", "$W_{down}$", AQUA)]
+    for m, name, col in mods:
+        e = sub["summary"][m]["energy_cum_b_mean"]
+        b.plot(np.arange(1, len(e) + 1), e, color=col, lw=1.4, ls="-", label=f"{name}, r = 64 adapter")
+    rng = np.random.default_rng(0)
+    ra = np.linalg.qr(rng.standard_normal((2048, 64)))[1]
+    sv = np.linalg.svd(ra @ rng.standard_normal((64, 2048)), compute_uv=False) ** 2
+    b.plot(np.arange(1, 65), np.cumsum(sv) / sv.sum(), color=MUTED, lw=1, ls=(0, (3, 2)),
+           label="random rank-64 matrix")
+    b.axvline(8, color=INK2, lw=0.6, ls=":")
+    b.set_xscale("log", base=2)
+    b.set_xticks([1, 2, 4, 8, 16, 32, 64], ["1", "2", "4", "8", "16", "32", "64"])
+    b.set_ylim(0, 1.02)
+    b.set_yticks([0, 0.25, 0.5, 0.75, 1.0], ["0%", "25%", "50%", "75%", "100%"])
+    b.set_xlabel("Top-$k$ singular directions of $\\Delta W$ (log$_2$)")
+    b.set_ylabel("Share of $\\|\\Delta W\\|_F^2$")
+    b.set_title("(b) Energy of the r = 64 update (mean over layers)", loc="left")
+    b.legend(loc="lower right")
+    fig.tight_layout(w_pad=2.5)
+    save(fig, "lora_rank")
+
+
+def fig_lora_subspace() -> None:
+    """Hu et al. Fig. 3 analogue: phi(A_{r=8}, A_{r=64}, i, j), last adapted layer."""
+    if not (ART / "lora_subspace.json").exists():
+        return
+    sub = load("lora_subspace.json")
+    h = sub["heatmaps"]
+    panels = [("self_attn.q_proj", "$\\phi$ on $A$, $\\Delta W_q$"),
+              ("self_attn.v_proj", "$\\phi$ on $A$, $\\Delta W_v$"),
+              ("self_attn.q_proj:dW", "$\\phi$ on output directions of $\\Delta W_q$"),
+              ("self_attn.v_proj:dW", "$\\phi$ on output directions of $\\Delta W_v$"),
+              ("random", "random Gaussian $A$ (baseline)")]
+    vmax = max(np.max(h[k]) for k, _ in panels)
+    fig, axes = plt.subplots(len(panels), 1, figsize=(WIDE, 5.0), sharex=True,
+                             gridspec_kw={"hspace": 0.6})
+    im = None
+    for ax, (k, title) in zip(axes, panels, strict=True):
+        m = np.array(h[k])
+        im = ax.imshow(m, aspect="auto", cmap="Blues", vmin=0, vmax=vmax,
+                       extent=(0.5, m.shape[1] + 0.5, m.shape[0] + 0.5, 0.5))
+        ax.set_yticks([1, 4, 8])
+        ax.set_ylabel("$i$")
+        ax.set_title(title + f"   (max {m.max():.3f})", loc="left", fontsize=7)
+        ax.grid(False)
+    axes[-1].set_xticks([1, 8, 16, 24, 32, 40, 48, 56, 64])
+    axes[-1].set_xlabel("$j$ (top-$j$ directions of the r = 64 adapter)")
+    fig.colorbar(im, ax=axes, fraction=0.02, pad=0.01, label="$\\phi(i, j)$")
+    save(fig, "lora_subspace")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     fig_kv_modes()
@@ -488,6 +569,8 @@ def main() -> None:
     fig_kv_variants()
     fig_conversation()
     fig_lora()
+    fig_lora_rank()
+    fig_lora_subspace()
     (OUT / "fits.json").write_text(json.dumps(f, indent=2))
     print(json.dumps(f, indent=2))
 

@@ -34,6 +34,8 @@ def main() -> int:
     parser.add_argument("--iters", type=int, default=700)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--num-layers", type=int, default=8)
+    parser.add_argument("--rank", type=int, default=8)
+    parser.add_argument("--scale", type=float, default=20.0, help="LoRA alpha/r")
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--max-seq-length", type=int, default=1536)  # prompt is ~1.15k tokens
     parser.add_argument("--steps-per-eval", type=int, default=100)
@@ -70,10 +72,12 @@ def main() -> int:
         "--mask-prompt",
         "--grad-checkpoint",
         "--adapter-path", str(out),
+        "--config", str(out.parent / "lora.yaml"),
     ]
     meta = {
         "run_id": run_id, "model": args.model, "model_source": source, "data": str(args.data),
         "iters": args.iters, "batch_size": args.batch_size, "num_layers": args.num_layers,
+        "rank": args.rank, "scale": args.scale,
         "learning_rate": args.learning_rate, "max_seq_length": args.max_seq_length,
         "seed": args.seed, "mask_prompt": True, "command": cmd,
     }
@@ -87,6 +91,8 @@ def main() -> int:
         return 0
 
     out.parent.mkdir(parents=True, exist_ok=True)
+    (out.parent / "lora.yaml").write_text(
+        f"lora_parameters:\n  rank: {args.rank}\n  scale: {args.scale}\n  dropout: 0.0\n")
     (out.parent / "run_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     env = dict(os.environ, HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1")
     log = out.parent / "train.log"
@@ -99,7 +105,7 @@ def main() -> int:
             fh.write(line)
         proc.wait()
     print(f"log: {log}")
-    if proc.returncode == 0:
+    if proc.returncode == 0 and args.adapter_path is None:
         latest = ROOT / "artifacts" / "runs" / "latest"
         if latest.exists() or latest.is_symlink():
             latest.unlink()
