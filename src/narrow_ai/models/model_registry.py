@@ -29,4 +29,11 @@ def create_backend(settings: Settings, *, load_mlx: bool = True) -> ModelBackend
             kv_group_size=settings.model.kv_group_size,
             load=load_mlx,
         )
+    if backend == "ollama":
+        from narrow_ai.models.ollama_backend import OllamaBackend
+
+        return OllamaBackend(
+            settings.model.ollama_model,
+            max_tokens=settings.model.max_tokens,
+        )
     raise ValueError(f"Unknown model backend: {backend}")

@@ -554,8 +554,64 @@ def fig_lora_subspace() -> None:
     save(fig, "lora_subspace")
 
 
+# ---------------------------------------------------------------- R2 vs. llama.cpp, and error outcomes
+def fig_comparison() -> None:
+    """(a) prefix cost by situation, R2 vs. Ollama; (b) error outcomes of the 124 requests."""
+    kv = load("kv_bench.json")["modes"]
+    ol = load("ollama/bench_json.json")
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDE, 1.85), gridspec_kw={"width_ratios": [1.3, 0.8]})
+
+    rows = [  # (label, [(value, color, segment name)])
+        ("R2, no cache", [(kv["none"]["ttft_ms_mean"], NEUTRAL, None)]),
+        ("R2, warm prefix", [(kv["prefix"]["ttft_ms_mean"], BLUE, None)]),
+        ("R2, after restart", [(82, AQUA, "cache load"), (kv["persistent"]["ttft_ms_mean"], BLUE, None)]),
+        ("Ollama, warm prefix", [(ol["warm"]["ttft_ms"]["mean"], ORANGE, None)]),
+        ("Ollama, after unload", [(ol["restart"]["ttft_minus_load_ms"]["mean"], ORANGE, None)]),
+    ]
+    ys = np.arange(len(rows))[::-1]
+    for y, (_lab, segs) in zip(ys, rows, strict=True):
+        left = 0.0
+        for v, c, _n in segs:
+            a.barh(y, v, left=left, height=0.5, color=c)
+            left += v
+        a.annotate(f"{left:,.0f} ms", (left, y), xytext=(3, 0), textcoords="offset points",
+                   va="center", fontsize=7, color=INK)
+    a.set_yticks(ys, [r[0] for r in rows])
+    a.set_xlim(0, 2350)
+    a.set_xlabel("Time to first token, model load excluded (ms)")
+    a.grid(axis="y", visible=False)
+    a.set_title("(a) Same model and prompt, 20 requests (mean)", loc="left")
+
+    sm = load("soft_metrics.json")
+    cfgs = [("base/json", "R2 base"), ("ollama/json", "Ollama"), ("adapter/json", "R2 + LoRA")]
+    cats = [("near_miss", "near miss", AQUA), ("safe_stop", "safe stop", NEUTRAL),
+            ("wrong_readonly", "wrong read-only", YELLOW), ("wrong_gated", "wrong, gated", ORANGE),
+            ("missed_refusal", "missed refusal", VIOLET)]
+    ys = np.arange(len(cfgs))[::-1]
+    for y, (k, _lab) in zip(ys, cfgs, strict=True):
+        left = 0
+        for ck, _cl, cc in cats:
+            v = sm[k]["outcomes"][ck]
+            if v:
+                b.barh(y, v, left=left, height=0.5, color=cc)
+                left += v
+        b.annotate(f"{left} errors", (left, y), xytext=(3, 0), textcoords="offset points",
+                   va="center", fontsize=7, color=INK)
+    b.set_yticks(ys, [c[1] for c in cfgs])
+    b.set_xlim(0, 18)
+    b.set_xlabel("Errors among 124 requests (JSON grammar on)")
+    b.grid(axis="y", visible=False)
+    b.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=c) for _, _, c in cats],
+             labels=[lab for _, lab, _ in cats], loc="center left", bbox_to_anchor=(1.0, 0.5),
+             fontsize=6.5, handlelength=1, borderaxespad=0.2)
+    b.set_title("(b) Outcome of each error", loc="left")
+    fig.tight_layout(w_pad=2.0)
+    save(fig, "comparison")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    fig_comparison()
     fig_kv_modes()
     f = fig_scaling()
     cfg = load("kv_scaling.json")["model_config"]

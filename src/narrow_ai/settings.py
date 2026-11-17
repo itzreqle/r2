@@ -26,6 +26,7 @@ class WorkspaceSettings(BaseModel):
 class ModelSettings(BaseModel):
     backend: str = "fake"
     model_id: str = "mlx-community/Qwen3-1.7B-4bit"
+    ollama_model: str = "qwen3:1.7b"  # baseline backend only (loopback Ollama server)
     adapter_path: str = ""
     max_tokens: int = 128
     temperature: float = 0.0
