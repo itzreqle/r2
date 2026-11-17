@@ -1,0 +1,426 @@
+{
+  "model": "qwen3:1.7b",
+  "constraint": "none",
+  "n": 20,
+  "restart": {
+    "ttft_ms": {
+      "mean": 3153.9638147001824,
+      "sd": 562.2117115017422,
+      "median": 2888.790646000416
+    },
+    "total_ms": {
+      "mean": 3450.8995021500596,
+      "sd": 648.8344069396371,
+      "median": 3172.29293750097
+    },
+    "load_ms": {
+      "mean": 569.50055415,
+      "sd": 79.5085673560013,
+      "median": 543.399167
+    },
+    "prompt_eval_ms": {
+      "mean": 2576.02695,
+      "sd": 521.3398412996531,
+      "median": 2336.9145
+    },
+    "ttft_minus_load_ms": {
+      "mean": 2584.4632605501824,
+      "sd": 521.585546641048,
+      "median": 2345.744313000416
+    }
+  },
+  "warm": {
+    "ttft_ms": {
+      "mean": 99.27674794980703,
+      "sd": 32.87017806767822,
+      "median": 100.36535399922286
+    },
+    "total_ms": {
+      "mean": 403.5163062997526,
+      "sd": 127.89934191947307,
+      "median": 401.3303330011695
+    },
+    "load_ms": {
+      "mean": 1.07834805,
+      "sd": 0.4878219900382183,
+      "median": 1.0423545
+    },
+    "prompt_eval_ms": {
+      "mean": 90.8609,
+      "sd": 31.78211505532632,
+      "median": 90.2755
+    },
+    "ttft_minus_load_ms": {
+      "mean": 98.19839989980703,
+      "sd": 32.72706787812547,
+      "median": 98.70651999922286
+    }
+  },
+  "same_outputs": 20,
+  "cases": {
+    "restart": [
+      {
+        "utterance": "is my working tree clean?",
+        "ttft_ms": 2155.190290999599,
+        "total_ms": 2329.489083000226,
+        "load_ms": 543.986708,
+        "prompt_eval_ms": 1601.731,
+        "ttft_minus_load_ms": 1611.203582999599,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {\"clean\": true}}"
+      },
+      {
+        "utterance": "any uncommitted changes?",
+        "ttft_ms": 2864.6059170023364,
+        "total_ms": 3060.2977500020643,
+        "load_ms": 542.639459,
+        "prompt_eval_ms": 2317.103,
+        "ttft_minus_load_ms": 2321.9664580023364,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "git status please",
+        "ttft_ms": 3004.6147920002113,
+        "total_ms": 3181.158792001952,
+        "load_ms": 543.361125,
+        "prompt_eval_ms": 2453.649,
+        "ttft_minus_load_ms": 2461.2536670002114,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "tell me which branch this is",
+        "ttft_ms": 2815.219750002143,
+        "total_ms": 2983.2006670003466,
+        "load_ms": 543.39325,
+        "prompt_eval_ms": 2263.673,
+        "ttft_minus_load_ms": 2271.826500002143,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "summarize the diff",
+        "ttft_ms": 2814.609625002049,
+        "total_ms": 3002.681167003175,
+        "load_ms": 540.020375,
+        "prompt_eval_ms": 2267.996,
+        "ttft_minus_load_ms": 2274.589250002049,
+        "text": "{\"intent\": \"git_diff_summary\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "how many lines did I change",
+        "ttft_ms": 2748.5382910017506,
+        "total_ms": 3103.5371660000237,
+        "load_ms": 543.581167,
+        "prompt_eval_ms": 2195.092,
+        "ttft_minus_load_ms": 2204.9571240017503,
+        "text": "{\"intent\": \"git_diff_summary\", \"parameters\": {\"question\": \"how many lines did I change\"}}"
+      },
+      {
+        "utterance": "what did I modify in the code since the last commit, roughly",
+        "ttft_ms": 2818.6170000008133,
+        "total_ms": 3009.092125001189,
+        "load_ms": 543.405084,
+        "prompt_eval_ms": 2266.512,
+        "ttft_minus_load_ms": 2275.2119160008133,
+        "text": "{\"intent\": \"git_diff_summary\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "list all python files",
+        "ttft_ms": 2766.510292000021,
+        "total_ms": 3004.1090000013355,
+        "load_ms": 542.747709,
+        "prompt_eval_ms": 2215.583,
+        "ttft_minus_load_ms": 2223.7625830000206,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"*.py\"}}"
+      },
+      {
+        "utterance": "find markdown docs",
+        "ttft_ms": 2783.6117090009793,
+        "total_ms": 3041.5190839994466,
+        "load_ms": 544.921541,
+        "prompt_eval_ms": 2230.676,
+        "ttft_minus_load_ms": 2238.690168000979,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"*.md\"}}"
+      },
+      {
+        "utterance": "where are the json files",
+        "ttft_ms": 2894.869416999427,
+        "total_ms": 3154.2517920024693,
+        "load_ms": 541.6405,
+        "prompt_eval_ms": 2344.678,
+        "ttft_minus_load_ms": 2353.228916999427,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"json\"}}"
+      },
+      {
+        "utterance": "locate any swift files",
+        "ttft_ms": 3054.820416997245,
+        "total_ms": 3332.900374996825,
+        "load_ms": 542.063167,
+        "prompt_eval_ms": 2501.902,
+        "ttft_minus_load_ms": 2512.757249997245,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"*.swift\"}}"
+      },
+      {
+        "utterance": "search for files with config in the name",
+        "ttft_ms": 3881.0708329983754,
+        "total_ms": 4309.134332997928,
+        "load_ms": 544.040875,
+        "prompt_eval_ms": 3326.654,
+        "ttft_minus_load_ms": 3337.0299579983753,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"config*\"}}"
+      },
+      {
+        "utterance": "open pyproject.toml and show it to me",
+        "ttft_ms": 4246.705333000136,
+        "total_ms": 4718.258957997023,
+        "load_ms": 807.242916,
+        "prompt_eval_ms": 3431.387,
+        "ttft_minus_load_ms": 3439.462417000136,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"pyproject.toml\"}}"
+      },
+      {
+        "utterance": "print the contents of docs/ARCHITECTURE.md",
+        "ttft_ms": 3977.4332089982636,
+        "total_ms": 4452.9528339990065,
+        "load_ms": 808.750583,
+        "prompt_eval_ms": 3162.584,
+        "ttft_minus_load_ms": 3168.6826259982636,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"docs/ARCHITECTURE.md\"}}"
+      },
+      {
+        "utterance": "can you read AGENTS.md",
+        "ttft_ms": 3901.427083997987,
+        "total_ms": 4261.733125000319,
+        "load_ms": 541.9925,
+        "prompt_eval_ms": 3351.766,
+        "ttft_minus_load_ms": 3359.4345839979874,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"AGENTS.md\"}}"
+      },
+      {
+        "utterance": "display config/default.toml",
+        "ttft_ms": 4158.768334000342,
+        "total_ms": 4618.204916998366,
+        "load_ms": 541.109083,
+        "prompt_eval_ms": 3604.712,
+        "ttft_minus_load_ms": 3617.659251000342,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"config/default.toml\"}}"
+      },
+      {
+        "utterance": "launch Xcode",
+        "ttft_ms": 3546.88645799979,
+        "total_ms": 3862.9922500003886,
+        "load_ms": 541.89625,
+        "prompt_eval_ms": 2998.962,
+        "ttft_minus_load_ms": 3004.99020799979,
+        "text": "{\"intent\": \"open_app\", \"parameters\": {\"app_name\": \"Xcode\"}}"
+      },
+      {
+        "utterance": "start the terminal app",
+        "ttft_ms": 2882.711875001405,
+        "total_ms": 3163.4270829999878,
+        "load_ms": 544.452166,
+        "prompt_eval_ms": 2329.151,
+        "ttft_minus_load_ms": 2338.259709001405,
+        "text": "{\"intent\": \"open_app\", \"parameters\": {\"app_name\": \"Terminal\"}}"
+      },
+      {
+        "utterance": "please open safari",
+        "ttft_ms": 2908.690416999889,
+        "total_ms": 3191.5156670002034,
+        "load_ms": 544.56125,
+        "prompt_eval_ms": 2355.571,
+        "ttft_minus_load_ms": 2364.129166999889,
+        "text": "{\"intent\": \"open_app\", \"parameters\": {\"app_name\": \"Safari\"}}"
+      },
+      {
+        "utterance": "remember my preferred language is Python",
+        "ttft_ms": 2854.375250000885,
+        "total_ms": 3237.533874998917,
+        "load_ms": 544.205375,
+        "prompt_eval_ms": 2301.157,
+        "ttft_minus_load_ms": 2310.169875000885,
+        "text": "{\"intent\": \"remember_preference\", \"parameters\": {\"key\": \"preferred_language\", \"value\": \"Python\"}}"
+      }
+    ],
+    "warm": [
+      {
+        "utterance": "is my working tree clean?",
+        "ttft_ms": 22.429874999943422,
+        "total_ms": 206.24700000189478,
+        "load_ms": 0.6025,
+        "prompt_eval_ms": 17.196,
+        "ttft_minus_load_ms": 21.827374999943423,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {\"clean\": true}}"
+      },
+      {
+        "utterance": "any uncommitted changes?",
+        "ttft_ms": 75.84016699911444,
+        "total_ms": 213.01133399902028,
+        "load_ms": 0.55,
+        "prompt_eval_ms": 71.018,
+        "ttft_minus_load_ms": 75.29016699911445,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "git status please",
+        "ttft_ms": 58.44333400091273,
+        "total_ms": 204.20908400046756,
+        "load_ms": 0.855334,
+        "prompt_eval_ms": 53.364,
+        "ttft_minus_load_ms": 57.58800000091273,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "tell me which branch this is",
+        "ttft_ms": 83.07287500065286,
+        "total_ms": 241.96066700096708,
+        "load_ms": 0.534959,
+        "prompt_eval_ms": 78.528,
+        "ttft_minus_load_ms": 82.53791600065286,
+        "text": "{\"intent\": \"git_status\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "summarize the diff",
+        "ttft_ms": 91.28224999949452,
+        "total_ms": 293.0573749981704,
+        "load_ms": 0.448625,
+        "prompt_eval_ms": 86.709,
+        "ttft_minus_load_ms": 90.83362499949452,
+        "text": "{\"intent\": \"git_diff_summary\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "how many lines did I change",
+        "ttft_ms": 113.17454199888743,
+        "total_ms": 642.3189169981924,
+        "load_ms": 0.749041,
+        "prompt_eval_ms": 107.415,
+        "ttft_minus_load_ms": 112.42550099888743,
+        "text": "{\"intent\": \"git_diff_summary\", \"parameters\": {\"question\": \"how many lines did I change\"}}"
+      },
+      {
+        "utterance": "what did I modify in the code since the last commit, roughly",
+        "ttft_ms": 152.98620799876517,
+        "total_ms": 473.9986669992504,
+        "load_ms": 1.05825,
+        "prompt_eval_ms": 144.312,
+        "ttft_minus_load_ms": 151.92795799876518,
+        "text": "{\"intent\": \"git_diff_summary\", \"parameters\": {}}"
+      },
+      {
+        "utterance": "list all python files",
+        "ttft_ms": 191.64729199837893,
+        "total_ms": 682.7506669978902,
+        "load_ms": 1.257375,
+        "prompt_eval_ms": 180.884,
+        "ttft_minus_load_ms": 190.38991699837894,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"*.py\"}}"
+      },
+      {
+        "utterance": "find markdown docs",
+        "ttft_ms": 103.93995800041012,
+        "total_ms": 423.2336249988293,
+        "load_ms": 2.287084,
+        "prompt_eval_ms": 92.44,
+        "ttft_minus_load_ms": 101.65287400041012,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"*.md\"}}"
+      },
+      {
+        "utterance": "where are the json files",
+        "ttft_ms": 114.50791599781951,
+        "total_ms": 402.32020799885504,
+        "load_ms": 1.0795,
+        "prompt_eval_ms": 104.934,
+        "ttft_minus_load_ms": 113.42841599781951,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"json\"}}"
+      },
+      {
+        "utterance": "locate any swift files",
+        "ttft_ms": 103.96400000172434,
+        "total_ms": 366.48716700074147,
+        "load_ms": 1.039042,
+        "prompt_eval_ms": 95.548,
+        "ttft_minus_load_ms": 102.92495800172435,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"*.swift\"}}"
+      },
+      {
+        "utterance": "search for files with config in the name",
+        "ttft_ms": 93.75037500285544,
+        "total_ms": 370.64516700047534,
+        "load_ms": 0.83375,
+        "prompt_eval_ms": 85.605,
+        "ttft_minus_load_ms": 92.91662500285544,
+        "text": "{\"intent\": \"search_files\", \"parameters\": {\"pattern\": \"config*\"}}"
+      },
+      {
+        "utterance": "open pyproject.toml and show it to me",
+        "ttft_ms": 93.91837500152178,
+        "total_ms": 421.08770800041384,
+        "load_ms": 0.933166,
+        "prompt_eval_ms": 86.253,
+        "ttft_minus_load_ms": 92.98520900152178,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"pyproject.toml\"}}"
+      },
+      {
+        "utterance": "print the contents of docs/ARCHITECTURE.md",
+        "ttft_ms": 96.79074999803561,
+        "total_ms": 504.9121660013043,
+        "load_ms": 1.030584,
+        "prompt_eval_ms": 88.362,
+        "ttft_minus_load_ms": 95.7601659980356,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"docs/ARCHITECTURE.md\"}}"
+      },
+      {
+        "utterance": "can you read AGENTS.md",
+        "ttft_ms": 112.6425839975127,
+        "total_ms": 439.2845419970399,
+        "load_ms": 1.072167,
+        "prompt_eval_ms": 102.59,
+        "ttft_minus_load_ms": 111.57041699751271,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"AGENTS.md\"}}"
+      },
+      {
+        "utterance": "display config/default.toml",
+        "ttft_ms": 107.93133299739566,
+        "total_ms": 454.307832998893,
+        "load_ms": 1.045667,
+        "prompt_eval_ms": 98.686,
+        "ttft_minus_load_ms": 106.88566599739566,
+        "text": "{\"intent\": \"read_file\", \"parameters\": {\"path\": \"config/default.toml\"}}"
+      },
+      {
+        "utterance": "launch Xcode",
+        "ttft_ms": 79.43299999897135,
+        "total_ms": 398.97758300139685,
+        "load_ms": 1.258875,
+        "prompt_eval_ms": 68.913,
+        "ttft_minus_load_ms": 78.17412499897135,
+        "text": "{\"intent\": \"open_app\", \"parameters\": {\"app_name\": \"Xcode\"}}"
+      },
+      {
+        "utterance": "start the terminal app",
+        "ttft_ms": 107.43187499974738,
+        "total_ms": 398.7332910000987,
+        "load_ms": 2.382709,
+        "prompt_eval_ms": 95.665,
+        "ttft_minus_load_ms": 105.04916599974737,
+        "text": "{\"intent\": \"open_app\", \"parameters\": {\"app_name\": \"Terminal\"}}"
+      },
+      {
+        "utterance": "please open safari",
+        "ttft_ms": 77.68395800303551,
+        "total_ms": 400.34045800348395,
+        "load_ms": 1.190958,
+        "prompt_eval_ms": 66.607,
+        "ttft_minus_load_ms": 76.49300000303552,
+        "text": "{\"intent\": \"open_app\", \"parameters\": {\"app_name\": \"Safari\"}}"
+      },
+      {
+        "utterance": "remember my preferred language is Python",
+        "ttft_ms": 104.66429200096172,
+        "total_ms": 532.4426669976674,
+        "load_ms": 1.357375,
+        "prompt_eval_ms": 92.189,
+        "ttft_minus_load_ms": 103.30691700096172,
+        "text": "{\"intent\": \"remember_preference\", \"parameters\": {\"key\": \"preferred_language\", \"value\": \"Python\"}}"
+      }
+    ]
+  }
+}

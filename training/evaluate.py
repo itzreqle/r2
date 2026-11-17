@@ -19,8 +19,9 @@ from narrow_ai.settings import load_settings  # noqa: E402
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--eval", type=Path, default=ROOT / "data" / "eval_heldout.jsonl")
-    parser.add_argument("--backend", choices=["fake", "mlx"], default="fake")
+    parser.add_argument("--backend", choices=["fake", "mlx", "ollama"], default="fake")
     parser.add_argument("--model", default=None, help="override model id")
+    parser.add_argument("--ollama-model", default=None, help="Ollama tag for --backend ollama")
     parser.add_argument("--adapter", type=Path, default=None)
     parser.add_argument("--cache-mode", choices=["none", "prefix", "persistent"], default=None)
     parser.add_argument("--no-constrain", action="store_true", help="same as --constraint none")
@@ -39,6 +40,8 @@ def main() -> int:
     settings.model.backend = args.backend
     if args.model:
         settings.model.model_id = args.model
+    if args.ollama_model:
+        settings.model.ollama_model = args.ollama_model
     if args.adapter:
         settings.model.adapter_path = str(args.adapter)
     if args.cache_mode:

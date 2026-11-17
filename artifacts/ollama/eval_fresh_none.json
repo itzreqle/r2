@@ -1,0 +1,663 @@
+{
+  "accuracy": 1.0,
+  "param_accuracy": 1.0,
+  "n": 24,
+  "malformed_rate": 0.0,
+  "fallback_rate": 0.0,
+  "latency_ms_mean": 273.87314762518145,
+  "latency_ms_p50": 282.00370850026957,
+  "ttft_ms_mean": 58.733333333333334,
+  "per_intent_f1": {
+    "answer_question": 1.0,
+    "clarify_request": 1.0,
+    "general_help": 1.0,
+    "git_diff_summary": 1.0,
+    "git_status": 1.0,
+    "open_app": 1.0,
+    "read_file": 1.0,
+    "recall_preference": 1.0,
+    "remember_preference": 1.0,
+    "search_files": 1.0,
+    "unsupported": 1.0
+  },
+  "confusion": {
+    "git_status": {
+      "git_status": 2
+    },
+    "git_diff_summary": {
+      "git_diff_summary": 2
+    },
+    "search_files": {
+      "search_files": 2
+    },
+    "read_file": {
+      "read_file": 2
+    },
+    "open_app": {
+      "open_app": 2
+    },
+    "remember_preference": {
+      "remember_preference": 2
+    },
+    "recall_preference": {
+      "recall_preference": 2
+    },
+    "answer_question": {
+      "answer_question": 3
+    },
+    "general_help": {
+      "general_help": 1
+    },
+    "clarify_request": {
+      "clarify_request": 2
+    },
+    "unsupported": {
+      "unsupported": 4
+    }
+  },
+  "config": {
+    "backend": "ollama",
+    "model_id": "mlx-community/Qwen3-1.7B-4bit",
+    "cache_mode": "persistent",
+    "constrained": false,
+    "constraint": "none",
+    "few_shot": true,
+    "adapter": ""
+  },
+  "cases": [
+    {
+      "id": "f01",
+      "utterance": "do I have anything staged or modified?",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 212.50583300206927,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 83.6,
+        "total_ms": 205.1,
+        "prompt_tokens": 1142,
+        "cached_tokens": 0,
+        "generated_tokens": 9,
+        "prompt_tps": 0.0,
+        "generation_tps": 74.2,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f02",
+      "utterance": "current branch name please",
+      "expected": "git_status",
+      "predicted": "git_status",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 180.57970800145995,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 60.9,
+        "total_ms": 180.3,
+        "prompt_tokens": 1138,
+        "cached_tokens": 0,
+        "generated_tokens": 9,
+        "prompt_tps": 0.0,
+        "generation_tps": 75.4,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f03",
+      "utterance": "give me a diff summary",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 192.67008399765473,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 59.0,
+        "total_ms": 192.4,
+        "prompt_tokens": 1139,
+        "cached_tokens": 0,
+        "generated_tokens": 10,
+        "prompt_tps": 0.0,
+        "generation_tps": 75.0,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f04",
+      "utterance": "what files changed and by how much",
+      "expected": "git_diff_summary",
+      "predicted": "git_diff_summary",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 189.07033299910836,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 55.4,
+        "total_ms": 188.8,
+        "prompt_tokens": 1141,
+        "cached_tokens": 0,
+        "generated_tokens": 10,
+        "prompt_tps": 0.0,
+        "generation_tps": 75.0,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f05",
+      "utterance": "list the yaml files",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*.yaml",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 236.8270000006305,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 58.5,
+        "total_ms": 236.5,
+        "prompt_tokens": 1138,
+        "cached_tokens": 0,
+        "generated_tokens": 13,
+        "prompt_tps": 0.0,
+        "generation_tps": 73.1,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f06",
+      "utterance": "find anything named test",
+      "expected": "search_files",
+      "predicted": "search_files",
+      "parameters": {
+        "pattern": "*test*",
+        "workspace": "active"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 250.81629200212774,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 58.7,
+        "total_ms": 250.6,
+        "prompt_tokens": 1138,
+        "cached_tokens": 0,
+        "generated_tokens": 14,
+        "prompt_tps": 0.0,
+        "generation_tps": 73.0,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f07",
+      "utterance": "read the training README",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "trainingREADME.md"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 268.83012499820325,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 58.1,
+        "total_ms": 268.6,
+        "prompt_tokens": 1138,
+        "cached_tokens": 0,
+        "generated_tokens": 15,
+        "prompt_tps": 0.0,
+        "generation_tps": 71.3,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f08",
+      "utterance": "cat pyproject.toml",
+      "expected": "read_file",
+      "predicted": "read_file",
+      "parameters": {
+        "path": "pyproject.toml"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 281.66179199979524,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 59.1,
+        "total_ms": 281.4,
+        "prompt_tokens": 1139,
+        "cached_tokens": 0,
+        "generated_tokens": 16,
+        "prompt_tps": 0.0,
+        "generation_tps": 72.0,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f09",
+      "utterance": "fire up visual studio code",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Visual Studio Code"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 282.3456250007439,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 58.6,
+        "total_ms": 282.1,
+        "prompt_tokens": 1139,
+        "cached_tokens": 0,
+        "generated_tokens": 16,
+        "prompt_tps": 0.0,
+        "generation_tps": 71.6,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f10",
+      "utterance": "open finder",
+      "expected": "open_app",
+      "predicted": "open_app",
+      "parameters": {
+        "app_name": "Finder"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 252.92316700142692,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 43.4,
+        "total_ms": 252.7,
+        "prompt_tokens": 1136,
+        "cached_tokens": 0,
+        "generated_tokens": 14,
+        "prompt_tps": 0.0,
+        "generation_tps": 66.9,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f11",
+      "utterance": "keep in mind that my main language is Swift",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "main_language",
+        "value": "Swift"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 355.2852089997032,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 55.6,
+        "total_ms": 355.1,
+        "prompt_tokens": 1143,
+        "cached_tokens": 0,
+        "generated_tokens": 20,
+        "prompt_tps": 0.0,
+        "generation_tps": 66.8,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f12",
+      "utterance": "please store my code style as black",
+      "expected": "remember_preference",
+      "predicted": "remember_preference",
+      "parameters": {
+        "key": "code_style",
+        "value": "black"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 338.72670799974003,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 55.9,
+        "total_ms": 338.5,
+        "prompt_tokens": 1141,
+        "cached_tokens": 0,
+        "generated_tokens": 20,
+        "prompt_tps": 0.0,
+        "generation_tps": 70.8,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f13",
+      "utterance": "what did I tell you my main language was",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "editor"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 234.90399999718647,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 56.9,
+        "total_ms": 234.7,
+        "prompt_tokens": 1143,
+        "cached_tokens": 0,
+        "generated_tokens": 13,
+        "prompt_tps": 0.0,
+        "generation_tps": 73.1,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f14",
+      "utterance": "remind me of my code style",
+      "expected": "recall_preference",
+      "predicted": "recall_preference",
+      "parameters": {
+        "key": "code_style"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 252.15012500120793,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 57.1,
+        "total_ms": 251.8,
+        "prompt_tokens": 1141,
+        "cached_tokens": 0,
+        "generated_tokens": 14,
+        "prompt_tps": 0.0,
+        "generation_tps": 71.9,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f15",
+      "utterance": "what is a git stash?",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "what is a git stash"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 297.5099159993988,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 60.5,
+        "total_ms": 297.3,
+        "prompt_tokens": 1140,
+        "cached_tokens": 0,
+        "generated_tokens": 17,
+        "prompt_tps": 0.0,
+        "generation_tps": 71.8,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f16",
+      "utterance": "how do I create a virtual environment in python",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "how do I create a virtual environment in python"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 357.84741699899314,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 58.6,
+        "total_ms": 357.6,
+        "prompt_tokens": 1143,
+        "cached_tokens": 0,
+        "generated_tokens": 21,
+        "prompt_tps": 0.0,
+        "generation_tps": 70.3,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f17",
+      "utterance": "explain what a race condition is",
+      "expected": "answer_question",
+      "predicted": "answer_question",
+      "parameters": {
+        "question": "explain what a race condition is"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 323.8612920031301,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 63.5,
+        "total_ms": 323.6,
+        "prompt_tokens": 1140,
+        "cached_tokens": 0,
+        "generated_tokens": 18,
+        "prompt_tps": 0.0,
+        "generation_tps": 69.2,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f18",
+      "utterance": "what kinds of things can you help with",
+      "expected": "general_help",
+      "predicted": "general_help",
+      "parameters": {},
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 178.1396250007674,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 58.1,
+        "total_ms": 177.9,
+        "prompt_tokens": 1142,
+        "cached_tokens": 0,
+        "generated_tokens": 9,
+        "prompt_tps": 0.0,
+        "generation_tps": 75.2,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f19",
+      "utterance": "sort it out",
+      "expected": "clarify_request",
+      "predicted": "clarify_request",
+      "parameters": {
+        "question": "What should I sort out?"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 313.7641249995795,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 45.8,
+        "total_ms": 313.5,
+        "prompt_tokens": 1137,
+        "cached_tokens": 0,
+        "generated_tokens": 19,
+        "prompt_tps": 0.0,
+        "generation_tps": 71.0,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f20",
+      "utterance": "change that thing",
+      "expected": "clarify_request",
+      "predicted": "clarify_request",
+      "parameters": {
+        "question": "What should I change?"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 302.45479099903605,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 47.3,
+        "total_ms": 302.2,
+        "prompt_tokens": 1137,
+        "cached_tokens": 0,
+        "generated_tokens": 18,
+        "prompt_tps": 0.0,
+        "generation_tps": 70.6,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f21",
+      "utterance": "tell me the news",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "News is outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 302.8940420008439,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 63.0,
+        "total_ms": 302.7,
+        "prompt_tokens": 1138,
+        "cached_tokens": 0,
+        "generated_tokens": 17,
+        "prompt_tps": 0.0,
+        "generation_tps": 70.9,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f22",
+      "utterance": "buy me a coffee",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Chit-chat is outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 334.25529200030724,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 63.3,
+        "total_ms": 334.0,
+        "prompt_tokens": 1138,
+        "cached_tokens": 0,
+        "generated_tokens": 19,
+        "prompt_tps": 0.0,
+        "generation_tps": 70.2,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f23",
+      "utterance": "chmod 777 everything",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Destructive actions are not allowed"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 322.03779200062854,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 65.0,
+        "total_ms": 321.8,
+        "prompt_tokens": 1140,
+        "cached_tokens": 0,
+        "generated_tokens": 18,
+        "prompt_tps": 0.0,
+        "generation_tps": 70.1,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    },
+    {
+      "id": "f24",
+      "utterance": "what's the population of Canada",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "parameters": {
+        "reason": "Weather is outside my developer scope"
+      },
+      "intent_ok": true,
+      "params_ok": true,
+      "source": "model",
+      "latency_ms": 310.8952500006126,
+      "metrics": {
+        "backend": "ollama",
+        "ttft_ms": 63.7,
+        "total_ms": 310.7,
+        "prompt_tokens": 1140,
+        "cached_tokens": 0,
+        "generated_tokens": 17,
+        "prompt_tps": 0.0,
+        "generation_tps": 68.8,
+        "peak_memory_gb": 0.0,
+        "cache_source": "ollama"
+      }
+    }
+  ]
+}

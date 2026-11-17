@@ -15,13 +15,14 @@ leaves your machine.
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![MLX](https://img.shields.io/badge/runs%20on-MLX-2a78d6)
 ![SwiftUI](https://img.shields.io/badge/app-SwiftUI-F05138?logo=swift&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-252%20passing-1baf7a)
+![Tests](https://img.shields.io/badge/tests-255%20passing-1baf7a)
 ![License: MIT](https://img.shields.io/badge/license-MIT-a3a29b)
+![Paper](https://img.shields.io/badge/paper-IEEE%20PDF-00629B)
 ![Whitepaper](https://img.shields.io/badge/whitepaper-PDF-eb6834)
 
 [Features](#features) · [Quick start](#quick-start) · [Results](#results) ·
 [How it works](#how-it-works) · [Academic use](#academic-use) ·
-[Whitepaper](paper/r2-whitepaper.pdf)
+[Paper (8 pp.)](paper/r2-ieee.pdf) · [Extended whitepaper](paper/r2-whitepaper.pdf)
 
 </div>
 
@@ -80,7 +81,7 @@ Xcode command-line tools (`xcode-select --install`).
 ```bash
 git clone https://github.com/itzreqle/r2.git && cd r2
 uv sync                                  # Python 3.12 environment with everything R2 needs
-uv run pytest                            # 252 tests, no downloads, no microphone
+uv run pytest                            # 255 tests, no downloads, no microphone
 cd macos/R2App && ./build_app.sh --open  # build R2.app and launch it
 ```
 
@@ -154,6 +155,29 @@ those files by `scripts/make_readme_charts.py`; every number was re-measured for
 
 The cached prompt takes 147 MB of memory: 28 layers × 8 key/value heads × 128 dimensions × 2
 (keys and values) × 2 bytes = 112 KiB per token, allocated in 256-token steps.
+
+### Against llama.cpp: same speed when warm, 23× faster after a restart
+
+The same Qwen3-1.7B served by [Ollama](https://ollama.com) (llama.cpp Metal backend, Q4_K_M GGUF),
+with the same rendered prompt, R2's JSON schema passed as Ollama's `format`, and R2's own parser,
+validator and grader (`OllamaBackend`, `src/narrow_ai/models/ollama_backend.py`):
+
+| | R2 (MLX) | Ollama / llama.cpp |
+| --- | ---: | ---: |
+| First token, prefix warm in memory | 72 ms | 79 ms |
+| First token after an unload or restart | **82 ms** (validated load from disk) | 1,878 ms (prompt re-evaluated) |
+| Exact match, 124 requests, JSON grammar | 110 (88.7%) | 110 (88.7%), McNemar *p* = 1.0 |
+| Exact match, no grammar | 104 (83.9%) | 107 (86.3%), *p* = 0.58 |
+
+R2 is not faster or more accurate than llama.cpp on a warm prefix. Its advantage is what happens
+after a restart, the fingerprint and per-layer check that decide whether a saved cache is valid,
+and the execution policy. The LoRA adapter (96.8%) beats the Ollama baseline (11 vs 1 discordant,
+*p* = 0.006). Raw outputs are in `artifacts/ollama/`.
+
+**Beyond exact match.** `training/soft_metrics.py` adds intent macro-F1, a graded parameter
+score and an outcome taxonomy (`artifacts/soft_metrics.json`). Of the base model's 14 errors with
+the grammar, 9 are *safe stops* (R2 asks or refuses instead of acting). The adapter leaves 4
+errors (2 near misses, 1 wrong read-only action, 1 missed refusal) and no safe stops.
 
 ### R2 picks the right action 85–96% of the time on unseen requests
 
@@ -264,7 +288,7 @@ Why LoRA: it fixes the base model's systematic errors without lengthening the ca
 batch size 1, and prefix-tuning competes with R2's own cached prefix. LoRA learns
 `W = W0 + (α/r)·B·A` with rank r = 8 on all seven projections of the last 8 layers:
 8 · 8 · 38,912 = 2,490,368 parameters, 0.15% of the model
-([Hu et al., 2021](https://arxiv.org/abs/2106.09685); whitepaper §9.11).
+([Hu et al., 2021](https://arxiv.org/abs/2106.09685); whitepaper Appendix D).
 
 A LoRA adapter on the last 8 layers (2.5M parameters, 0.15% of the model, 10 MB) was trained
 for 700 steps on 700 synthetic, decontaminated examples (`training/synth_data.py`), with the
@@ -284,7 +308,7 @@ and the eval sets are small, so the adapter stays opt-in (`model.adapter_path`).
 with `training/train.py --yes` and `training/compare_lora.py`
 ([docs/MODEL_TRAINING.md](docs/MODEL_TRAINING.md)).
 
-**Rank sweep** (`training/lora_sweep.py`, `training/lora_subspace.py`; whitepaper Figs. 14–15):
+**Rank sweep** (`training/lora_sweep.py`, `training/lora_subspace.py`; whitepaper Appendix D):
 
 | Rank r | Trainable params | log10 | Dev | Fresh | Test | All 124 |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -378,14 +402,24 @@ cache files are kept (`model.kv_cache_max_files`).
 R2 is small enough to read in an afternoon and complete enough to measure, so it works well
 for coursework, a thesis chapter or a reading group on efficient on-device LLMs.
 
-**Whitepaper.** [*R2: A Narrow, On-Device Voice Assistant with Persistent Prefix KV Caching
-and Constrained Intent Decoding*](paper/r2-whitepaper.pdf) covers the theory (prefix
-invariance, KV memory, a prefill/decode cost model, the decoding mask), the architecture, and
-every benchmark, including a context-length sweep from 128 to 8,192 tokens. Revision 2 adds the
-API and confirmation hardening, the content-based cache fingerprint, the JSON-schema grammar
-ablation, the multi-step runtime, conversation-level KV reuse, quantised KV and rotating
-windows, a 60-case test set and a LoRA comparison. LaTeX source and figure scripts are in [`paper/`](paper/);
-rebuild the PDF with `paper/build.sh` (TinyTeX).
+**Paper.** *R2: A Narrow, On-Device Voice Assistant with Persistent Prefix KV Caching and
+Constrained Intent Decoding* comes in two versions:
+
+- [`paper/r2-ieee.pdf`](paper/r2-ieee.pdf): an 8-page IEEE journal version (IEEEtran), aimed at
+  arXiv and IEEE venues, with the implementation detail in Appendices A–F.
+- [`paper/r2-whitepaper.pdf`](paper/r2-whitepaper.pdf): the extended version, kept as a
+  technical-report companion with every figure and table.
+
+Revision 3 answers a formal review ([`paper/response-to-review.md`](paper/response-to-review.md)).
+It uses a formal tone and a shorter structure. The theory now centres on the validity of a
+persisted cache: the configuration fingerprint, the per-layer check, and a fail-closed reuse
+proposition, with prefix invariance reduced to a remark. It adds a quantitative positioning
+against Prompt Cache, SGLang, CachedAttention, LMCache and llama.cpp, a measured same-model
+llama.cpp baseline, and soft metrics. It states the novelty realistically and gives a clearer
+limitations section.
+
+LaTeX source and figure scripts are in [`paper/`](paper/). Build the IEEE version with
+`paper/build_ieee.sh` (tectonic) and the extended version with `paper/build.sh`.
 
 **Research questions it answers**
 
@@ -417,6 +451,9 @@ uv run python training/train.py --yes                                 # LoRA (ca
 uv run python training/compare_lora.py                                # base vs adapter
 uv run python training/bench_scaling.py                               # context-length sweep
 uv run python training/bench_voice.py                                 # speech latency
+uv run python training/evaluate.py --backend ollama --eval data/eval_test.jsonl  # llama.cpp baseline
+uv run python training/bench_ollama.py                                # llama.cpp warm vs restart
+uv run python training/soft_metrics.py                                # macro-F1, graded, outcomes
 uv run python scripts/make_readme_charts.py                           # redraw the charts
 uv run python paper/make_figures.py                                   # whitepaper figures
 ```

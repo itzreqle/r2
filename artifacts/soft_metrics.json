@@ -1,0 +1,104 @@
+{
+  "base/json": {
+    "n": 124,
+    "exact": 0.8870967741935484,
+    "intent_acc": 0.8951612903225806,
+    "macro_f1": 0.8853029749449187,
+    "graded": 0.8907624633431085,
+    "useful": 0.8951612903225806,
+    "harmless": 0.9838709677419355,
+    "outcomes": {
+      "correct": 110,
+      "near_miss": 1,
+      "safe_stop": 9,
+      "wrong_readonly": 2,
+      "wrong_gated": 1,
+      "missed_refusal": 1
+    }
+  },
+  "base/none": {
+    "n": 124,
+    "exact": 0.8387096774193549,
+    "intent_acc": 0.8548387096774194,
+    "macro_f1": 0.849672864314808,
+    "graded": 0.842375366568915,
+    "useful": 0.8548387096774194,
+    "harmless": 0.9919354838709677,
+    "outcomes": {
+      "correct": 104,
+      "near_miss": 2,
+      "safe_stop": 13,
+      "wrong_readonly": 4,
+      "wrong_gated": 1,
+      "missed_refusal": 0
+    }
+  },
+  "adapter/json": {
+    "n": 124,
+    "exact": 0.967741935483871,
+    "intent_acc": 0.9838709677419355,
+    "macro_f1": 0.9857670816376416,
+    "graded": 0.9718108504398827,
+    "useful": 0.9838709677419355,
+    "harmless": 0.9919354838709677,
+    "outcomes": {
+      "correct": 120,
+      "near_miss": 2,
+      "safe_stop": 0,
+      "wrong_readonly": 1,
+      "wrong_gated": 0,
+      "missed_refusal": 1
+    }
+  },
+  "adapter/none": {
+    "n": 124,
+    "exact": 0.967741935483871,
+    "intent_acc": 0.9838709677419355,
+    "macro_f1": 0.9857670816376416,
+    "graded": 0.9718108504398827,
+    "useful": 0.9838709677419355,
+    "harmless": 0.9919354838709677,
+    "outcomes": {
+      "correct": 120,
+      "near_miss": 2,
+      "safe_stop": 0,
+      "wrong_readonly": 1,
+      "wrong_gated": 0,
+      "missed_refusal": 1
+    }
+  },
+  "ollama/json": {
+    "n": 124,
+    "exact": 0.8870967741935484,
+    "intent_acc": 0.9193548387096774,
+    "macro_f1": 0.9185223495569296,
+    "graded": 0.8985766045548654,
+    "useful": 0.9193548387096774,
+    "harmless": 0.9919354838709677,
+    "outcomes": {
+      "correct": 110,
+      "near_miss": 4,
+      "safe_stop": 7,
+      "wrong_readonly": 2,
+      "wrong_gated": 1,
+      "missed_refusal": 0
+    }
+  },
+  "ollama/none": {
+    "n": 124,
+    "exact": 0.8629032258064516,
+    "intent_acc": 0.8951612903225806,
+    "macro_f1": 0.8981514701498732,
+    "graded": 0.8743830561677687,
+    "useful": 0.8951612903225806,
+    "harmless": 0.9919354838709677,
+    "outcomes": {
+      "correct": 107,
+      "near_miss": 4,
+      "safe_stop": 9,
+      "wrong_readonly": 3,
+      "wrong_gated": 1,
+      "missed_refusal": 0
+    }
+  }
+}
